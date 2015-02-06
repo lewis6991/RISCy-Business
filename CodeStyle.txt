@@ -1,7 +1,49 @@
+Coding style:
+Note: This coding style should only be seen as a convention not strict rules.
+-------------------------------------------
 - No tabs.
-- Indent with 3 spaces.
+-------------------------------------------
+- Indent with 4 spaces.
+-------------------------------------------
 - Page width of 80 characters.
+    -Wrap lines with indents.
+-------------------------------------------
 - 'begin' on same line as if, e.g:
     if (condition) begin
       ...
     end
+-------------------------------------------
+- No redundant 'begin-end's', e.g.
+    if (conidition) begin //
+        assignment;       // Not this.
+    end                   //
+    
+    if (condition)        // This is preferred.
+        assignment;       // 
+-------------------------------------------
+- Prefer assignment of 'if' statements on seperate lines, e.g.
+    if (condition)  assignment; // Not this
+    
+    if (condition)  // This is preferred.
+        assignment; // 
+-------------------------------------------
+- Have one space between 'if' and the first bracket, e.g. 'if (condition)'.
+-------------------------------------------
+- Spaces used appropriately with operators, e.g:
+    a=b*c+d          // Not this
+    a = b*c + d      // Preferred
+    input [3 : 0] a; // Not this 
+    input [3:0] a;   // Preferred
+-------------------------------------------
+- All code aligned when possible, e.g:
+    input        Clock ; 
+    output       nReset;
+    input  [3:0] Out   ;
+--------------------------------------------
+-Port names are camelcased with the exception of active-low ports, e.g.
+    input Clock      ;
+    input nReset     ;
+    input ThisIsAPort;
+--------------------------------------------
+-Internal signals can be named however with the rule that they start lowercase.
+    
