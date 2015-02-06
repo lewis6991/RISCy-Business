@@ -1,0 +1,7 @@
+- No tabs.
+- Indent with 3 spaces.
+- Page width of 80 characters.
+- 'begin' on same line as if, e.g:
+    if (condition) begin
+      ...
+    end
