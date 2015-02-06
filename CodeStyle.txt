@@ -8,8 +8,9 @@ Note: This coding style should only be seen as a convention not strict rules.
 - Page width of 80 characters.
     -Wrap lines with indents.
 -------------------------------------------
-- 'begin' on same line as if, e.g:
-    if (condition) begin
+- 'begin' on next line as if, e.g:
+    if (condition)
+    begin
       ...
     end
 -------------------------------------------
