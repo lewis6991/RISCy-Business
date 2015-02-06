@@ -10,15 +10,15 @@ Specification:
   * 400MHz.
     
 Extended specification:
-  *Pipelined with 11 stages.
-  *Floating Point Unit.
-  *N-bit branch prediction.
+  * Pipelined with 11 stages.
+  * Floating Point Unit.
+  * N-bit branch prediction.
     
 Testbench specification:
-  *Randomly constrained.
-  *Coverage driven.
-  *Stimulus generated from cross-compiler.
-  *Inclusion of SystemVerilog assertions.
+  * Randomly constrained.
+  * Coverage driven.
+  * Stimulus generated from cross-compiler.
+  * Inclusion of SystemVerilog assertions.
     
 How to use github:
 http://rogerdudler.github.io/git-guide/
