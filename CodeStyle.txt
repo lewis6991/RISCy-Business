@@ -47,4 +47,5 @@ Note: This coding style should only be seen as a convention not strict rules.
     input ThisIsAPort;
 --------------------------------------------
 -Internal signals can be named however with the rule that they start lowercase.
+
     
