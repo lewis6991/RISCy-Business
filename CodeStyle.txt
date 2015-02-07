@@ -47,5 +47,18 @@ Note: This coding style should only be seen as a convention not strict rules.
     input ThisIsAPort;
 --------------------------------------------
 -Internal signals can be named however with the rule that they start lowercase.
-
+--------------------------------------------
+-For 1 bit signals, a NOT of the signal shall be implemented using tilda, not explanation mark.
+  e.g. if(~nReset)  // Preferred
+       if(!nReset)  // Not this
+--------------------------------------------
+- Only declare input or output keyword once where possible.
+  e.g.  input        [31:0] ProgAddrIn,
+        input               Clock, 
+                            nReset,
+        output logic [31:0] ProgAddrOut,
+        output logic        A,
+                            B,
+                            C
+--------------------------------------------
     
