@@ -1,5 +1,14 @@
+//----------------------------------------
+// File: coding_style.txt
+// Description: Document detailing the coding style to be used.
+// Primary Author: Lewis
+// Other Contributors: Dominic, ...
+//----------------------------------------
+
 Coding style:
 Note: This coding style should only be seen as a convention not strict rules.
+-------------------------------------------
+Each document should have a header at the explaining the purpose of the file and metadata. See above.
 -------------------------------------------
 - No tabs.
 -------------------------------------------
