@@ -45,6 +45,7 @@ module decoder(
                 case(Func_Code)
                     `ADD:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `ADD;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -52,6 +53,7 @@ module decoder(
     
                     `ADDU:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `ADDU;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -59,6 +61,7 @@ module decoder(
     
                     `SUB:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SUB;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -66,6 +69,7 @@ module decoder(
     
                     `SUBU:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SUBU;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -73,6 +77,7 @@ module decoder(
     
                     `SLL:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SLL;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -80,6 +85,7 @@ module decoder(
     
                     `SLLV:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SLLV;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -87,6 +93,7 @@ module decoder(
     
                     `SRA:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SRA;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -94,6 +101,7 @@ module decoder(
     
                     `SRAV:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SRAV;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -101,6 +109,7 @@ module decoder(
     
                     `SRL:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SRL;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -108,6 +117,7 @@ module decoder(
     
                     `SRLV:
                     begin
+                        RegDst   = 1'b1;
                         Func = `SRLV;
                         ALUOp = 1'b1;
                         RegWrite = 1'b1;
@@ -115,6 +125,7 @@ module decoder(
     
                     `AND:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `AND;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -122,6 +133,7 @@ module decoder(
     
                     `NOR:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `NOR;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -129,6 +141,7 @@ module decoder(
     
                     `OR:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `OR ;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -136,6 +149,7 @@ module decoder(
     
                     `XOR:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `XOR;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -143,6 +157,7 @@ module decoder(
     
                     `MOVN:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `MOVN;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -150,6 +165,7 @@ module decoder(
     
                     `MOVZ:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `MOVZ;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -157,6 +173,7 @@ module decoder(
     
                     `SLT:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SLT;
                         ALUOp    = 1'b1;
                         RegWrite = 1'b1;
@@ -164,6 +181,7 @@ module decoder(
     
                     `SLTU:
                     begin
+                        RegDst   = 1'b1;
                         Func     = `SLTU;
                         ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -183,14 +201,16 @@ module decoder(
     
                     `MFHI:
                     begin
-                        Func  = `MFHI;
-                        ALUOp = 1'b1 ;
+                        RegDst = 1'b1 ;
+                        Func   = `MFHI;
+                        ALUOp  = 1'b1 ;
                     end
     
                     `MFLO:
                     begin
-                        Func  = `MFLO;
-                        ALUOp = 1'b1 ;
+                        RegDst = 1'b1 ;
+                        Func   = `MFLO;
+                        ALUOp  = 1'b1 ;
                     end
     
                     `MTHI:
@@ -255,6 +275,7 @@ module decoder(
     
                     `MUL:
                     begin
+                        RegDst   = 1'b1 ;
                         Func     = `MADD;
                         MULOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
@@ -305,8 +326,29 @@ module decoder(
             end
     
             `XORI:
+            begin
+                Func     = `OR ;
+                ALUOp    = 1'b1;
+                ALUSrc   = 1'b1;
+                RegWrite = 1'b1;
+            end
+            
             `SLTI:
+            begin
+                Func     = `OR ;
+                ALUOp    = 1'b1;
+                ALUSrc   = 1'b1;
+                RegWrite = 1'b1;
+            end
+
             `SLTIU:
+            begin
+                Func     = `OR ;
+                ALUOp    = 1'b1;
+                ALUSrc   = 1'b1;
+                RegWrite = 1'b1;
+            end
+            
             `BEQ:
             `BGTZ:
             `BLEZ:
