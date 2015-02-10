@@ -45,7 +45,7 @@ always_comb
                 case(Func_Code)
                     `ADD:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `ADD;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -53,7 +53,7 @@ always_comb
                     
                     `ADDU:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `ADDU;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -61,7 +61,7 @@ always_comb
                     
                     `SUB:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SUB;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -69,7 +69,7 @@ always_comb
                     
                     `SUBU:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SUBU;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -77,7 +77,7 @@ always_comb
                     
                     `SLL:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SLL;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -85,7 +85,7 @@ always_comb
                     
                     `SLLV:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SLLV;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -93,7 +93,7 @@ always_comb
                     
                     `SRA:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SRA;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -101,7 +101,7 @@ always_comb
                     
                     `SRAV:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SRAV;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -109,7 +109,7 @@ always_comb
                     
                     `SRL:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SRL;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -117,7 +117,7 @@ always_comb
                     
                     `SRLV:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SRLV;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -125,7 +125,7 @@ always_comb
                     
                     `AND:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `AND;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -133,7 +133,7 @@ always_comb
                     
                     `NOR:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `NOR;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -141,7 +141,7 @@ always_comb
                     
                     `OR:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `OR;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -149,7 +149,7 @@ always_comb
                     
                     `XOR:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `XOR;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -157,7 +157,7 @@ always_comb
                     
                     `MOVN:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `MOVN;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -165,7 +165,7 @@ always_comb
                     
                     `MOVZ:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `MOVZ;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -173,7 +173,7 @@ always_comb
                     
                     `SLT:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SLT;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -181,7 +181,7 @@ always_comb
                     
                     `SLTU:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `SLTU;
                             ALUOp = 1'b1;
                             RegWrite = 1'b1;
@@ -201,14 +201,14 @@ always_comb
                     
                     `MFHI:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `MFHI;
                             ALUOp = 1'b1;
                         end
                     
                     `MFLO:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `MFLO;
                             ALUOp = 1'b1;
                         end
@@ -276,7 +276,7 @@ always_comb
                     
                     `MUL:
                         begin
-							RegDst = 1'b1;
+                            RegDst = 1'b1;
                             Func = `MADD;
                             MULOp = 1'b1;
                             RegWrite = 1'b1;
@@ -286,7 +286,7 @@ always_comb
                 endcase
             
             `ADDI:
-				begin
+                begin
                     Func = `ADDI;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
@@ -294,7 +294,7 @@ always_comb
                 end
             
             `ADDIU:
-				begin
+                begin
                     Func = `ADDIU;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
@@ -311,7 +311,7 @@ always_comb
                 end
             
             `ANDI:
-				begin
+                begin
                     Func = `ANDI;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
@@ -327,7 +327,7 @@ always_comb
                 end
             
             `XORI:
-				begin
+                begin
                     Func = `OR;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
@@ -335,7 +335,7 @@ always_comb
                 end
             
             `SLTI:
-				begin
+                begin
                     Func = `OR;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
@@ -343,7 +343,7 @@ always_comb
                 end
             
             `SLTIU:
-				begin
+                begin
                     Func = `OR;
                     ALUOp = 1'b1;
                     ALUSrc = 1'b1;
