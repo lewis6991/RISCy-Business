@@ -21,7 +21,7 @@ module decoder(
 							ALUSrc,
 							RegWrite,
 							ShiftSel,
-	output	logic	[5:0]	ALUfunc,
+	output	logic	[5:0]	Func,
     input   		[5:0]   Op_Code,
 							Func_Code
 );
@@ -38,176 +38,176 @@ always_comb
 		RegWrite = 1'b0;
 		ImmSel = 1'b0;
 		MULOp = 1'b0;
-		ALUfunc = 6'b000000;
+		Func = 6'b000000;
 		
 		case(Op_Code)
 			`ALU_OP:
 				case(Func_Code)
 					`ADD:
 						begin
-							ALUfunc = `ADD;
+							Func = `ADD;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`ADDU:
 						begin
-							ALUfunc = `ADDU;
+							Func = `ADDU;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SUB:
 						begin
-							ALUfunc = `SUB;
+							Func = `SUB;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SUBU:
 						begin
-							ALUfunc = `SUBU;
+							Func = `SUBU;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SLL:
 						begin
-							ALUfunc = `SLL;
+							Func = `SLL;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SLLV:
 						begin
-							ALUfunc = `SLLV;
+							Func = `SLLV;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SRA:
 						begin
-							ALUfunc = `SRA;
+							Func = `SRA;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SRAV:
 						begin
-							ALUfunc = `SRAV;
+							Func = `SRAV;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SRL:
 						begin
-							ALUfunc = `SRL;
+							Func = `SRL;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SRLV:
 						begin
-							ALUfunc = `SRLV;
+							Func = `SRLV;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`AND:
 						begin
-							ALUfunc = `AND;
+							Func = `AND;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`NOR:
 						begin
-							ALUfunc = `NOR;
+							Func = `NOR;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`OR:
 						begin
-							ALUfunc = `OR;
+							Func = `OR;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`XOR:
 						begin
-							ALUfunc = `XOR;
+							Func = `XOR;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`MOVN:
 						begin
-							ALUfunc = `MOVN;
+							Func = `MOVN;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`MOVZ:
 						begin
-							ALUfunc = `MOVZ;
+							Func = `MOVZ;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SLT:
 						begin
-							ALUfunc = `SLT;
+							Func = `SLT;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`SLTU:
 						begin
-							ALUfunc = `SLTU;
+							Func = `SLTU;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
 						end
 					
 					`MULT:
 						begin
-							ALUfunc = `MULT;
+							Func = `MULT;
 							ALUOp = 1'b1;
 						end
 					
 					`MULTU:
 						begin
-							ALUfunc = `MULTU;
+							Func = `MULTU;
 							ALUOp = 1'b1;
 						end
 					
 					`MFHI:
 						begin
-							ALUfunc = `MFHI;
+							Func = `MFHI;
 							ALUOp = 1'b1;
 						end
 					
 					`MFLO:
 						begin
-							ALUfunc = `MFLO;
+							Func = `MFLO;
 							ALUOp = 1'b1;
 						end
 					
 					`MTHI:
 						begin
-							ALUfunc = `MTHI;
+							Func = `MTHI;
 							ALUOp = 1'b1;
 						end
 					
 					`MTLO:
 						begin
-							ALUfunc = `MTLO;
+							Func = `MTLO;
 							ALUOp = 1'b1;
 						end
 					
 					`JALR:
 						begin
-							ALUfunc = `JALR;
+							Func = `JALR;
 							ALUOp = 1'b1;
 							ALUSrc = 1'b1;
 							RegWrite = 1'b1;
@@ -215,7 +215,7 @@ always_comb
 					
 					`JR:
 						begin
-							ALUfunc = `JR;
+							Func = `JR;
 							ALUOp = 1'b1;
 							ALUSrc = 1'b1;
 							RegWrite = 1'b1;
@@ -232,31 +232,31 @@ always_comb
 					
 					`MADD:
 						begin
-							ALUfunc = `MADD;
+							Func = `MADD;
 							MULOp = 1'b1;
 						end
 					
 					`MADDU:
 						begin
-							ALUfunc = `MADD;
+							Func = `MADD;
 							MULOp = 1'b1;
 						end
 					
 					`MSUB:
 						begin
-							ALUfunc = `MADD;
+							Func = `MADD;
 							MULOp = 1'b1;
 						end
 					
 					`MSUBU:
 						begin
-							ALUfunc = `MADD;
+							Func = `MADD;
 							MULOp = 1'b1;
 						end
 					
 					`MUL:
 						begin
-							ALUfunc = `MADD;
+							Func = `MADD;
 							MULOp = 1'b1;
 							RegWrite = 1'b1;
 						end
@@ -270,7 +270,7 @@ always_comb
 			
 			`LUI:
 				begin
-					ALUfunc = `ADD;
+					Func = `ADD;
 					ALUOp = 1'b1;
 					ALUSrc = 1'b1;
 					ShiftSel = 1'b1;
@@ -281,7 +281,7 @@ always_comb
 			
 			`ORI:
 				begin
-					ALUfunc = `OR;
+					Func = `OR;
 					ALUOp = 1'b1;
 					ALUSrc = 1'b1;
 					RegWrite = 1'b1;
