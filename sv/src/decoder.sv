@@ -265,8 +265,20 @@ always_comb
                 endcase
             
             `ADDI:
+				begin
+                    Func = `ADDI;
+                    ALUOp = 1'b1;
+                    ALUSrc = 1'b1;
+                    RegWrite = 1'b1;
+                end
             
             `ADDIU:
+				begin
+                    Func = `ADDIU;
+                    ALUOp = 1'b1;
+                    ALUSrc = 1'b1;
+                    RegWrite = 1'b1;
+                end
             
             `LUI:
                 begin
@@ -278,6 +290,12 @@ always_comb
                 end
             
             `ANDI:
+				begin
+                    Func = `ANDI;
+                    ALUOp = 1'b1;
+                    ALUSrc = 1'b1;
+                    RegWrite = 1'b1;
+                end
             
             `ORI:
                 begin
