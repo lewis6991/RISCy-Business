@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#----------------------------------------
+# File: RUNME.sh
+# Description: Bash script for automated testing
+# Primary Author: Jack
+# Other Contributors: Dominic
+# Notes: 
+#----------------------------------------
+
 args=("$@")
 echo ${#args[@]}
 
@@ -11,6 +19,7 @@ wrb = 0
 
 main()
 {
+    echo "This is Jack's shitty testing script. Use with caution, it probably won't work."
     case $1 in
         (-h|--help) usage;;
         (-a|--all)  all;;
@@ -49,18 +58,23 @@ all()
 
 fet()
 {
-    ncverilog  -sv  -q  mux_t.sv    ../src/mux.sv
-    ncverilog  -sv  -q  stages/if/pc_alu_t.sv ../src/stages/if/pc_alu.sv
-    ncverilog  -sv  -q  stages/if/pc_t.sv     ../src/stages/if/pc.sv
-    ncverilog  -sv  -q  stages/if_t.sv        ../src/stages/if.sv
+    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
+    ncverilog  -sv  -q  pcinc_tb.sv     ../src/pcinc.sv
+    ncverilog  -sv  -q  pc_tb.sv        ../src/pc.sv
+    ncverilog  -sv  -q  stages/IF_tb.sv ../src/IF.sv
 }
 
 dec()
 {
+    ncverilog  -sv  -q  reg_tb.sv        ../src/reg.sv
+    ncverilog  -sv  -q  nleftshift_tb.sv ../src/nleftshift.sv
+    ncverilog  -sv  -q  signextend_tb.sv ../src/signextend.sv
 }
 
 exe()
 {
+    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
+    ncverilog  -sv  -q  alu_tb.sv       ../src/alu.sv
 }
 
 mem()
@@ -69,4 +83,5 @@ mem()
 
 wrb()
 {
+    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
 }

@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: mul_definition.sv
 // Description: MUL instruction codes
-// Primary Author: Dhanushan
+// Primary Author: Dhanushan Raveendran
 // Other Contributors: 
 // Notes: 
 //----------------------------------------
@@ -13,4 +13,5 @@
 `define     MADDU   6'b000001
 `define     MSUB    6'b000100
 `define     MSUBU   6'b000101
-`define     MUL     6'b000010   
+`define     MUL     6'b000010
+
