@@ -8,13 +8,11 @@
 module alu(
     input        [31:0] A  ,
     input        [31:0] B  ,
-    input        [4:0]  Shamt,
-    input               AluOp,
     input        [5:0]  Func,
     output logic [31:0] Out,
     output logic        En, C, Z, O, N
 );
-    
+
 always_comb:
 begin
 
@@ -96,15 +94,6 @@ begin
                     Out = 1;
                 else
                     Out = 0;
-
-            // TODO: ACC instructions shouldn't be in here
-            MULT:
-            MULTU:
-
-            MFHI:
-            MFLO:
-            MTHI:
-            MTLO:
 
             // TODO: Jump not in ALU
             JALR:
