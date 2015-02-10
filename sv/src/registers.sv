@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: registers.sv
 // Description: Program Counter
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: - 32 registers in place. 
 //        - Asynchronous read, synchronous write
