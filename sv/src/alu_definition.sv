@@ -10,7 +10,7 @@
 // ALU Function Definitions
 //
 // For R-type instructions (rd = rt {OP} rs):
-// A = rt, B = rs, Out = rd, PC = PC (where needed),
+// A = rs, B = rt, Out = rd, PC = PC (where needed),
 // ALU Func = func
 //
 // For I-type instructions (rt = rs {OP} Imm):
@@ -18,7 +18,7 @@
 // ALU Func = b100000 + (OpCode & b000111)
 //
 // For MULT instructions (OpCode == b011100):
-// A = rt, B = rs, Out = rd,
+// A = rs, B = rt, Out = rd,
 // ALU Func = b110000 + (func & b000111)
 //
 // For J-type instructions (J and JAL):

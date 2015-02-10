@@ -13,4 +13,5 @@
 `define     MADDU   6'b000001
 `define     MSUB    6'b000100
 `define     MSUBU   6'b000101
-`define     MUL     6'b000010   
+`define     MUL     6'b000010
+
