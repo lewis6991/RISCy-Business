@@ -1,13 +1,14 @@
 //----------------------------------------
-// File: alu_t.sv
+// File: alu_tb.sv
 // Description: PC testbench
-// Primary Author: Jack
+// Primary Author: Jack Barnes
 // Other Contributors:
 // Notes: Full test coverage of ALU instructions
 //        Select sample for each instruction
 //----------------------------------------
-module alu_t;
+module alu_tb;
 
+timeunit 10ns; timeprecision 100ps;
 const int clk = 100;
 
 alu alu0 (
