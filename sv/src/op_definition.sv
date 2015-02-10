@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: op_definition.sv
 // Description: Operational instruction codes
-// Primary Author: Dhanushan
+// Primary Author: Dhanushan Raveendran
 // Other Contributors: 
 // Notes: 
 //----------------------------------------
