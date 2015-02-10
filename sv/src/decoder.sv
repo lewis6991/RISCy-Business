@@ -240,16 +240,32 @@ always_comb
 						begin
 							ALUfunc = `MADD;
 							MULOp = 1'b1;
-							RegWrite = 1'b1;
 						end
 					
 					`MADDU:
+						begin
+							ALUfunc = `MADD;
+							MULOp = 1'b1;
+						end
 					
 					`MSUB:
+						begin
+							ALUfunc = `MADD;
+							MULOp = 1'b1;
+						end
 					
 					`MSUBU:
+						begin
+							ALUfunc = `MADD;
+							MULOp = 1'b1;
+						end
 					
 					`MUL:
+						begin
+							ALUfunc = `MADD;
+							MULOp = 1'b1;
+							RegWrite = 1'b1;
+						end
 					
 					default:
 				endcase
