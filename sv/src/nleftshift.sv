@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: nleftshift.sv
 // Description: n-bit fixed left shift (32-bit)
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: - parameter n determines amount of shift.
 //----------------------------------------

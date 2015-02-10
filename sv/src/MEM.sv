@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: MEM.sv
 // Description: Memory pipeline stage
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: - The memory section of the pipeline will interface with
 //          off chip memory. This is yet undetermined, hence memory
