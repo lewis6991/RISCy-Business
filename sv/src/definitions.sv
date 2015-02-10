@@ -1,6 +1,6 @@
 //----------------------------------------
-// File: definitions.sv
-// Description: Definitions used between modules.
+// File: alu_definitions.sv
+// Description: ALU definitions 
 // Primary Author: Ethan Bishop
 // Other Contributors: 
 //----------------------------------------
@@ -57,11 +57,3 @@
     
 `define SLT     6'b101010   /* if B < A then Out = 1 else Out = 0 */
 `define SLTU    6'b101011   /* if B < A then Out = 1 else Out = 0 */
-
-`define MADD    6'b110000   /* ACC += B * A */
-`define MADDU   6'b110001   /* ACC += B * A */
-`define MUL     6'b110010   /* Out  = B * A */
-`define MSUB    6'b110100   /* ACC -= B * A */
-`define MSUBU   6'b110101   /* ACC -= B * A */
-
-
