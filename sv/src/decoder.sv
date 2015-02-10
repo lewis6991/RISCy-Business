@@ -21,11 +21,9 @@ module decoder(
 							ALUSrc,
 							RegWrite,
 							ShiftSel,
-	output	logic	[4:0]	Shift,
 	output	logic	[5:0]	ALUfunc,
     input   		[5:0]   Op_Code,
-							Func_Code,
-	input	logic	[4:0]	Shamt
+							Func_Code
 );
 
 always_comb
@@ -41,7 +39,6 @@ always_comb
 		ImmSel = 1'b0;
 		MULOp = 1'b0;
 		ALUfunc = 6'b000000;
-		Shift = 5'b00000;
 		
 		case(Op_Code)
 			`ALU_OP:
@@ -79,7 +76,6 @@ always_comb
 							ALUfunc = `SLL;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
-							Shift = Shamt;
 						end
 					
 					`SLLV:
@@ -94,7 +90,6 @@ always_comb
 							ALUfunc = `SRA;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
-							Shift = Shamt;
 						end
 					
 					`SRAV:
@@ -109,7 +104,6 @@ always_comb
 							ALUfunc = `SRL;
 							ALUOp = 1'b1;
 							RegWrite = 1'b1;
-							Shift = Shamt;
 						end
 					
 					`SRLV:
