@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: pc.sv
 // Description: Program Counter
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: 
 //----------------------------------------

@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: pcinc.sv
 // Description: Adds 4 to the input. Used for PC incrementation.
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: Out = In + 4.
 //----------------------------------------

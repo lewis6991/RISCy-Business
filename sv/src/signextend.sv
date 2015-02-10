@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: signextend.sv
 // Description: 16-bit to 32-bit sign extension
-// Primary Author: Dominic
+// Primary Author: Dominic Murphy
 // Other Contributors: N/A
 // Notes: - 
 //----------------------------------------
