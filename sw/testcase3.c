@@ -1,3 +1,12 @@
+//-----------------------------------------------------------------------------
+// File: testcase3.c
+// Description: Assembler code for test case 3 of the directed tests. This test
+//              exercises all the multiply and accumulator instructions..
+// Pimrary Author: Lewis Russell
+// Other Contributers: N/A
+// Notes: To generate machine code, run with cross-compiler using command:
+//          gcc -Wa,-adhln -c -O -mips32 -EB test.c
+//------------------------------------------------------------------------------
 asm(
     ".set noat               \n\t"
     "li    $1,     0x12340000\n\t"
@@ -30,3 +39,21 @@ asm(
     "mfhi  $16               \n\t"
     "mflo  $17               \n\t"
 );
+
+// $1  [0x12345678]          
+// $2  [0x01234567]          
+// $3  [0xB8C52248]          
+// $4  [0x0014B66D]          
+// $5  [0xB8C52248]          
+// $6  [0x00296CDB]          
+// $7  [0x718A4490]          
+// $8  [0x00136B06]          
+// $9  [0xDDCA72D7]          
+// $10 [0x0014B66D]          
+// $11 [0xB8C52248]          
+// $12 [0x00136B06]          
+// $13 [0xDDCA72D7]          
+// $14 [0x0014B66D]          
+// $15 [0xB8C52248]          
+// $16 [0x12345678]          
+// $17 [0x01234567]          
