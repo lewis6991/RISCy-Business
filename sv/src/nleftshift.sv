@@ -10,6 +10,6 @@ module nshift #(parameter n = 2)(
         output logic [31:0] Out
 );
 
-assign Out = {In[32-n:0],{n{1'b0}}};
+assign Out = {In[31-n:0],{n{1'b0}}};
 
 endmodule
