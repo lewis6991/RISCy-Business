@@ -1,9 +1,29 @@
 //----------------------------------------
 // File: alu_definition.sv
 // Description: ALU instruction codes
-// Primary Author: Dhanushan
-// Other Contributors: 
+// Primary Author: Dhanushan Raveendran
+// Other Contributors: Ethan Bishop
 // Notes: 
+//----------------------------------------
+
+//----------------------------------------
+// ALU Function Definitions
+//
+// For R-type instructions (rd = rt {OP} rs):
+// A = rt, B = rs, Out = rd, PC = PC (where needed),
+// ALU Func = func
+//
+// For I-type instructions (rt = rs {OP} Imm):
+// A = rs, B = Imm, Out = rt, PC = PC (where needed),
+// ALU Func = b100000 + (OpCode & b000111)
+//
+// For MULT instructions (OpCode == b011100):
+// A = rt, B = rs, Out = rd,
+// ALU Func = b110000 + (func & b000111)
+//
+// For J-type instructions (J and JAL):
+// A = Address, Out = ra (for JAL)
+// ALU Func = b001000 + (OpCode & b000001)
 //----------------------------------------
 
 `define		ADD		6'b100000
