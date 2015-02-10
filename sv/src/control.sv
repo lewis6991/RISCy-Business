@@ -1,11 +1,14 @@
-//---------------------------------------------
-// File: Control.sv
-// Description: Control module.
-//---------------------------------------------
+//------------------------------------------------------------------------------
+// File              : Control.sv
+// Description       : Control module.
+// Author            :
+// Other Contributers:
+// Notes             :
+//------------------------------------------------------------------------------
 
 module control(
-    input logic Clock,
-    input logic nReset,
+    input Clock ,
+    input nReset,
 );
 
 endmodule
