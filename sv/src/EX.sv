@@ -14,6 +14,10 @@ module EX(
     input               MultSel, OutSel
     output logic [31:0] Out,
     output logic        C, Z, O, N,
-                        LoadReg
+                        LoadReg, LoadMem
 );
+
+
+
+endmodule
 
