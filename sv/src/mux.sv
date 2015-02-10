@@ -3,13 +3,14 @@
 // Description: Standard 2:1 32-bit signal multiplexer
 // Primary Author: Dominic
 // Other Contributors: N/A
-// Notes: When sel is 0, Y = A. Else, Y = B.
+// Notes: - When sel is 0, Y = A. Else, Y = B.
+//        - parameter n determines the bit width.
 //----------------------------------------
-module mux(
+module mux #(parameter n = 32)(
         input               sel,
-        input        [31:0] A,
+        input        [n-1:0] A,
                             B,
-        output logic [31:0] Y
+        output logic [n-1:0] Y
         );
 
 assign Y = (sel ? B : A);
