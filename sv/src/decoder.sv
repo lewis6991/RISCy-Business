@@ -7,8 +7,8 @@
 //----------------------------------------
 
 `include "op_definition.sv"
-`include "alu_definition"
-`include "mul_definition"
+`include "alu_definition.sv"
+`include "mul_definition.sv"
 
 module decoder(
 	output	logic			RegDst,
