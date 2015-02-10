@@ -9,6 +9,7 @@
 module reg(
         input               Clock, 
                             nReset,
+                            RegWrite,
         input        [4:0]  RdAddr,
                             RsAddr,
                             RtAddr,
@@ -24,7 +25,7 @@ always_ff@(posedge Clock, negedge nReset)
     if(~nReset)
         for(int k=0; k<32;k++) // for loop resets all registers to zero in the 
             data[k] <= 32'd0;  // event of an asserted nReset.
-    else //if(WRITE)
+    else if(RegWrite)
         data[RdAddr] <= RdData;
 
 // Asynchronous read
