@@ -32,8 +32,8 @@ always_ff@(posedge Clock, negedge nReset)
 assign RsData = data[RsAddr];
 assign RtData = data[RtAddr];
 
-assert(RdAddr != 5'd0)
+assert(data[0] != 0)
 else
-    $fatal("%dns: Register 0 was written to. Register 0 is always zero!", $time);
+    $error("%dns: Register 0 was not zero. Register 0 should always be zero!", $time);
         
 endmodule
