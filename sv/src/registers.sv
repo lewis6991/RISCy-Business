@@ -1,12 +1,12 @@
 //----------------------------------------
-// File: reg.sv
+// File: registers.sv
 // Description: Program Counter
 // Primary Author: Dominic
 // Other Contributors: N/A
 // Notes: - 32 registers in place. 
 //        - Asynchronous read, synchronous write
 //----------------------------------------
-module reg(
+module registers(
         input               Clock, 
                             nReset,
                             RegWrite,
