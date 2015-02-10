@@ -1,12 +1,13 @@
 //----------------------------------------
-// File: decoder_t.sv
+// File: decoder_tb.sv
 // Description: Decoder testbench
-// Primary Author: Jack
+// Primary Author: Jack Barnes
 // Other Contributors:
 // Notes: Full test coverage
 //----------------------------------------
-module decoder_t;
+module decoder_tb;
 
+timeunit 10ns; timeprecision 100ps;
 const int clk = 100;
 
 decoder decoder0 (
