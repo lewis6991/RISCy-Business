@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: decoder.sv
 // Description: Control Unit for the processor
-// Primary Author: Dhanushan
+// Primary Author: Dhanushan Raveendran
 // Other Contributors: 
 // Notes: 
 //----------------------------------------
