@@ -15,7 +15,7 @@ logic [4:0] RdAddr, RsAddr, RtAddr;
 logic [31:0] RdData;
 wire  [31:0] RsData, RtData;
 
-reg rgs0 (
+reg reg0 (
     .Clock  (Clock ), 
     .nReset (nReset),
     .RdAddr (RdAddr),
