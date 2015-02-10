@@ -34,6 +34,6 @@ assign RtData = data[RtAddr];
 
 assert(data[0] != 0)
 else
-    $error("%dns: Register 0 was not zero. Register 0 should always be zero!", $time);
+    $error("%dns: Register 0 is not zero. Register 0 should always be zero!", $time);
         
 endmodule
