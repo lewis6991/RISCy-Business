@@ -1,7 +1,7 @@
 //----------------------------------------
 // File: mul_definition.sv
 // Description: MUL instruction codes
-// Primary Author: Dhanushan
+// Primary Author: Dhanushan Raveendran
 // Other Contributors: 
 // Notes: 
 //----------------------------------------
