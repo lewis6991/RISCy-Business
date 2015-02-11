@@ -17,7 +17,7 @@ module decoder(
                             MemtoReg,
                             ALUOp,
                             MULOp,
-                            Memwrite,
+                            MemWrite,
                             ALUSrc,
                             RegWrite,
                             ShiftSel,
@@ -33,7 +33,7 @@ always_comb
         MemRead = 1'b0;
         MemtoReg = 1'b0;
         ALUOp = 1'b0;
-        Memwrite = 1'b0;
+        MemWrite = 1'b0;
         ALUSrc = 1'b0;
         RegWrite = 1'b0;
         ImmSel = 1'b0;
