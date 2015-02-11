@@ -49,23 +49,23 @@ all()
 
 fet()
 {
-    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
-    ncverilog  -sv  -q  pcinc_tb.sv     ../src/pcinc.sv
-    ncverilog  -sv  -q  pc_tb.sv        ../src/pc.sv
-    ncverilog  -sv  -q  stages/IF_tb.sv ../src/IF.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps pcinc_tb.sv     ../src/pcinc.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps pc_tb.sv        ../src/pc.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps stages/IF_tb.sv ../src/IF.sv
 }
 
 dec()
 {
-    ncverilog  -sv  -q  reg_tb.sv        ../src/reg.sv
-    ncverilog  -sv  -q  nleftshift_tb.sv ../src/nleftshift.sv
-    ncverilog  -sv  -q  signextend_tb.sv ../src/signextend.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps reg_tb.sv        ../src/reg.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps nleftshift_tb.sv ../src/nleftshift.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps signextend_tb.sv ../src/signextend.sv
 }
 
 exe()
 {
-    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
-    ncverilog  -sv  -q  alu_tb.sv       ../src/alu.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps alu_tb.sv       ../src/alu.sv
 }
 
 mem()
@@ -75,7 +75,7 @@ mem()
 
 wrb()
 {
-    ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
 }
 
 main $1
