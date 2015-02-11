@@ -1,17 +1,17 @@
-//----------------------------------------
-// File: mult.sv
-// Description: Multiplier module for execute stage
-// Primary Author: Ethan Bishop
-// Other Contributors: 
-//----------------------------------------
+//------------------------------------------------------------------------------
+// File              : mult.sv
+// Description       : Multiplier module for execute stage
+// Primary Author    : Ethan Bishop
+// Other Contributors: Lewis Russell
+//------------------------------------------------------------------------------
 
 module mult(
     input        [31:0] A  ,
-    input        [31:0] B  ,
+                        B  ,
     output logic [63:0] Out
 );
 
-assign Out = A * B;
+    assign Out = A * B;
 
 endmodule
 

@@ -7,8 +7,8 @@
 //----------------------------------------
 
 module PROCESSOR(
-        input Clock,
-        input nReset
+    input Clock,
+    input nReset
 );
 
 wire RegDstD;
