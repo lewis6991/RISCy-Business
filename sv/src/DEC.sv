@@ -20,16 +20,20 @@ module DEC(
                              Branch,
                              MemRead,
                              MemtoReg,
+                             ALUOp,
+                             MULOp,
                              MemWrite,
                              ALUSrc,
                              RegWriteOut,
-                             ALUfunc,
         output logic [5:0]   Op_Code,
-                             Func_Code
+                             Func_Code,
+        output logic [4:0]   Shamt
 );
 
 wire [31:0] InstrSE;
 wire shiftsel;
+
+assign Shamt = Instruction[10:6];
 
 decoder dec0(
         .RegDst(RegDst),
