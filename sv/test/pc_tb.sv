@@ -62,7 +62,7 @@ begin
             $display("ERROR: ProgAddrIn = %d, ProgAddrOut = %d\n", ProgAddrIn, ProgAddrOut);
         ProgAddrIn = {ProgAddrIn[30:0],1'b0};
     end
-    $finish
+    $finish;
 end
 
 endmodule
