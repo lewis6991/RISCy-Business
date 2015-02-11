@@ -23,14 +23,14 @@ module IF(
     output logic [31:0] InstrOut        
 );
 
-    wire        clock       ,
+    wire        Clock       ,
                 nReset      ;
     wire [31:0] progaddrout ,
                 progaddrnext,
                 progaddrinc ;
     
     pc pc0(
-        .Clock      (clock       ),
+        .Clock      (Clock       ),
         .nReset     (nReset      ),
         .ProgAddrIn (progaddrnext),
         .ProgAddrOut(progaddrout )
