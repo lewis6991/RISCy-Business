@@ -4,7 +4,7 @@
 # File: RUNME.sh
 # Description: Bash script for automated testing
 # Primary Author: Jack Barnacle Boy
-# Other Contributors: Dominic Murphcat
+# Other Contributors: Dominic Smurph-cat
 # Notes: 
 #----------------------------------------
 
