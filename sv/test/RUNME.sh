@@ -10,7 +10,6 @@
 
 main()
 {
-    echo "This is Jack's shitty testing script. Use with caution, it probably won't work."
     case $1 in
         (-h|--help) usage;;
         (-a|--all)  all;;
@@ -57,7 +56,7 @@ fet()
 
 dec()
 {
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps reg_tb.sv        ../src/reg.sv
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps registers_tb.sv        ../src/registers.sv
     ncverilog  -sv  -q  +nctimescale+1ns/10ps nleftshift_tb.sv ../src/nleftshift.sv
     ncverilog  -sv  -q  +nctimescale+1ns/10ps signextend_tb.sv ../src/signextend.sv
 }
