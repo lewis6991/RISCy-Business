@@ -29,6 +29,10 @@ wire MemtoRegE;
 wire MemtoRegM;
 wire MemtoRegW;
 
+wire ALUOpD;
+
+wire MULOpD;
+
 wire MemWriteD;
 wire MemWriteE;
 wire MemWriteM;
@@ -45,49 +49,78 @@ wire [4:0] ALUOpD;
 wire [4:0] ALUOpE;
 wire [4:0] ALUOpD;
 
+wire [31:0] InstructionF;
+wire [31:0] InstructionD;
+wire InstrMem;
+wire InstrAddr;
+wire [31:0] RDataW;	// from WB
+wire [4:0] RAddrD;	// goes through PLs
+wire [4:0] RAddrE;
+wire [4:0] RAddrM;
+wire [4:0] RAddrW;
+wire [31:0] ImmDataD;
+wire [31:0] RsDataD;
+wire [31:0] RtDataD;
+
+wire [5:0] Op_CodeD;
+
+wire [5:0] Func_CodeD;
+
+wire [4:0] ShamtD;
+wire [4:0] ShamtE;
+
+/*
+DUMMY instruction_memory(
+    .addrin(InstrAddr),
+    .instrout(InstrMem)
+    );
+*/
+
 IF if0( 
     .BranchTaken(),
     .BranchAddr(),
-    .InstrMem(),
-    .InstrAddr(),
-    .InstrOut()
+    .InstrMem(InstrMem),
+    .InstrAddr(InstrAddr),
+    .InstrOut(Instruction)
     );
     
 PIPE #(n=0) pipe0(
     .Clock(Clock),
     .nReset(nReset),
-    .In(),
-    .Out()
+    .In(InstructionF),
+    .Out(InstructionD)
     );
      
-DE de0(
+DEC de0(
     .Clock(Clock),
     .nReset(nReset),
-    .RegWriteIn(),
-    .Instruction(),
-    .RData(),
-    .RAddrIn(),
-    .ImmData(),
-    .RsData(),
-    .RtData(),
-    .RAddrOut(),
-    .RegDst(),
-    .Branch(),
-    .MemRead(),
-    .MemtoReg(),
-    .MemWrite(),
-    .ALUSrc(),
-    .RegWriteOut(),
-    .ALUfunc(),
-    .Op_Code(),
-    .Func_Code()
+    .RegWriteIn(RegWriteW),
+    .Instruction(InstructionD),
+    .RData(RDataW),
+    .RAddrIn(RAddrW),
+    .ImmData(ImmDataD),
+    .RsData(RsDataD),
+    .RtData(RtDataD),
+    .RAddrOut(RAddrD),
+    .RegDst(RegDstD),
+    .Branch(BranchD),
+    .MemRead(MemReadD),
+    .MemtoReg(MemtoRegD),
+    .ALUOp(ALUOpD),
+    .MULOp(MULOpD),
+    .MemWrite(MemWriteD),
+    .ALUSrc(ALUSrcD),
+    .RegWriteOut(RegWriteD),
+    .Op_Code(Op_CodeD),
+    .Func_Code(Func_CodeD),
+    .Shamt(ShamtD)
 );
 
-PIPE #(n=0) pipe1(
+PIPE #(n=127) pipe1(
     .Clock(Clock),
     .nReset(nReset),
-    .In(),
-    .Out()
+    .In ({ImmDataD, RsDataD, RtDataD, RAddrD, RegDstD, BranchD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, Op_CodeD, Func_CodeD, ShamtD}),
+    .Out({ImmDataE, RsDataE, RtDataE, RAddrE, RegDstE, BranchE, MemReadE, MemtoRegE, ALUOpE, MULOpE, MemWriteE, ALUSrcE, RegWriteE, Op_CodeE, Func_CodeE, ShamtE})
     );
      
 EX ex(
