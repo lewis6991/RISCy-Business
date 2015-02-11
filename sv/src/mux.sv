@@ -7,9 +7,9 @@
 //        - parameter n determines the bit width.
 //----------------------------------------
 module mux #(parameter n = 32)(
-        input               sel,
+        input              sel,
         input        [n-1:0] A,
-                            B,
+                             B,
         output logic [n-1:0] Y
         );
 
