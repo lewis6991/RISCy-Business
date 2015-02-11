@@ -14,17 +14,18 @@
 //          pipeline stage.
 //----------------------------------------
 module IF(
-        input               BranchTaken,
+        input               Clock,
+                            nReset,
+                            BranchTaken,
         input        [31:0] BranchAddr,
                             InstrMem,
         output logic [15:0] InstrAddr,
         output logic [31:0] InstrOut        
         );
 
-wire clock, nReset;
 wire [31:0] progaddrout, progaddrnext, progaddrinc;
         
-pc pc0(.Clock(clock),.nReset(nReset),.ProgAddrIn(progaddrnext),.ProgAddrOut(progaddrout),);
+pc pc0(.Clock(Clock),.nReset(nReset),.ProgAddrIn(progaddrnext),.ProgAddrOut(progaddrout),);
 pcinc pcinc0(.In(progaddrout),.Out(progaddrinc));
 mux mux0(.sel(BranchTaken),.A(progaddrinc),.B(BranchAddr),.Y(progaddrnext));
 
