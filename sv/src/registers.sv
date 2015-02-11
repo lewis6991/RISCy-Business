@@ -2,7 +2,7 @@
 // File              : registers.sv
 // Description       : Program Counter
 // Primary Author    : Dominic Murphy
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             : - 32 registers in place. 
 //                     - Asynchronous read, synchronous write.
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ module registers(
     assign RsData = data[RsAddr];
     assign RtData = data[RtAddr];
     
-    assert(data[0] != 0)
+    assert(data[0] == 0)
     else
         $error("%dns: Register 0 is not zero. Register 0 should always be zero!", $time);
         
