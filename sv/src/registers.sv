@@ -32,11 +32,18 @@ module registers(
             data[RdAddr] <= RdData;
     
     // Asynchronous read
-    assign RsData = data[RsAddr];
-    assign RtData = data[RtAddr];
+always_comb
+begin
+    RsData = data[RsAddr];
+    RtData = data[RtAddr];
     
     assert(data[0] == 0)
     else
-        $error("%dns: Register 0 is not zero. Register 0 should always be zero!", $time);
+    begin
+        //Test after time = 0
+        if (data[0] !== 32'dx)
+            $error("%dns: Register 0 is not zero. Register 0 should always be zero! %d", $time, data[0]);
+    end
+end
         
 endmodule

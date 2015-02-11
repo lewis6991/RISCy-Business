@@ -11,10 +11,18 @@ module pcinc(
     output logic [31:0] Out
 );
 
-    assign Out = In + 32'd4;
+
+always_comb
+begin
+    Out = In + 32'd4;
 
     assert(Out > In)
     else
-        $error("%dns: add4 has overflowed.", $time);
+    begin
+        //Test after time = 0
+        if ((Out !== 32'dx) && (Out !== 32'dx))
+            $error("%dns: add4 has overflowed.", $time);
+    end
+end
 
 endmodule

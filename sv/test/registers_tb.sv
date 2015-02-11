@@ -10,31 +10,33 @@ module registers_tb;
 timeunit 10ns; timeprecision 100ps;
 const int clk = 100;
 
-logic Clock, nReset;
+logic Clock, nReset, RegWrite;
 logic [4:0] RdAddr, RsAddr, RtAddr;
 logic [31:0] RdData;
 wire  [31:0] RsData, RtData;
 
 registers registers0 (
-    .Clock  (Clock ), 
-    .nReset (nReset),
-    .RdAddr (RdAddr),
-    .RsAddr (RsAddr),
-    .RtAddr (RtAddr),
-    .RdData (RdData),
-    .RsData (RsData),
-    .RtData (RtData)
+    .Clock    (Clock   ), 
+    .nReset   (nReset  ),
+    .RegWrite (RegWrite),
+    .RdAddr   (RdAddr  ),
+    .RsAddr   (RsAddr  ),
+    .RtAddr   (RtAddr  ),
+    .RdData   (RdData  ),
+    .RsData   (RsData  ),
+    .RtData   (RtData  )
 );
 
 //Initial conditions
 initial
 begin
-    Clock  = 1'b0;
-    nReset = 1'b0;
-    RdAddr = 0;
-    RsAddr = 0;
-    RtAddr = 0;
-    RdData = 0;
+    Clock    = 1'b0;
+    nReset   = 1'b0;
+    RegWrite = 1'b0;
+    RdAddr   = 0;
+    RsAddr   = 0;
+    RtAddr   = 0;
+    RdData   = 0;
 end
 
 //Clock implementation
@@ -44,8 +46,10 @@ always
 //Testing procedure
 initial
 begin
+    #clk
     //Test nReset condition
     RdData = 9673;
+    RegWrite = 1'b1;
     for (int i = 0 ; i < 32; i++)
     begin
         RdAddr = i;
@@ -53,13 +57,13 @@ begin
         begin
             RsAddr = j;
             RtAddr = j;
+            #clk
             assert (RsData[j] == 0) 
             else
                 $error("ERROR: nReset active, RsAddr = %b, RsData = %b\n", RsAddr, RsData);
             assert (RtData[j] == 0) 
             else
                 $error("ERROR: nReset active, RtAddr = %b,  RtData = %b\n", RtAddr, RtData);
-            #clk
         end
     end
 
@@ -71,15 +75,15 @@ begin
         RdAddr = i;
         RsAddr = i;
         RtAddr = i;
-        assert (RsData[i] == RdData[i) 
+        #clk
+        assert (RsData[i] == RdData[i]) 
         else
             $error("ERROR: RsAddr = %b, RsData = %b, RdData = %b\n", RsAddr, RsData, RdData);
-        assert (RtData[i] == RdData[i) 
+        assert (RtData[i] == RdData[i]) 
         else
             $error("ERROR: RtAddr = %b, RtData = %b, RdData = %b\n", RtAddr, RtData, RdData);
-        #clk
     end
-    $finish
+    $finish;
 end
 
 endmodule
