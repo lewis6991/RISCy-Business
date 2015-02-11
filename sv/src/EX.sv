@@ -52,6 +52,13 @@ module EX(
         .O       (ALUO   ),
         .N       (ALUN   )
     );
+
+    mux mux2(
+        .A  (),
+        .B  (),
+        .Y  (),
+        .sel()
+    );
     
     
     assign MemReadOut  = MemReadIn;
