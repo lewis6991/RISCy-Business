@@ -40,9 +40,9 @@ module decoder(
         MULOp    = 1'b0     ;
         Func     = 6'b000000;
 
-        case(Op_Code)
-            `ALU_OP:
-                case(Func_Code)
+        case(OpCode)
+            `ALU:
+                case(FuncCode)
                     `ADD:
                     begin
                         RegDst   = 1'b1;
@@ -244,8 +244,8 @@ module decoder(
                     default:
                 endcase
     
-            `MUL_OP:
-                case(Func_Code)
+            `MUL:
+                case(FuncCode)
                     `CLO:
                     `CLZ:
     
