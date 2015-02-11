@@ -3,8 +3,8 @@
 #----------------------------------------
 # File: RUNME.sh
 # Description: Bash script for automated testing
-# Primary Author: Jack
-# Other Contributors: Dominic
+# Primary Author: Jack Barnacle Boy
+# Other Contributors: Dominic Smurph-cat
 # Notes: 
 #----------------------------------------
 
