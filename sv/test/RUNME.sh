@@ -8,15 +8,6 @@
 # Notes: 
 #----------------------------------------
 
-args=("$@")
-echo ${#args[@]}
-
-fet = 0
-dec = 0
-exe = 0
-mem = 0
-wrb = 0
-
 main()
 {
     echo "This is Jack's shitty testing script. Use with caution, it probably won't work."
@@ -79,9 +70,12 @@ exe()
 
 mem()
 {
+    echo "Not implemented yet"
 }
 
 wrb()
 {
     ncverilog  -sv  -q  mux_tb.sv       ../src/mux.sv
 }
+
+main $1
