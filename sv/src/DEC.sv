@@ -42,7 +42,7 @@ decoder dec0(
         .ALUSrc(ALUSrc),
         .RegWrite(RegWriteOut),
         .ShiftSel(shiftsel),
-        .Func(Func),
+        .Func(ALUfunc),
         .Op_Code(Instruction[31:26]),
         .Func_Code(Instruction[5:0])
         );
