@@ -2,7 +2,7 @@
 // File              : IF.sv
 // Description       : Instruction Fetch pipeline stage
 // Primary Author    : Dominic
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             : - The program counter will increment and be used as
 //                       the next instruction.
 //                     - In the case where BranchTaken is high, BranchAddr will
