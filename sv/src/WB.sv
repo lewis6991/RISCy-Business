@@ -8,12 +8,12 @@
 //        - Warning: Names have no meaning yet, hence have been arbitrarily chosen.
 //----------------------------------------
 module WB(
-        input        [31:0] Jack, 
-                            Ethan,
-        output logic [31:0] Lewis,
-        output logic        Dhanu
+        input               sel,
+        input        [31:0] In1, 
+                            In2,
+        output logic [31:0] Out1
 );
 
-mux mux3(.sel(UNKNOWN),.A(Jack),.B(Ethan),.Y(Lewis));
+mux mux3(.sel(sel),.A(In1),.B(In2),.Y(Out1));
 
 endmodule
