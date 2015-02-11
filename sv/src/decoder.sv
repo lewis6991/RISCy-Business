@@ -118,8 +118,8 @@ module decoder(
                     `SRLV:
                     begin
                         RegDst   = 1'b1;
-                        Func = `SRLV;
-                        ALUOp = 1'b1;
+                        Func     = `SRLV;
+                        ALUOp    = 1'b1;
                         RegWrite = 1'b1;
                     end
     
