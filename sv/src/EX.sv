@@ -30,7 +30,7 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
-                        PCout        // Progam counter output.
+                        PCout        // Program counter output.
 );
 
     logic [ 5:0] ALUfunc;
