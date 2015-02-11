@@ -6,7 +6,7 @@
 // Notes             : - parameter n determines amount of shift.
 //------------------------------------------------------------------------------
 
-module nshift #(parameter n = 2)(
+module nleftshift #(parameter n = 2)(
         input        [31:0] In ,
         output logic [31:0] Out
 );

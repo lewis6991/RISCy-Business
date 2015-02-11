@@ -29,18 +29,18 @@ end
 //Testing procedure
 initial
 begin
-    In = 1;
     #clk
+    In = 1;
     //Test a select sample
     for (int i = 0 ; i < 31; i++)
     begin
+        #clk
         assert (Out == (In + 4)) 
         else
             $display("ERROR: In = %d, Out = %d\n       In + 4 != Out\n", In, Out);
         In = {In[30:0],1'b0};
-        #clk
     end
-    $finish
+    $finish;
 end
 
 endmodule
