@@ -2,7 +2,7 @@
 // File              : EX.sv
 // Description       : Execute stage logic
 // Primary Author    : Ethan Bishop
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             :
 //------------------------------------------------------------------------------
 
@@ -20,6 +20,7 @@ module EX(
                         MemtoRegIn ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
+                        Immediate  , // Immediate from Decode stage.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 5:0] Func       ,
     output logic [31:0] Out        ,
@@ -30,19 +31,27 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
+                        ALUSrc     ,
                         PCout        // Program counter output.
 );
 
-    logic [ 5:0] ALUfunc;
-    logic [31:0] ALUout ;
-    logic [63:0] MULout ;
-    logic [31:0] ACCout ;
+    wire [ 5:0] ALUfunc;
+    wire [31:0] ALUout ;
+    wire [63:0] MULout ;
+    wire [31:0] ACCout ;
+    wire [31:0] Y      ;
     
-    logic ALUO, ALUZ, ALUN, ALUC, ACCO, ACCZ, ACCN;
+    wire ALUO;
+    wire ALUZ;
+    wire ALUN;
+    wire ALUC;
+    wire ACCO;
+    wire ACCZ;
+    wire ACCN;
     
     alu alu0 (
         .A       (A      ),
-        .B       (B      ),
+        .B       (Y      ),
         .Shamt   (Shamt  ),
         .ALUfunc (ALUfunc),
         .Out     (ALUout ),
@@ -54,10 +63,10 @@ module EX(
     );
 
     mux mux2(
-        .A  (),
-        .B  (),
-        .Y  (),
-        .sel()
+        .A  (B),
+        .B  (Immediate),
+        .Y  (Y),
+        .sel(ALUSrc)
     );
     
     
@@ -97,10 +106,10 @@ module EX(
                 begin
                     ALUfunc = Func  ;
                     Out     = ALUout;
-                    C = ALUC;
-                    Z = ALUZ;
-                    O = ALUO;
-                    N = ALUN;
+                    C       = ALUC;
+                    Z       = ALUZ;
+                    O       = ALUO;
+                    N       = ALUN;
                 end
             endcase
             
