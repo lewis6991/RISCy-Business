@@ -38,13 +38,13 @@ PROCESSOR prcsr0 (
 );
 
 memory memory0 (
-    .Clock    (Clock    ),
-    .nReset   (nReset   ),
-    .Address  (memAddr  ),
-    .ReadEn   (memReadEn),
-    .ReadData (memRData ),
-    .WriteEn  (mWriteEn ),
-    .WriteData(memWData )
+    .Clock    (Clock     ),
+    .nReset   (nReset    ),
+    .Address  (memAddr   ),
+    .ReadEn   (memReadEn ),
+    .ReadData (memRData  ),
+    .WriteEn  (memWriteEn),
+    .WriteData(memWData  )
 );
 
 //Clock implementation
