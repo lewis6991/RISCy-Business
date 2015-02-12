@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // File              : IF.sv
 // Description       : Instruction Fetch pipeline stage
-// Primary Author    : Dominic
+// Primary Author    : Dominic Murphy
 // Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             : - The program counter will increment and be used as
 //                       the next instruction.
@@ -20,7 +20,8 @@ module IF(
     input        [31:0] BranchAddr ,
                         InstrMem   ,
     output logic [15:0] InstrAddr  ,
-    output logic [31:0] InstrOut        
+    output logic [31:0] InstrOut   ,
+                        PCAddrInc        
 );
     wire        Clock       ,
                 nReset      ;
@@ -49,5 +50,6 @@ module IF(
     
     assign InstrAddr = progaddrout;
     assign InstrOut  = InstrMem   ;
+    assign PCAddrInc = progaddrinc;
 
 endmodule
