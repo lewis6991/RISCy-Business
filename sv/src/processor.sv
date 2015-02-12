@@ -2,7 +2,7 @@
 // File: PROCESSOR.sv
 // Description: Top-Level Processor
 // Primary Author: Dominic Murphy
-// Other Contributors: N/A
+// Other Contributors: Dhanushan Raveendran
 // Notes: 
 //----------------------------------------
 
@@ -62,9 +62,8 @@ wire [31:0] ImmDataD;
 wire [31:0] RsDataD;
 wire [31:0] RtDataD;
 
-wire [5:0] Op_CodeD;
-
-wire [5:0] Func_CodeD;
+wire [5:0] ALUfuncD;
+wire [5:0] ALUfuncE;
 
 wire [4:0] ShamtD;
 wire [4:0] ShamtE;
@@ -111,34 +110,33 @@ DEC de0(
     .MemWrite(MemWriteD),
     .ALUSrc(ALUSrcD),
     .RegWriteOut(RegWriteD),
-    .Op_Code(Op_CodeD),
-    .Func_Code(Func_CodeD),
+	.ALUfunc(ALUfuncD),
     .Shamt(ShamtD)
 );
 
-PIPE #(n=127) pipe1(
+PIPE #(n=122) pipe1( // n need to be recalculated
     .Clock(Clock),
     .nReset(nReset),
-    .In ({ImmDataD, RsDataD, RtDataD, RAddrD, RegDstD, BranchD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, Op_CodeD, Func_CodeD, ShamtD}),
-    .Out({ImmDataE, RsDataE, RtDataE, RAddrE, RegDstE, BranchE, MemReadE, MemtoRegE, ALUOpE, MULOpE, MemWriteE, ALUSrcE, RegWriteE, Op_CodeE, Func_CodeE, ShamtE})
+    .In ({ImmDataD, RsDataD, RtDataD, RAddrD, RegDstD, BranchD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, ALUfuncD, ShamtD}),
+    .Out({ImmDataE, RsDataE, RtDataE, RAddrE, RegDstE, BranchE, MemReadE, MemtoRegE, ALUOpE, MULOpE, MemWriteE, ALUSrcE, RegWriteE, ALUfuncE, ShamtE})
     );
      
 EX ex(
     .Clock(Clock),
     .nReset(nReset),
-    .A(),
-    .B(),
-    .Shamt(),
-    .Func(),
-    .ALUOp(),
-    .MULOp(),
-    .ShiftSel(),
+	.ALUOp(ALUOpE),
+	.MULOp(MULOpE),
     .Jump(),
     .Branch(),
     .PCin(),
-    .RegWriteIn(),
-    .MemReadIn(),
-    .MemtoRegIn(),
+    .RegWriteIn(RegWriteE),
+    .MemReadIn(MemReadE),
+    .MemtoRegIn(MemtoRegE),
+    .A(RsDataE),
+    .B(RtDataE),
+	.Immediate(ImmDataE),
+    .Shamt(ShamtE),
+    .Func(ALUfuncE),
     .Out(),
     .C(),
     .Z(),
@@ -146,7 +144,8 @@ EX ex(
     .N(),
     .RegWriteOut(),
     .MemReadOut(),
-    .MemtoRegOut()
+    .MemtoRegOut(),
+	.ALUSrc(),
     .PCout()
     );
 

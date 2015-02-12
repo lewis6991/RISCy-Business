@@ -10,8 +10,7 @@ module EX(
     input               Clock      ,
                         nReset     ,
                         ALUOp      ,
-                        MULOp      ,
-                        ShiftSel   ,   
+                        MULOp      , 
                         Jump       ,
                         Branch     , 
                         PCin       , // Program counter input.
