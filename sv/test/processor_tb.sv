@@ -63,7 +63,7 @@ always @ (posedge Clock)
 initial
 begin
     #clk nReset = 1;
-    #200*clk
+    #(200*clk);
 
     $finish;
 end
