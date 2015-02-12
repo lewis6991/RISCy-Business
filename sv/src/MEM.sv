@@ -11,6 +11,8 @@
 //                     - Assumed asynchronous for the time being.
 //------------------------------------------------------------------------------
 module MEM(
+    input               MemWrite,
+                        MemRead,
     input        [15:0] MemAddr, 
     input        [31:0] MemDataIn,
     output logic [31:0] MemDataOut
