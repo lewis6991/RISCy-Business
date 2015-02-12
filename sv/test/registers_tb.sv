@@ -46,42 +46,45 @@ always
 //Testing procedure
 initial
 begin
-    #clk
-    //Test nReset condition
-    RdData = 9673;
-    RegWrite = 1'b1;
-    for (int i = 0 ; i < 32; i++)
+    for (int h = 0 ; h < 2; h++)
     begin
-        RdAddr = i;
-        for (int j = 0 ; j < 32; j++)
-        begin
-            RsAddr = j;
-            RtAddr = j;
-            #clk
-            assert (RsData[j] == 0) 
-            else
-                $error("ERROR: nReset active, RsAddr = %b, RsData = %b\n", RsAddr, RsData);
-            assert (RtData[j] == 0) 
-            else
-                $error("ERROR: nReset active, RtAddr = %b,  RtData = %b\n", RtAddr, RtData);
-        end
-    end
-
-    nReset = 1;
-    //Test PC implementation
-    for (int i = 0 ; i < 32; i++)
-    begin
-        RdData = i * 32;
-        RdAddr = i;
-        RsAddr = i;
-        RtAddr = i;
         #clk
-        assert (RsData[i] == RdData[i]) 
-        else
-            $error("ERROR: RsAddr = %b, RsData = %b, RdData = %b\n", RsAddr, RsData, RdData);
-        assert (RtData[i] == RdData[i]) 
-        else
-            $error("ERROR: RtAddr = %b, RtData = %b, RdData = %b\n", RtAddr, RtData, RdData);
+        //Test nReset condition
+        RdData = 9673;
+        RegWrite = h;
+        for (int i = 0 ; i < 32; i++)
+        begin
+            RdAddr = i;
+            for (int j = 0 ; j < 32; j++)
+            begin
+                RsAddr = j;
+                RtAddr = j;
+                #clk
+                assert (RsData[j] == 0) 
+                else
+                    $error("ERROR: nReset active, RsAddr = %b, RsData = %b\n", RsAddr, RsData);
+                assert (RtData[j] == 0) 
+                else
+                    $error("ERROR: nReset active, RtAddr = %b,  RtData = %b\n", RtAddr, RtData);
+            end
+        end
+    
+        nReset = 1;
+        //Test PC implementation
+        for (int i = 0 ; i < 32; i++)
+        begin
+            RdData = i * 32;
+            RdAddr = i;
+            RsAddr = i;
+            RtAddr = i;
+            #clk
+            assert (RsData[i] == RdData[i]) 
+            else
+                $error("ERROR: RsAddr = %b, RsData = %b, RdData = %b\n", RsAddr, RsData, RdData);
+            assert (RtData[i] == RdData[i]) 
+            else
+                $error("ERROR: RtAddr = %b, RtData = %b, RdData = %b\n", RtAddr, RtData, RdData);
+        end
     end
     $finish;
 end
