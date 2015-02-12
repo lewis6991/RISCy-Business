@@ -30,7 +30,7 @@ module DEC(
         output logic [4:0]   Shamt
 );
 
-wire [31:0] InstrSE;
+wire [31:0] instrse;
 wire shiftsel;
 
 assign Shamt = Instruction[10:6];
@@ -66,17 +66,17 @@ registers reg0(
         
 signextend se0(
         .In(Instruction[15:0]),
-        .Out(InstrSE)
+        .Out(instrse)
         );
         
-mux mux1(
-        .A(InstrSE),
+mux #(n=32) mux1(
+        .A(instrse),
         .B({Instruction[15:0],16'd0}),
         .Y(ImmData),
         .sel(shiftsel)
         );
         
-mux mux2 #(n=5)(
+mux #(n=5) mux2(
         .A(Instruction[20:16]),
         .B(Instruction[15:11]),
         .Y(RAddrOut),
