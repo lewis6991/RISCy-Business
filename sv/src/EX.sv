@@ -57,7 +57,7 @@ module EX(
         .A       (A      ),
         .B       (Y      ),
         .Shamt   (Shamt  ),
-        .ALUfunc (ALUfunc),
+        .ALUfunc (Func),
         .Out     (ALUout ),
         .En      (LoadReg),
         .C       (ALUC   ),
