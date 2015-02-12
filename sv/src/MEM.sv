@@ -13,11 +13,20 @@
 module MEM(
     input               MemWrite,
                         MemRead,
+                        RegWriteIn,
+    input        [31:0] ALUDataIn,
+    input        [ 4:0] RAddrIn,
     input        [15:0] MemAddr, 
     input        [31:0] MemDataIn,
-    output logic [31:0] MemDataOut
+    output logic        RegWriteOut,
+    output logic [ 4:0] RAddrOut,
+    output logic [31:0] MemDataOut,
+    output logic [31:0] ALUDataOut
 );
 
-    assign MemDataOut = MemDataIn;
+    assign MemDataOut  = MemDataIn;
+    assign ALUDataOut  = MemAddr;
+    assign RAddrOut    = RAddrIn;
+    assign RegWriteOut = RegWriteIn;
 
 endmodule
