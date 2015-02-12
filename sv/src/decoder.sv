@@ -13,6 +13,7 @@
 module decoder(
     output logic       RegDst  ,
                        Branch  ,
+                       Jump    ,
                        MemRead ,
                        MemtoReg,
                        ALUOp   ,

@@ -14,18 +14,22 @@ module PROCESSOR(
 wire RegDstD;
 wire RegDstE;
 
-wire Jump;
+wire JumpD;
+wire JumpE;
 
 wire BranchD;
-wire BranchE;
+wire BranchEin;
+wire BranchEout;
 wire BranchM;
 
 wire MemReadD;
-wire MemReadE;
+wire MemReadEin;
+wire MemReadEout;
 wire MemReadM;
 
 wire MemtoRegD;
-wire MemtoRegE;
+wire MemtoRegEin;
+wire MemtoRegEout;
 wire MemtoRegM;
 wire MemtoRegW;
 
@@ -34,7 +38,8 @@ wire ALUOpD;
 wire MULOpD;
 
 wire MemWriteD;
-wire MemWriteE;
+wire MemWriteEin;
+wire MemWriteEout;
 wire MemWriteM;
 
 wire ALUSrcD;
@@ -103,6 +108,7 @@ DEC de0(
     .RAddrOut(RAddrD),
     .RegDst(RegDstD),
     .Branch(BranchD),
+    .Jump(JumpD),
     .MemRead(MemReadD),
     .MemtoReg(MemtoRegD),
     .ALUOp(ALUOpD),
@@ -114,11 +120,11 @@ DEC de0(
     .Shamt(ShamtD)
 );
 
-PIPE #(n=122) pipe1( // n need to be recalculated
+PIPE #(n=116) pipe1( // n need to be recalculated
     .Clock(Clock),
     .nReset(nReset),
-    .In ({ImmDataD, RsDataD, RtDataD, RAddrD, RegDstD, BranchD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, ALUfuncD, ShamtD}),
-    .Out({ImmDataE, RsDataE, RtDataE, RAddrE, RegDstE, BranchE, MemReadE, MemtoRegE, ALUOpE, MULOpE, MemWriteE, ALUSrcE, RegWriteE, ALUfuncE, ShamtE})
+    .In ({ImmDataD, RsDataD, RtDataD, RAddrD, RegDstD, BranchD, JumpD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, ALUfuncD, ShamtD}),
+    .Out({ImmDataE, RsDataE, RtDataE, RAddrE, RegDstE, BranchE, JumpE, MemReadEin, MemtoRegEin, ALUOpE, MULOpE, MemWriteE, ALUSrcE, RegWriteEin, ALUfuncE, ShamtE})
     );
      
 EX ex(
@@ -126,13 +132,13 @@ EX ex(
     .nReset(nReset),
     .ALUOp(ALUOpE),
     .MULOp(MULOpE),
-    .Jump(),
+    .Jump(JumpE),
     .Branch(BranchE),
     .PCin(),
-    .RegWriteIn(RegWriteE),
-    .MemReadIn(MemReadE),
-    .MemtoRegIn(MemtoRegE),
-    .ALUSrc(),
+    .RegWriteIn(RegWriteEin),
+    .MemReadIn(MemReadEin),
+    .MemtoRegIn(MemtoRegEin),
+    .ALUSrc(ALUSrcE),
     .A(RsDataE),
     .B(RtDataE),
     .Immediate(ImmDataE),
@@ -143,9 +149,9 @@ EX ex(
     .Z(),
     .O(),
     .N(),
-    .RegWriteOut(),
-    .MemReadOut(),
-    .MemtoRegOut(),
+    .RegWriteOut(RegWriteEout),
+    .MemReadOut(MemReadOutEout),
+    .MemtoRegOut(MemtoRegOut),
     .PCout()
     );
 

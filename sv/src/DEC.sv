@@ -18,6 +18,7 @@ module DEC(
         output logic [4:0]   RAddrOut,
         output logic         RegDst,
                              Branch,
+                             Jump,
                              MemRead,
                              MemtoReg,
                              ALUOp,
@@ -37,6 +38,7 @@ assign Shamt = Instruction[10:6];
 decoder dec0(
         .RegDst(RegDst),
         .Branch(Branch),
+        .Jump(Jump),
         .MemRead(MemRead),
         .MemtoReg(MemtoReg),
         .ALUOp(ALUOp),
