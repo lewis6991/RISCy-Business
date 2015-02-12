@@ -3,8 +3,8 @@
 #----------------------------------------
 # File: RUNME.sh
 # Description: Bash script for automated testing
-# Primary Author: Jack Barnacle Boy
-# Other Contributors: Dominic Smurph-cat
+# Primary Author: Jack Barnes
+# Other Contributors: Dominic Murphy
 # Notes: 
 #----------------------------------------
 
@@ -15,7 +15,7 @@ main()
         (-a|--all)  all;;
         (-if)       IF;;
         (-id)       ID;;
-        (-exe)      EX;;
+        (-ex)       EX;;
         (-mem)      MEM;;
         (-wb)       WB;;
         (-*)        echo "Unknown argument. Try --help for information";;
@@ -39,42 +39,74 @@ usage()
 
 all()
 {
-    fet
-    dec
-    exe
-    mem
-    wrb
+    echo "##### Testing all stages"
+    IF
+    DE
+    EX
+    MEM
+    WB
 }
 
 IF()
 {
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps pcinc_tb.sv     ../src/pcinc.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps pc_tb.sv        ../src/pc.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps stages/IF_tb.sv ../src/IF.sv
+    echo "##### Testing the IF stage"
+    
+    MODULES=(mux pcinc pc IF)
+
+    for i in ${MODULES[@]};
+    do
+        echo "##### Testing ${i}.sv"
+        ncverilog  -sv  -q  +nctimescale+1ns/10ps ${i}_tb.sv       ../src/${i}.sv
+        echo "##### ${i}.sv done"
+    done
 }
 
 ID()
 {
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps registers_tb.sv  ../src/registers.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps nleftshift_tb.sv ../src/nleftshift.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps signextend_tb.sv ../src/signextend.sv
+    echo "##### Testing the ID stage"    
+
+    MODULES=(registers nleftshift signextend)
+
+    for i in ${MODULES[@]};
+    do
+        echo "Testing ${i}.sv"
+        ncverilog  -sv  -q  +nctimescale+1ns/10ps ${i}_tb.sv       ../src/${i}.sv
+        echo "##### ${i}.sv done"
+    done
 }
 
 EX()
 {
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps alu_tb.sv       ../src/alu.sv
+    echo "##### Testing the EX stage"
+
+    MODULES=(mux alu)
+
+    for i in ${MODULES[@]};
+    do
+        echo "Testing ${i}.sv"
+        ncverilog  -sv  -q  +nctimescale+1ns/10ps ${i}_tb.sv       ../src/${i}.sv
+        echo "##### ${i}.sv done"
+    done
 }
 
 MEM()
 {
+    echo "##### Testing the MEM stage"
     echo "Not implemented yet"
 }
 
 WB()
 {
-    ncverilog  -sv  -q  +nctimescale+1ns/10ps mux_tb.sv       ../src/mux.sv
+    echo "##### Testing the WB stage"
+
+    MODULES=(mux)
+
+    for i in ${MODULES[@]};
+    do
+        echo "Testing ${i}.sv"
+        ncverilog  -sv  -q  +nctimescale+1ns/10ps ${i}_tb.sv       ../src/${i}.sv
+        echo "##### ${i}.sv done"
+    done
 }
 
 main $1
