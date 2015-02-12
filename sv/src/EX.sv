@@ -13,7 +13,6 @@ module EX(
                         MULOp      ,
                         Jump       ,
                         Branch     ,
-                        PCin       , // Program counter input.
                         RegWriteIn ,
                         MemReadIn  ,
                         MemtoRegIn ,
@@ -22,11 +21,13 @@ module EX(
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
                         Immediate  , // Immediate from Decode stage.
+                        PCin       , // Program counter input.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
     output logic [31:0] Out        ,
                         RtDataOut  ,
+                        PCout      ,  // Program counter output.
     output logic [ 4:0] RAddrOut   ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
@@ -35,8 +36,7 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
-                        MemWriteOut,
-                        PCout        // Program counter output.
+                        MemWriteOut
 );
 
     wire [ 5:0] ALUfunc;

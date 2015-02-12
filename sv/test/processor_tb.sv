@@ -17,10 +17,10 @@ parameter clk = 100;
 logic Clock  = 1'b0,
       nReset = 1'b0;
 
-logic [31:0] instrData = 0;
-wire  [31:0] instrAddr    ,
-             memAddr      ,
-             memRData     ,
+logic [31:0] instrData    ;
+wire  [15:0] instrAddr    ,
+             memAddr      ;
+wire  [31:0] memRData     ,
              memWData     ;
 wire         memReadEn    ,
              memWriteEn   ;
@@ -65,6 +65,7 @@ always @ (posedge Clock)
 //Testing procedure
 initial
 begin
+    instrData = 0;
     #clk nReset = 1;
     #(200*clk);
 

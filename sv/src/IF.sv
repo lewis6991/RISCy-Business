@@ -16,15 +16,16 @@
 //------------------------------------------------------------------------------
 
 module IF(
-    input               BranchTaken,
+    input               Clock,
+                        nReset,
+                        BranchTaken,
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
     output logic [31:0] InstrOut   ,
                         PCAddrInc
 );
-    wire        Clock       ,
-                nReset      ;
+
     wire [31:0] progaddrout ,
                 progaddrnext,
                 progaddrinc ;
@@ -42,7 +43,7 @@ module IF(
     );
 
     mux mux0(
-        .Sel(BranchTaken ),
+        .Sel(1'b0),//(BranchTaken ),
         .A  (progaddrinc ),
         .B  (BranchAddr  ),
         .Y  (progaddrnext)

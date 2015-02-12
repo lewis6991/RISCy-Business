@@ -50,7 +50,8 @@ wire ALUSrcD;
 wire ALUSrcE;
 
 wire RegWriteD;
-wire RegWriteE;
+wire RegWriteEin;
+wire RegWriteEout;
 wire RegWriteMin;
 wire RegWriteMout;
 wire RegWriteW;
@@ -74,6 +75,7 @@ wire [4:0] RAddrMout;
 wire [4:0] RAddrW;
 
 wire [31:0] ImmDataD;
+wire [31:0] ImmDataE;
 
 wire [31:0] RsDataD;
 wire [31:0] RsDataE;
@@ -81,6 +83,7 @@ wire [31:0] RsDataE;
 wire [31:0] RtDataD;
 wire [31:0] RtDataEin;
 wire [31:0] RtDataEout;
+wire [31:0] RtDataM;
 
 wire [5:0] ALUfuncD;
 wire [5:0] ALUfuncE;
@@ -102,6 +105,8 @@ wire [31:0] MemDataM;
 wire [31:0] MemDataW;
 
 IF if0(
+    .Clock(Clock),
+    .nReset(nReset),
     .BranchTaken(),
     .BranchAddr(),
     .InstrMem(InstrMem),
@@ -120,7 +125,7 @@ PIPE #(.n(64)) pipe0(
 DEC de0(
     .Clock(Clock),
     .nReset(nReset),
-    .RegWriteIn(RegWriteWout),
+    .RegWriteIn(RegWriteW),
     .Instruction(InstructionD),
     .RData(RDataW),
     .PCAddrIncIn(PCAddrIncDin),
