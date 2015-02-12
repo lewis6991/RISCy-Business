@@ -21,33 +21,33 @@ module IF(
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
     output logic [31:0] InstrOut   ,
-                        PCAddrInc        
+                        PCAddrInc
 );
     wire        Clock       ,
                 nReset      ;
     wire [31:0] progaddrout ,
                 progaddrnext,
                 progaddrinc ;
-    
+
     pc pc0(
         .Clock      (Clock       ),
         .nReset     (nReset      ),
         .ProgAddrIn (progaddrnext),
         .ProgAddrOut(progaddrout )
     );
-    
+
     pcinc pcinc0(
         .In (progaddrout),
         .Out(progaddrinc)
     );
-    
+
     mux mux0(
-        .sel(BranchTaken ),
+        .Sel(BranchTaken ),
         .A  (progaddrinc ),
         .B  (BranchAddr  ),
         .Y  (progaddrnext)
     );
-    
+
     assign InstrAddr = progaddrout;
     assign InstrOut  = InstrMem   ;
     assign PCAddrInc = progaddrinc;

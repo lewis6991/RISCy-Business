@@ -17,7 +17,7 @@ module EX(
                         RegWriteIn ,
                         MemReadIn  ,
                         MemtoRegIn ,
-			MemWriteIn ,
+                        MemWriteIn ,
                         ALUSrc     ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
@@ -70,7 +70,7 @@ module EX(
         .A  (B),
         .B  (Immediate),
         .Y  (Y),
-        .sel(ALUSrc).
+        .Sel(ALUSrc)
     );
 
 
@@ -87,9 +87,8 @@ module EX(
     always_comb
     begin
         Out     = 0;
-        ALUfunc = 0;
-        MULfunc = 0;
-        ACCfunc = 0;
+        //MULfunc = 0;
+        //ACCfunc = 0;
 
         C = 0;
         Z = 0;
@@ -99,19 +98,19 @@ module EX(
         if (ALUOp)
             case (Func)
                 // TODO: Non-ALU instructions with ALU opcode
-                `MULT:
-                `MULTU:
-                `MFHI:
-                `MFLO:
-                `MTHI:
-                `MTLO:
+                `MULT:;
+                `MULTU:;
+                `MFHI:;
+                `MFLO:;
+                `MTHI:;
+                `MTLO:;
 
-                `JALR:
-                `JR:
+                `JALR:;
+                `JR:;
 
                 default:
                 begin
-                    ALUfunc = Func  ;
+                    //ALUfunc = Func  ;
                     Out     = ALUout;
                     C       = ALUC;
                     Z       = ALUZ;
@@ -123,8 +122,8 @@ module EX(
         if (MULOp)
             case (Func)
                 // TODO: Non-MUL instructions with MUL opcode
-                `CLZ:
-                `CLO:
+                `CLZ:;
+                `CLO:;
 
                 default:
                 begin

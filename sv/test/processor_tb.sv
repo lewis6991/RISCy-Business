@@ -6,6 +6,9 @@
 // Notes             : Full test coverage of MIPS instructions
 //                     Select sample for each instruction
 //------------------------------------------------------------------------------
+
+`include "memory.sv"
+
 module processor_tb;
 
 timeunit 10ns; timeprecision 100ps;
@@ -22,7 +25,7 @@ wire  [31:0] instrAddr    ,
 wire         memReadEn    ,
              memWriteEn   ;
 
-processor prcsr0 (
+PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
     .InstrMem (instrData ),

@@ -3,7 +3,7 @@
 // Description: Top-Level Processor
 // Primary Author: Dominic Murphy
 // Other Contributors: Dhanushan Raveendran
-// Notes: 
+// Notes:
 //----------------------------------------
 
 module PROCESSOR(
@@ -15,7 +15,7 @@ module PROCESSOR(
     output logic [15:0] InstrAddr,
                         MemAddr,
     output logic        MemWrite,
-                        MemRead    
+                        MemRead
 );
 
 wire RegDstD;
@@ -64,9 +64,9 @@ wire MulOpE;
 wire [31:0] InstructionF;
 wire [31:0] InstructionD;
 
-wire [31:0] RDataW;	
+wire [31:0] RDataW;
 
-wire [4:0] RAddrD;	
+wire [4:0] RAddrD;
 wire [4:0] RAddrEin;
 wire [4:0] RAddrEout;
 wire [4:0] RAddrMin;
@@ -101,7 +101,7 @@ wire [31:0] ALUDataW;
 wire [31:0] MemDataM;
 wire [31:0] MemDataW;
 
-IF if0( 
+IF if0(
     .BranchTaken(),
     .BranchAddr(),
     .InstrMem(InstrMem),
@@ -109,14 +109,14 @@ IF if0(
     .InstrOut(InstructionF),
     .PCAddrInc(PCAddrIncF)
     );
-    
+
 PIPE #(.n(64)) pipe0(
     .Clock(Clock),
     .nReset(nReset),
     .In({InstructionF, PCAddrIncF}),
     .Out({InstructionD, PCAddrIncDin})
     );
-     
+
 DEC de0(
     .Clock(Clock),
     .nReset(nReset),
@@ -150,7 +150,7 @@ PIPE #(.n(154)) pipe1(
     .In ({ImmDataD, RsDataD, RtDataD, PCAddrIncDout, RAddrD, RegDstD, BranchD, JumpD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, ALUfuncD, ShamtD}),
     .Out({ImmDataE, RsDataE, RtDataEin, PCAddrIncE, RAddrEin, RegDstE, BranchE, JumpE, MemReadEin, MemtoRegEin, ALUOpE, MULOpE, MemWriteEin, ALUSrcE, RegWriteEin, ALUfuncE, ShamtE})
     );
-     
+
 EX ex(
     .Clock(Clock),
     .nReset(nReset),
@@ -168,7 +168,7 @@ EX ex(
     .B(RtDataEin),
     .Immediate(ImmDataE),
     .Shamt(ShamtE),
-    .RaddrIn(RAddrEin),
+    .RAddrIn(RAddrEin),
     .Func(ALUfuncE),
     .Out(ALUDataE),
     .RtDataOut(RtDataEout),
@@ -184,7 +184,7 @@ EX ex(
     .PCout()
     );
 
-PIPE #(.n(73)) pipe2(  
+PIPE #(.n(73)) pipe2(
     .Clock(Clock),
     .nReset(nReset),
     .In({ALUDataE, RtDataEout, RAddrEout, RegWriteEout, MemReadEout, MemtoRegEout, MemWriteEout}),
@@ -211,13 +211,13 @@ MEM mem0(
     .ALUDataOut(ALUDataMout)
     );
 
-PIPE #(.n(71)) pipe3(  
+PIPE #(.n(71)) pipe3(
     .Clock(Clock),
     .nReset(nReset),
     .In({RegWriteMout, MemtoRegMout, RAddrMout, MemDataM, ALUDataMout}),
     .Out({RegWriteW, MemtoRegW, RAddrW, MemDataW, ALUDataW})
     );
-     
+
 WB wb0(
     .MemtoReg(MemtoRegW),
     .ALUData(ALUDataW),

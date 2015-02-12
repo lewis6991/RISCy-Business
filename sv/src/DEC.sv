@@ -3,7 +3,7 @@
 // Description: Decode pipeline stage
 // Primary Author: Dominic Murphy
 // Other Contributors: Dhanushan Raveendran
-// Notes: 
+// Notes:
 //----------------------------------------
 module DEC(
         input                Clock,
@@ -51,8 +51,8 @@ decoder dec0(
         .RegWrite(RegWriteOut),
         .ShiftSel(shiftsel),
         .Func(ALUfunc),
-        .Op_Code(Instruction[31:26]),
-        .Func_Code(Instruction[5:0])
+        .OpCode(Instruction[31:26]),
+        .FuncCode(Instruction[5:0])
         );
 
 registers reg0(
@@ -66,24 +66,24 @@ registers reg0(
         .RsData(RsData),
         .RtData(RtData)
         );
-        
+
 signextend se0(
         .In(Instruction[15:0]),
         .Out(instrse)
         );
-        
-mux #(n=32) mux1(
-        .A(instrse),
-        .B({Instruction[15:0],16'd0}),
-        .Y(ImmData),
-        .sel(shiftsel)
-        );
-        
-mux #(n=5) mux2(
+
+mux #(.n(32)) mux1(
+    .A  (instrse                   ),
+    .B  ({Instruction[15:0], 16'd0}),
+    .Y  (ImmData                   ),
+    .Sel(shiftsel                  )
+);
+
+mux #(.n(5)) mux2(
         .A(Instruction[20:16]),
         .B(Instruction[15:11]),
         .Y(RAddrOut),
-        .sel(RegDst)
+        .Sel(RegDst)
         );
 
 endmodule

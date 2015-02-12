@@ -21,9 +21,9 @@ module memory #(
     output logic [   WordSize-1:0] ReadData
 );
 
-    assert #0 (AddressSize < 32)
-    else
-        $fatal("FATAL: Address size has to be less than 32.");
+    //assert #0 (AddressSize < 32)
+    //else
+    //    $fatal("FATAL: Address size has to be less than 32.");
 
     logic [WordSize-1:0] memory[0:1 << AddressSize - 1];
 

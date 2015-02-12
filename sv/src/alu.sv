@@ -19,7 +19,7 @@ module alu(
                         N        // Negative output flag.
 );
 
-    always_comb:
+    always_comb
     begin
         Out = 0         ;
         En  = 1         ;
@@ -27,69 +27,69 @@ module alu(
         O   = 0         ;
         N   = Out[31]   ;
         Z   = (Out == 0);
-        
-        case (Func)
-            ADD:
+
+        case (ALUfunc)
+            `ADD:
             begin
                 {C, Out} = A + B;
                 if (A[31] == B[31])
                     O = (A[31] ^ N);
             end
 
-            ADDU:
+            `ADDU:
             begin
                 {C, Out} = A + B;
                 O = C;
             end
 
-            SUB:
+            `SUB:
             begin
                 {C, Out} = A - B;
                 if (A[31] == B[31])
                     O = (A[31] ^ N);
             end
 
-            SUBU:
+            `SUBU:
             begin
                 {C, Out} = A - B;
                 O = C;
             end
 
-            SLL : Out = B <<  Shamt;
-            SLLV: Out = B <<  A    ;
-            SRA : Out = B >>> Shamt;
-            SRAV: Out = B >>> A    ;
-            SRL : Out = B >>  Shamt;
-            SRLV: Out = B >>  A    ;
-            AND : Out = A & B      ;
-            NOR : Out = ~(A | B)   ;
-            OR  : Out = A | B      ;
-            XOR : Out = A ^ B      ;
+            `SLL : Out = B <<  Shamt;
+            `SLLV: Out = B <<  A    ;
+            `SRA : Out = B >>> Shamt;
+            `SRAV: Out = B >>> A    ;
+            `SRL : Out = B >>  Shamt;
+            `SRLV: Out = B >>  A    ;
+            `AND : Out = A & B      ;
+            `NOR : Out = ~(A | B)   ;
+            `OR  : Out = A | B      ;
+            `XOR : Out = A ^ B      ;
 
-            MOVN:
+            `MOVN:
             begin
                 Out = A;
                 En = (B != 0);
             end
-            
-            MOVZ:
+
+            `MOVZ:
             begin
                 Out = A;
                 En = (B == 0);
             end
 
-            SLT:
-                if ((int)A < (int)B)
+            `SLT:
+                if (int'(A) < int'(B))
                     Out = 1;
                 else
                     Out = 0;
-            SLTU:
-                if ((unsigned int)A < (unsigned int)B)
+            `SLTU:
+                if (unsigned'(A) < unsigned'(B))
                     Out = 1;
                 else
                     Out = 0;
-    
-            ALU_CLZ:
+
+            `ALU_CLZ:
                 case (A)
                     32'b1???????????????????????????????: Out = 0 ;
                     32'b01??????????????????????????????: Out = 1 ;
@@ -125,8 +125,8 @@ module alu(
                     32'b00000000000000000000000000000001: Out = 31;
                     32'b00000000000000000000000000000000: Out = 32;
                 endcase
-                
-            ALU_CLO:
+
+            `ALU_CLO:
                 case (A)
                     32'b0???????????????????????????????: Out = 0 ;
                     32'b10??????????????????????????????: Out = 1 ;
