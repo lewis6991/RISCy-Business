@@ -17,45 +17,94 @@ const int clk = 100;
 
 logic [5:0] OpCode, FuncCode;
 wire [5:0] Func;
-wire RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel;
+wire RegDst, Branch, Jump, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel;
 
-parameter num = 30;
+parameter num = 60; //Minus 1 from total number of elements
 
-logic [15:0] testcases [num:0] = '{16'b1000100010_100000, /////////////////
-                                   16'b1000100010_100001, //
-                                   16'b1000100010_100010, //
-                                   16'b1000100010_100011, //
-                                   16'b1000100010_000000, //
-                                   16'b1000100010_000100, //
-                                   16'b1000100010_000011, //
-                                   16'b1000100010_000111, //
-                                   16'b1000100010_000010, //
-                                   16'b1000100010_000110, //
+//RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel, Jump, Func
+logic [16:0] testcases [num:0] = '{17'b1000100010_0_100000, ////////// ADD
+                                   17'b1000100010_0_100001, //      // ADDU
+                                   17'b1000100010_0_100010, //      // SUB
+                                   17'b1000100010_0_100011, //      // SUBU
+                                   17'b1000100010_0_000000, //      // SLL
+                                   17'b1000100010_0_000100, //      // SLLV
+                                   17'b1000100010_0_000011, //      // SRA
+                                   17'b1000100010_0_000111, //      // SRAV
+                                   17'b1000100010_0_000010, //      // SRL
+                                   17'b1000100010_0_000110, //      // SRLV
 
-                                   16'b1000100010_100100, //
-                                   16'b1000100010_100111, //
-                                   16'b1000100010_100101, //    ALU
-                                   16'b1000100010_100110, //
-                                   16'b1000100010_001011, //
-                                   16'b1000100010_001010, //
-                                   16'b1000100010_101010, //
-                                   16'b1000100010_101011, //
-                                   16'b0000100000_011000, //
-                                   16'b0000100000_011001, //
+                                   17'b1000100010_0_100100, //      // AND
+                                   17'b1000100010_0_100111, //      // NOR
+                                   17'b1000100010_0_100101, // ALU  // OR
+                                   17'b1000100010_0_100110, //      // XOR
+                                   17'b1000100010_0_001011, //      // MOVN
+                                   17'b1000100010_0_001010, //      // MOVZ
+                                   17'b1000100010_0_101010, //      // SLT
+                                   17'b1000100010_0_101011, //      // SLTU
+                                   17'b0000100000_0_011000, //      // MULT
+                                   17'b0000100000_0_011001, //      // MULTU
 
-                                   16'b1000100000_010000, //
-                                   16'b1000100000_010010, //
-                                   16'b0000100000_010001, //
-                                   16'b0000100000_010011, //
-                                   16'b0000100110_001001, //
-                                   16'b0000100110_001000, /////////////////
+                                   17'b1000100000_0_010000, //      // MFHI
+                                   17'b1000100000_0_010010, //      // MFLO
+                                   17'b0000100000_0_010001, //      // MTHI
+                                   17'b0000100000_0_010011, //      // MTLO
+                                   17'b0000100110_0_001001, //      // JALR
+                                   17'b0000100110_0_001000, ////////// JR
+                                   17'b0000000000_0_000000, ////////// CLO
+                                   17'b0000000000_0_000000, //      // CLZ
+                                   17'b0000010000_0_000000, //      // MADD
+                                   17'b0000010000_0_000000, // MULL // MADDU
 
+                                   17'b0000010000_0_000000, //      // MSUB
+                                   17'b0000010000_0_000000, //      // MSUBU
+                                   17'b1000010010_0_000000, ////////// MUL
+                                   17'b0000100110_0_001000, // ADDI
+                                   17'b0000100110_0_001001, // ADDIU
+                                   17'b0000100111_0_100000, // LUI
+                                   17'b0000100110_0_001100, // ANDI
+                                   17'b0000100110_0_100101, // ORI
+                                   17'b0000100110_0_100101, // XORI
+                                   17'b0000100110_0_100101, // SLTI
 
-                                   16'b0000000000_000000,
-                                   16'b0000000000_000000,
-                                   16'b0000000000_000000,
-                                   16'b0000000000_000000,
-                                   16'b0000000000_000000};
+                                   17'b0000100110_0_100101, // SLTIU
+                                   17'b0000000000_0_000000, // BEQ
+                                   17'b0000000000_0_000000, // BGTZ
+                                   17'b0000000000_0_000000, // BLEZ
+                                   17'b0000000000_0_000000, // BNE
+                                   17'b0000000000_0_000000, // J
+                                   17'b0000000000_0_000000, // JAL
+                                   17'b0000000000_0_000000, // LB
+                                   17'b0000000000_0_000000, // LBU
+                                   17'b0000000000_0_000000, // LH
+
+                                   17'b0000000000_0_000000, // LHU
+                                   17'b0000000000_0_000000, // LW
+                                   17'b0000000000_0_000000, // LWL
+                                   17'b0000000000_0_000000, // LWR
+                                   17'b0000000000_0_000000, // SB
+                                   17'b0000000000_0_000000, // SH
+                                   17'b0000000000_0_000000, // SW
+                                   17'b0000000000_0_000000, // SWL
+                                   17'b0000000000_0_000000, // SWR
+                                   17'b0000000000_0_000000, // LL
+
+                                   17'b0000000000_0_000000};// SC
+
+logic [5:0] testALU  [0:25] = '{
+    `ADD,  `ADDU, `SUB,  `SUBU, `SLL,  `SLLV, `SRA, `SRAV, `SRL,  `SRLV,
+    `AND,  `NOR,  `OR,   `XOR,  `MOVN, `MOVZ, `SLT, `SLTU, `MULT, `MULTU,
+    `MFHI, `MFLO, `MTHI, `MTLO, `JALR, `JR
+};
+
+logic [5:0] testMULL [0:6] = '{
+    `CLO, `CLZ, `MADD, `MADDU, `MSUB, `MSUBU, `MUL
+};
+
+logic [5:0] testOthr [0:27] = '{
+    `ADDI, `ADDIU, `LUI, `ANDI, `ORI, `XORI, `SLTI, `SLTIU, `BEQ, `BGTZ,
+    `BLEZ, `BNE,   `J,   `JAL,  `LB,  `LBU,  `LH,   `LHU,   `LW,  `LWL,
+    `LWR,  `SB,    `SH,  `SW,   `SWL, `SWR,  `LL,   `SC
+};
 
 logic [9:0] OutBits;
 int count;
@@ -64,6 +113,7 @@ decoder decoder0 (
     .RegDst   (RegDst  ),
     .Branch   (Branch  ),
     .MemRead  (MemRead ),
+    .Jump     (Jump    ),
     .MemtoReg (MemtoReg),
     .ALUOp    (ALUOp   ),
     .MULOp    (MULOp   ),
@@ -89,128 +139,25 @@ end
 initial
 begin
     #clk
-
     OpCode = `ALU;
-    FuncCode = `ADD;
-    checkassert;
-    count++;
-
-    FuncCode = `ADDU;
-    checkassert;
-    count++;
-
-    FuncCode = `SUB;
-    checkassert;
-    count++;
-
-    FuncCode = `SUBU;
-    checkassert;
-    count++;
-
-    FuncCode = `SLL;
-    checkassert;
-    count++;
-
-    FuncCode = `SLLV;
-    checkassert;
-    count++;
-
-    FuncCode = `SRA;
-    checkassert;
-    count++;
-
-    FuncCode = `SRAV;
-    checkassert;
-    count++;
-
-    FuncCode = `SRL;
-    checkassert;
-    count++;
-
-    FuncCode = `SRLV;
-    checkassert;
-    count++;
-
-    FuncCode = `AND;
-    checkassert;
-    count++;
-
-    FuncCode = `NOR;
-    checkassert;
-    count++;
-
-    FuncCode = `OR;
-    checkassert;
-    count++;
-
-    FuncCode = `XOR;
-    checkassert;
-    count++;
-
-    FuncCode = `MOVN;
-    checkassert;
-    count++;
-
-    FuncCode = `MOVZ;
-    checkassert;
-    count++;
-
-    FuncCode = `SLT;
-    checkassert;
-    count++;
-
-    FuncCode = `SLTU;
-    checkassert;
-    count++;
-
-    FuncCode = `MULT;
-    checkassert;
-    count++;
-
-    FuncCode = `MULTU;
-    checkassert;
-    count++;
-
-    FuncCode = `MFHI;
-    checkassert;
-    count++;
-
-    FuncCode = `MFLO;
-    checkassert;
-    count++;
-
-    FuncCode = `MTHI;
-    checkassert;
-    count++;
-
-    FuncCode = `MTLO;
-    checkassert;
-    count++;
-
-    FuncCode = `JALR;
-    checkassert;
-    count++;
-
-    FuncCode = `JR;
-    checkassert;
-    count++;
-
-$finish;
-
+    for (int i = 0 ; i < 26; i++) 
+    begin
+        FuncCode = testALU[i];
+        #clk
+        checkassert;
+        count++;
+    end
     //FuncCode = `ALU_CLZ;
     //FuncCode = `ALU_CLO;
 
-
-
     OpCode = `MULL;
-    FuncCode = `CLO;
-    FuncCode = `CLZ;
-    FuncCode = `MADD;
-    FuncCode = `MADDU;
-    FuncCode = `MSUB;
-    FuncCode = `MSUBU;
-    FuncCode = `MUL;
-
+    for (int i = 0 ; i < 7; i++) 
+    begin
+        FuncCode = testMULL[i];
+        #clk
+        checkassert;
+        count++;
+    end
     //FuncCode = `M_MFHI;
     //FuncCode = `M_MFLO;
     //FuncCode = `M_MTHI;
@@ -218,6 +165,15 @@ $finish;
     //FuncCode = `M_MULT;
     //FuncCode = `M_MULTU;
 
+    for (int i = 0 ; i < 28; i++) 
+    begin
+        OpCode = testOthr[i];
+        #clk
+        checkassert;
+        count++;
+    end
+
+$finish;
 
     OpCode = `ADDI;
     OpCode = `ADDIU;
@@ -260,9 +216,9 @@ task checkassert;
     #clk
     OutBits = {RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel};
 
-    assert ({OutBits, Func} == testcases[num-count])
+    assert ({OutBits, Jump, Func} == testcases[num-count])
     else
-        $display("ERROR: testcase no. %d\n         Output  Expected\nRegDst   %b       %b\nBranch   %b       %b\nMemRead  %b       %b\nMemtoReg %b       %b\nALUOp    %b       %b\nMemwrite %b       %b\nALUSrc   %b       %b\nRegWrite %b       %b\nShiftSel %b       %b\nMULOp    %b       %b\nFunc     %b  %b%b%b%b%b%b\n", count, RegDst, testcases[num-count][15], Branch, testcases[num-count][14], MemRead, testcases[num-count][13], MemtoReg, testcases[num-count][12], ALUOp, testcases[num-count][11], MULOp, testcases[num-count][10], Memwrite, testcases[num-count][9], ALUSrc, testcases[num-count][8], RegWrite, testcases[num-count][7], ShiftSel, testcases[num-count][6], Func, testcases[num-count][5], testcases[num-count][4], testcases[num-count][3], testcases[num-count][2], testcases[num-count][1], testcases[num-count][0]);
+        $display("ERROR: testcase no. %d\n         Output  Expected\nRegDst   %b       %b\nBranch   %b       %b\nMemRead  %b       %b\nMemtoReg %b       %b\nALUOp    %b       %b\nMemwrite %b       %b\nALUSrc   %b       %b\nRegWrite %b       %b\nShiftSel %b       %b\nMULOp    %b       %b\nJump     %b       %b\nFunc     %b  %b%b%b%b%b%b\n", (count+1), RegDst, testcases[num-count][16], Branch, testcases[num-count][15], MemRead, testcases[num-count][14], MemtoReg, testcases[num-count][13], ALUOp, testcases[num-count][12], MULOp, testcases[num-count][11], Memwrite, testcases[num-count][10], ALUSrc, testcases[num-count][9], RegWrite, testcases[num-count][8], ShiftSel, testcases[num-count][7], Jump, testcases[num-count][6], Func, testcases[num-count][5], testcases[num-count][4], testcases[num-count][3], testcases[num-count][2], testcases[num-count][1], testcases[num-count][0]);
 endtask
 
 endmodule
