@@ -13,7 +13,7 @@ main()
     case $1 in
         (-h|--help) usage;;
         (-a|--all)  all;;
-        (-proc)     proc;;
+        (-proc)     proc $2;;
         (-if)       IF;;
         (-id)       ID;;
         (-ex)       EX;;
@@ -53,7 +53,12 @@ all()
 proc()
 {
     echo "##### Testing the entire processor"
-    ncverilog  -sv  -q  -y ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+    if [ $1 -eq "+gui"]
+    then
+        ncverilog +ncaccess+r -sv  -q  -y +gui ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+    else
+        ncverilog  -sv  -q  -y ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+    fi
     echo "##### Processor done"
 }
 
@@ -132,7 +137,7 @@ specific() #Warning - $1 in this function actually corresponds to $2 from the co
     echo "##### ${1}.sv done"
 }
 
-main $1 $2
+main $1 $2 $3
 
 
 
