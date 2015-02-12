@@ -25,8 +25,7 @@ module DEC(
                              MemWrite,
                              ALUSrc,
                              RegWriteOut,
-        output logic [5:0]   Op_Code,
-                             Func_Code,
+        output logic [5:0]   ALUfunc,
         output logic [4:0]   Shamt
 );
 

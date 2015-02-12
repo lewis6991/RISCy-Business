@@ -6,9 +6,9 @@
 // Notes             : 
 //------------------------------------------------------------------------------
 
-`include "op_definition.sv"
-`include "alu_definition.sv"
-`include "mul_definition.sv"
+//`include "op_definition.sv"
+//`include "alu_definition.sv"
+//`include "mul_definition.sv"
 
 module decoder(
     output logic       RegDst  ,
@@ -36,7 +36,7 @@ module decoder(
         Memwrite = 1'b0     ;
         ALUSrc   = 1'b0     ;
         RegWrite = 1'b0     ;
-        ImmSel   = 1'b0     ;
+        ShiftSel = 1'b0     ;
         MULOp    = 1'b0     ;
         Func     = 6'b000000;
 
@@ -241,13 +241,13 @@ module decoder(
                         RegWrite = 1'b1;
                     end
     
-                    default:
+                    default:;
                 endcase
     
-            `MUL:
+            `MULL:
                 case(FuncCode)
-                    `CLO:
-                    `CLZ:
+                    `CLO:;
+                    `CLZ:;
     
                     `MADD:
                     begin
@@ -281,7 +281,7 @@ module decoder(
                         RegWrite = 1'b1 ;
                     end
     
-                    default:
+                    default:;
                 endcase
     
             `ADDI:
@@ -349,25 +349,25 @@ module decoder(
                 RegWrite = 1'b1;
             end
             
-            `BEQ:
-            `BGTZ:
-            `BLEZ:
-            `BNE:
-            `J:
-            `JAL:
-            `LB:
-            `LBU:
-            `LH:
-            `LWL:
-            `LWR:
-            `SB:
-            `SH:
-            `SW:
-            `SWL:
-            `SWR:
-            `LL:
-            `SC:
-            default:
+            `BEQ:;
+            `BGTZ:;
+            `BLEZ:;
+            `BNE:;
+            `J:;
+            `JAL:;
+            `LB:;
+            `LBU:;
+            `LH:;
+            `LWL:;
+            `LWR:;
+            `SB:;
+            `SH:;
+            `SW:;
+            `SWL:;
+            `SWR:;
+            `LL:;
+            `SC:;
+            default:;
         endcase
     end
 endmodule

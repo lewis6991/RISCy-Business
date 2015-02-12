@@ -40,5 +40,5 @@
 `define LL     6'b110000
 `define SC     6'b111000
 
-`define ALU 6'b000000
-`define MUL 6'b011100
+`define ALU    6'b000000
+`define MULL   6'b011100
