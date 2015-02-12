@@ -7,8 +7,15 @@
 //----------------------------------------
 
 module PROCESSOR(
-    input Clock,
-    input nReset
+    input               Clock,
+                        nReset,
+    input        [31:0] InstrMem,
+                        MemData,
+    output logic [31:0] WriteData,
+    output logic [15:0] InstrAddr,
+                        MemAddr,
+    output logic        MemWrite,
+                        MemRead    
 );
 
 wire RegDstD;
@@ -59,12 +66,9 @@ wire [4:0] ALUOpD;
 wire [31:0] InstructionF;
 wire [31:0] InstructionD;
 
-wire InstrMem;
-wire InstrAddr;
+wire [31:0] RDataW;	
 
-wire [31:0] RDataW;	// from WB
-
-wire [4:0] RAddrD;	// goes through PLs
+wire [4:0] RAddrD;	
 wire [4:0] RAddrEin;
 wire [4:0] RAddrEout;
 wire [4:0] RAddrMin;
@@ -99,13 +103,6 @@ wire [31:0] ALUDataW;
 wire [31:0] MemDataM;
 wire [31:0] MemDataW;
 
-/*
-DUMMY instruction_memory(
-    .addrin(InstrAddr),
-    .instrout(InstrMem)
-    );
-*/
-
 IF if0( 
     .BranchTaken(),
     .BranchAddr(),
@@ -115,7 +112,7 @@ IF if0(
     .PCAddrInc(PCAddrIncF)
     );
     
-PIPE #(n=0) pipe0(
+PIPE #(n=0) pipe0(  // n need to be calculated
     .Clock(Clock),
     .nReset(nReset),
     .In({InstructionF, PCAddrIncF}),
@@ -197,22 +194,26 @@ PIPE #(n=0) pipe2(  // n need to be calculated
     );
 
 MEM mem0(
-    .MemWrite(MemWriteM),
-    .MemRead(MemReadM),
     .RegWriteIn(RegWriteMin),
     .MemtoRegIn(MemtoRegMin),
+    .MemReadIn(MemReadM),
+    .MemWriteIn(MemWriteM),
     .RAddrIn(RAddrMin),
-    .MemAddr(ALUDataMin),
-    .MemDataIn(RtDataM),
+    .RtData(RtDataM),
     .ALUDataIn(ALUDataMin),
+    .MemDataIn(MemData),
     .RegWriteOut(RegWriteMout),
     .MemtoRegOut(MemtoRegMout),
+    .MemWrite(MemWrite),
+    .MemRead(MemRead),
     .RAddrOut(RAddrMout),
+    .MemAddr(MemAddr),
+    .MemWriteData(WriteData),
     .MemDataOut(MemDataM),
     .ALUDataOut(ALUDataMout)
     );
 
-PIPE #(n=0) pipe3(
+PIPE #(n=0) pipe3(  // n need to be calculated
     .Clock(Clock),
     .nReset(nReset),
     .In({RegWriteMout, MemtoRegMout, RAddrMout, MemDataM, ALUDataMout}),

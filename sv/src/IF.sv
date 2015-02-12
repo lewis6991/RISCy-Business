@@ -18,7 +18,7 @@
 module IF(
     input               BranchTaken,
     input        [31:0] BranchAddr ,
-                        InstrMem   ,
+                 [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
     output logic [31:0] InstrOut   ,
                         PCAddrInc        

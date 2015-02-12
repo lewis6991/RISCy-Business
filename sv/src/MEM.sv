@@ -2,7 +2,7 @@
 // File              : MEM.sv
 // Description       : Memory pipeline stage
 // Primary Author    : Dominic Murphy
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             : - The memory section of the pipeline will interface with
 //                       off chip memory. This is yet undetermined, hence memory
 //                       is currently bypassed.
@@ -11,24 +11,34 @@
 //                     - Assumed asynchronous for the time being.
 //------------------------------------------------------------------------------
 module MEM(
-    input               MemWrite,
-                        MemRead,
-                        RegWriteIn,
+    input               RegWriteIn,
 			MemtoRegIn,
+                        MemReadIn,
+                        MemWriteIn,
     input        [ 4:0] RAddrIn,
-    input        [15:0] MemAddr, 
-    input        [31:0] MemDataIn,
+    input        [31:0] RtData,
                         ALUDataIn,
+                        MemDataIn,
     output logic        RegWriteOut,
                         MemtoRegOut,
+                        MemWrite,
+                        MemRead,
     output logic [ 4:0] RAddrOut,
-    output logic [31:0] MemDataOut,
-    output logic [31:0] ALUDataOut
+    output logic [15:0] MemAddr, 
+    output logic [31:0] MemWriteData,
+                        MemDataOut,
+                        ALUDataOut
 );
 
-    assign MemDataOut  = MemDataIn;
-    assign ALUDataOut  = MemAddr;
-    assign RAddrOut    = RAddrIn;
-    assign RegWriteOut = RegWriteIn;
+    
+    assign RegWriteOut  = RegWriteIn;
+    assign MemtoRegOut  = MemtoRegIn;
+    assign MemWrite     = MemWriteIn;
+    assign MemRead      = MemReadIn;
+    assign RAddrOut     = RAddrIn;
+    assign MemAddr      = ALUDataIn;
+    assign MemWriteData = RtData;
+    assign MemDataOut   = MemDataIn;
+    assign ALUDataOut   = ALUDataIn;
 
 endmodule

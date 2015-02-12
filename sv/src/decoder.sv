@@ -31,6 +31,7 @@ module decoder(
     begin
         RegDst   = 1'b0     ;
         Branch   = 1'b0     ;
+        Jump     = 1'b0     ;
         MemRead  = 1'b0     ;
         MemtoReg = 1'b0     ;
         ALUOp    = 1'b0     ;
