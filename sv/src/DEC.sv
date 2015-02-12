@@ -11,10 +11,12 @@ module DEC(
                              RegWriteIn,
         input        [31:0]  Instruction,
                              RData,
+                             PCAddrIncIn,
         input        [4:0]   RAddrIn,
         output logic [31:0]  ImmData,
                              RsData,
                              RtData,
+                             PCAddrIncOut,
         output logic [4:0]   RAddrOut,
         output logic         RegDst,
                              Branch,
@@ -34,6 +36,7 @@ wire [31:0] instrse;
 wire shiftsel;
 
 assign Shamt = Instruction[10:6];
+assign PCAddrIncOut = PCAddrIncIn;
 
 decoder dec0(
         .RegDst(RegDst),

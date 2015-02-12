@@ -17,13 +17,17 @@ module EX(
                         RegWriteIn ,
                         MemReadIn  ,
                         MemtoRegIn ,
+			MemWriteIn ,
                         ALUSrc     ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
                         Immediate  , // Immediate from Decode stage.
     input        [ 4:0] Shamt      , // Shift amount.
+    input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
     output logic [31:0] Out        ,
+                        RtDataOut  ,
+    output logic [ 4:0] RAddrOut   ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
@@ -31,6 +35,7 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
+                        MemWriteOut,
                         PCout        // Program counter output.
 );
 
@@ -65,12 +70,15 @@ module EX(
         .A  (B),
         .B  (Immediate),
         .Y  (Y),
-        .sel(ALUSrc)
+        .sel(ALUSrc).
     );
     
     
     assign MemReadOut  = MemReadIn;
     assign MemtoRegOut = MemtoRegIn;
+    assign MemWriteOut = MemWriteIn;
+    assign RAddrOut    = RAddrIn;
+    assign RtDataOut   = B;
     
     // TODO: These will eventually do something
     assign RegWriteOut = RegWriteIn;
