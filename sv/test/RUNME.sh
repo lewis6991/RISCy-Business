@@ -18,6 +18,7 @@ main()
         (-ex)       EX;;
         (-mem)      MEM;;
         (-wb)       WB;;
+        (-s|--specific) specific $2;;
         (-*)        echo "Unknown argument. Try --help for information";;
         (*)         echo "No argument given. Try --help for information";;
     esac
@@ -26,13 +27,14 @@ main()
 usage()
 {
     echo "
-    -h,--help     Displays this message
-    -a,--all      Runs all test conditions
-    -if           Runs the instruction fetch tests
-    -id           Runs the instruction decode tests
-    -ex           Runs the execute tests
-    -mem          Runs the memory tests
-    -wb           Runs the write back tests
+    -h,--help                 Displays this message
+    -a,--all                  Runs all test conditions
+    -if                       Runs the instruction fetch tests
+    -id                       Runs the instruction decode tests
+    -ex                       Runs the execute tests
+    -mem                      Runs the memory tests
+    -wb                       Runs the write back tests
+    -s, --specific 'module' Runs a singular test on 'module'
     "
     exit 1
 }
@@ -109,4 +111,23 @@ WB()
     done
 }
 
-main $1
+specific() #Warning - $1 in this function actually corresponds to $2 from the command line.
+{
+    if [ $1 -eq ""]
+    then
+        echo "No argument given. Try --help for information"
+        exit
+    fi
+
+    echo "Testing specific module: ${1}.sv"
+    ncverilog  -sv  -q  +nctimescale+1ns/10ps ${1}_tb.sv       ../src/${1}.sv
+    echo "##### ${1}.sv done"
+}
+
+main $1 $2
+
+
+
+
+
+
