@@ -10,9 +10,9 @@ module EX(
     input               Clock      ,
                         nReset     ,
                         ALUOp      ,
-                        MULOp      , 
+                        MULOp      ,
                         Jump       ,
-                        Branch     , 
+                        Branch     ,
                         PCin       , // Program counter input.
                         RegWriteIn ,
                         MemReadIn  ,
@@ -44,7 +44,7 @@ module EX(
     wire [63:0] MULout ;
     wire [31:0] ACCout ;
     wire [31:0] Y      ;
-    
+
     wire ALUO;
     wire ALUZ;
     wire ALUN;
@@ -52,7 +52,7 @@ module EX(
     wire ACCO;
     wire ACCZ;
     wire ACCN;
-    
+
     alu alu0 (
         .A       (A      ),
         .B       (Y      ),
@@ -72,18 +72,18 @@ module EX(
         .Y  (Y),
         .sel(ALUSrc).
     );
-    
-    
+
+
     assign MemReadOut  = MemReadIn;
     assign MemtoRegOut = MemtoRegIn;
     assign MemWriteOut = MemWriteIn;
     assign RAddrOut    = RAddrIn;
     assign RtDataOut   = B;
-    
+
     // TODO: These will eventually do something
     assign RegWriteOut = RegWriteIn;
     assign PCout       = PCin;
-    
+
     always_comb
     begin
         Out     = 0;
@@ -99,16 +99,16 @@ module EX(
         if (ALUOp)
             case (Func)
                 // TODO: Non-ALU instructions with ALU opcode
-                MULT:
-                MULTU:
-                MFHI:
-                MFLO:
-                MTHI:
-                MTLO:
-                
-                JALR:
-                JR:
-                    
+                `MULT:
+                `MULTU:
+                `MFHI:
+                `MFLO:
+                `MTHI:
+                `MTLO:
+
+                `JALR:
+                `JR:
+
                 default:
                 begin
                     ALUfunc = Func  ;
@@ -119,12 +119,12 @@ module EX(
                     N       = ALUN;
                 end
             endcase
-            
+
         if (MULOp)
             case (Func)
                 // TODO: Non-MUL instructions with MUL opcode
-                CLZ:
-                CLO:
+                `CLZ:
+                `CLO:
 
                 default:
                 begin
