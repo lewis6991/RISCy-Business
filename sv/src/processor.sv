@@ -110,7 +110,7 @@ DEC de0(
     .MemWrite(MemWriteD),
     .ALUSrc(ALUSrcD),
     .RegWriteOut(RegWriteD),
-	.ALUfunc(ALUfuncD),
+    .ALUfunc(ALUfuncD),
     .Shamt(ShamtD)
 );
 
@@ -124,18 +124,18 @@ PIPE #(n=122) pipe1( // n need to be recalculated
 EX ex(
     .Clock(Clock),
     .nReset(nReset),
-	.ALUOp(ALUOpE),
-	.MULOp(MULOpE),
+    .ALUOp(ALUOpE),
+    .MULOp(MULOpE),
     .Jump(),
     .Branch(BranchE),
     .PCin(),
     .RegWriteIn(RegWriteE),
     .MemReadIn(MemReadE),
     .MemtoRegIn(MemtoRegE),
-	.ALUSrc(),
+    .ALUSrc(),
     .A(RsDataE),
     .B(RtDataE),
-	.Immediate(ImmDataE),
+    .Immediate(ImmDataE),
     .Shamt(ShamtE),
     .Func(ALUfuncE),
     .Out(),
