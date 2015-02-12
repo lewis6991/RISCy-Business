@@ -29,7 +29,7 @@ module registers(
             for (int k = 0; k < 32; k++) 
                 data[k] <= 32'd0;  
         else if (RegWrite)
-            data[RdAddr] <= RdData;
+            data[RdAddr] <= #20 RdData;
     
     // Asynchronous read
 always_comb

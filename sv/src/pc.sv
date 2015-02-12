@@ -17,6 +17,6 @@ module pc(
         if(~nReset)
             ProgAddrOut <= 32'd0;
         else
-            ProgAddrOut <= ProgAddrIn;
+            ProgAddrOut <= #20 ProgAddrIn;
 
 endmodule

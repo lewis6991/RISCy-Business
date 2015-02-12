@@ -53,13 +53,14 @@ always
 
 always @ (posedge Clock)
     case(instrAddr)
-        16'h0000:  instrData <= #20 32'h3C011234;
-        16'h0004:  instrData <= #20 32'h34215678;
-        16'h0008:  instrData <= #20 32'h24020000;
-        16'h000c:  instrData <= #20 32'h00000000;
-        16'h0010:  instrData <= #20 32'h34420005;
-        16'h0014:  instrData <= #20 32'h70411802;
-        16'h0018:  instrData <= #20 32'h00000000;
+        16'h0000:  instrData <= #20 32'h00000000;
+        16'h0004:  instrData <= #20 32'h3C011234;
+        16'h0008:  instrData <= #20 32'h34215678;
+        16'h000c:  instrData <= #20 32'h24020000;
+        16'h0010:  instrData <= #20 32'h00000000;
+        16'h0014:  instrData <= #20 32'h34420005;
+        16'h0018:  instrData <= #20 32'h70411802;
+        16'h001c:  instrData <= #20 32'h00000000;
     endcase
 
 //Testing procedure

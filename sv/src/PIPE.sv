@@ -17,6 +17,6 @@ module PIPE #(parameter n = 1)(
         if(~nReset)
             Out <= {n{1'b0}};
         else
-            Out <= In;
+            Out <= #20 In;
 
 endmodule
