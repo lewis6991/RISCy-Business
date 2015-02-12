@@ -53,11 +53,14 @@ all()
 proc()
 {
     echo "##### Testing the entire processor"
-    if [ $1 -eq "+gui"]
+    echo $1
+    if [ "$1" = "-gui" ]
     then
-        ncverilog +ncaccess+r -sv  -q  -y +gui ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+        echo "Include GUI"
+        ncverilog +ncaccess+r -sv  -q +gui +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
     else
-        ncverilog  -sv  -q  -y ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+        echo "Default"
+        ncverilog  -sv  -q +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
     fi
     echo "##### Processor done"
 }
