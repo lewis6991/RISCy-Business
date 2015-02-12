@@ -8,19 +8,24 @@
 //                      www.doulos.com/knowhow/verilog_designers_guide/models/simple_ram_model
 //------------------------------------------------------------------------------
 module memory #(
-    parameter AddressSize = 32,
+    parameter AddressSize = 16,
     parameter WordSize    = 32
 )
 (
     input                          Clock    ,
                                    nReset   ,
-                                   WriteEn  , // Write Enable/Read Enable
+                                   WriteEn  ,
+                                   ReadEn   ,
     input        [AddressSize-1:0] Address  ,
     input        [   WordSize-1:0] WriteData,
     output logic [   WordSize-1:0] Data
 );
 
-    logic [WordSize-1:0] memory[0:1 << AddressSize];
+    assert #0 (AddressSize < 32)
+    else
+        $fatal("FATAL: Address size has to be less than 32.");
+
+    logic [WordSize-1:0] memory[0:1 << AddressSize - 1];
 
     // Write block
     always @ (posedge Clock, negedge nReset)
@@ -34,7 +39,9 @@ module memory #(
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
             Data <= #20 0;
-        else if(~WriteEn)
+        else if(ReadEn)
             Data <= #20 memory[Address];
+        else
+            Data <= #20 0;
 
 endmodule
