@@ -30,7 +30,8 @@ wire MemReadM;
 wire MemtoRegD;
 wire MemtoRegEin;
 wire MemtoRegEout;
-wire MemtoRegM;
+wire MemtoRegMin;
+wire MemtoRegMout;
 wire MemtoRegW;
 
 wire ALUOpD;
@@ -47,7 +48,8 @@ wire ALUSrcE;
 
 wire RegWriteD;
 wire RegWriteE;
-wire RegWriteM;
+wire RegWriteMin;
+wire RegWriteMout;
 wire RegWriteW;
 
 wire [4:0] ALUOpD;
@@ -65,7 +67,8 @@ wire [31:0] RDataW;	// from WB
 wire [4:0] RAddrD;	// goes through PLs
 wire [4:0] RAddrEin;
 wire [4:0] RAddrEout;
-wire [4:0] RAddrM;
+wire [4:0] RAddrMin;
+wire [4:0] RAddrMout;
 wire [4:0] RAddrW;
 
 wire [31:0] ImmDataD;
@@ -88,7 +91,13 @@ wire [31:0] PCAddrIncDin;
 wire [31:0] PCAddrIncDout;
 wire [31:0] PCAddrIncE;
 
-wire [31:0] ALUOutE;
+wire [31:0] ALUDataE;
+wire [31:0] ALUDataMin;
+wire [31:0] ALUDataMout;
+wire [31:0] ALUDataW;
+
+wire [31:0] MemDataM;
+wire [31:0] MemDataW;
 
 /*
 DUMMY instruction_memory(
@@ -116,7 +125,7 @@ PIPE #(n=0) pipe0(
 DEC de0(
     .Clock(Clock),
     .nReset(nReset),
-    .RegWriteIn(RegWriteW),
+    .RegWriteIn(RegWriteWout),
     .Instruction(InstructionD),
     .RData(RDataW),
     .PCAddrIncIn(PCAddrIncDin),
@@ -166,7 +175,7 @@ EX ex(
     .Shamt(ShamtE),
     .RaddrIn(RAddrEin),
     .Func(ALUfuncE),
-    .Out(ALUOutE),
+    .Out(ALUDataE),
     .RtDataOut(RtDataEout),
     .RAddrOut(RAddrEout),
     .C(),
@@ -183,24 +192,38 @@ EX ex(
 PIPE #(n=0) pipe2(  // n need to be calculated
     .Clock(Clock),
     .nReset(nReset),
-    .In({ALUOutE, RtDataEout, RAddrEout, RegWriteEout, MemReadEout, MemtoRegEout, MemWriteEout}),
-    .Out({ALUOutDin, RtDataD, RAddrDin, RegWriteDin, MemReadD, MemtoRegD, MemWriteD})
+    .In({ALUDataE, RtDataEout, RAddrEout, RegWriteEout, MemReadEout, MemtoRegEout, MemWriteEout}),
+    .Out({ALUDataMin, RtDataM, RAddrMin, RegWriteMin, MemReadM, MemtoRegMin, MemWriteM})
     );
 
 MEM mem0(
-    .MemAddr(ALUOutDin),
-    .MemDataIn(),
-    .MemDataOut()
+    .MemWrite(MemWriteM),
+    .MemRead(MemReadM),
+    .RegWriteIn(RegWriteMin),
+    .MemtoRegIn(MemtoRegMin),
+    .RAddrIn(RAddrMin),
+    .MemAddr(ALUDataMin),
+    .MemDataIn(RtDataM),
+    .ALUDataIn(ALUDataMin),
+    .RegWriteOut(RegWriteMout),
+    .MemtoRegOut(MemtoRegMout),
+    .RAddrOut(RAddrMout),
+    .MemDataOut(MemDataM),
+    .ALUDataOut(ALUDataMout)
     );
 
 PIPE #(n=0) pipe3(
     .Clock(Clock),
     .nReset(nReset),
-    .In(),
-    .Out()
+    .In({RegWriteMout, MemtoRegMout, RAddrMout, MemDataM, ALUDataMout}),
+    .Out({RegWriteW, MemtoRegW, RAddrW, MemDataW, ALUDataW})
     );
      
-WB wb0();
-
+WB wb0(
+    .MemtoReg(MemtoRegW),
+    .ALUData(ALUDataW),
+    .MemData(MemDataW),
+    .WBData(RDataW)
+    );
 
 endmodule
