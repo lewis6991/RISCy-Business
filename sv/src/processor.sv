@@ -31,7 +31,7 @@ wire MemtoRegD;
 wire MemtoRegEin;
 wire MemtoRegEout;
 wire MemtoRegMin;
-wire MemtoRegMin;
+wire MemtoRegMout;
 wire MemtoRegW;
 
 wire ALUOpD;
@@ -200,10 +200,13 @@ MEM mem0(
     .MemWrite(MemWriteM),
     .MemRead(MemReadM),
     .RegWriteIn(RegWriteMin),
-    .MemAddr(ALUDataMin),
+    .MemtoRegIn(MemtoRegMin),
     .RAddrIn(RAddrMin),
+    .MemAddr(ALUDataMin),
     .MemDataIn(RtDataM),
+    .ALUDataIn(ALUDataMin),
     .RegWriteOut(RegWriteMout),
+    .MemtoRegOut(MemtoRegMout),
     .RAddrOut(RAddrMout),
     .MemDataOut(MemDataM),
     .ALUDataOut(ALUDataMout)
@@ -212,11 +215,15 @@ MEM mem0(
 PIPE #(n=0) pipe3(
     .Clock(Clock),
     .nReset(nReset),
-    .In({RegWriteMout, RAddrMout, MemDataM, ALUDataMout}),
-    .Out({RegWriteW, RAddrW, MemDataW, ALUDataW})
+    .In({RegWriteMout, MemtoRegMout, RAddrMout, MemDataM, ALUDataMout}),
+    .Out({RegWriteW, MemtoRegW, RAddrW, MemDataW, ALUDataW})
     );
      
-WB wb0();
-
+WB wb0(
+    .MemtoReg(MemtoRegW),
+    .ALUData(ALUDataW),
+    .MemData(MemDataW),
+    .WBData(RDataW)
+    );
 
 endmodule

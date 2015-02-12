@@ -10,17 +10,17 @@
 //------------------------------------------------------------------------------
 
 module WB(
-        input               Sel,
-        input        [31:0] In1, 
-                            In2,
-        output logic [31:0] Out1
+        input               MemtoReg,
+        input        [31:0] ALUData, 
+                            MemData,
+        output logic [31:0] WBData
 );
 
     mux mux3(
-        .Sel(Sel ),
-        .A  (In1 ),
-        .B  (In2 ),
-        .Y  (Out1)
+        .Sel(MemtoReg),
+        .A  (ALUData ),
+        .B  (MemData ),
+        .Y  (WBData  )
     );
 
 endmodule
