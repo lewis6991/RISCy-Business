@@ -41,10 +41,6 @@ wire MemtoRegMin;
 wire MemtoRegMout;
 wire MemtoRegW;
 
-wire ALUOpD;
-
-wire MULOpD;
-
 wire MemWriteD;
 wire MemWriteEin;
 wire MemWriteEout;
@@ -59,9 +55,11 @@ wire RegWriteMin;
 wire RegWriteMout;
 wire RegWriteW;
 
-wire [4:0] ALUOpD;
-wire [4:0] ALUOpE;
-wire [4:0] ALUOpD;
+wire ALUOpD;
+wire ALUOpE;
+
+wire MulOpD;
+wire MulOpE;
 
 wire [31:0] InstructionF;
 wire [31:0] InstructionD;
@@ -112,7 +110,7 @@ IF if0(
     .PCAddrInc(PCAddrIncF)
     );
     
-PIPE #(n=0) pipe0(  // n need to be calculated
+PIPE #(.n(64)) pipe0(
     .Clock(Clock),
     .nReset(nReset),
     .In({InstructionF, PCAddrIncF}),
@@ -146,7 +144,7 @@ DEC de0(
     .Shamt(ShamtD)
 );
 
-PIPE #(n=116) pipe1( // n need to be recalculated
+PIPE #(.n(154)) pipe1(
     .Clock(Clock),
     .nReset(nReset),
     .In ({ImmDataD, RsDataD, RtDataD, PCAddrIncDout, RAddrD, RegDstD, BranchD, JumpD, MemReadD, MemtoRegD, ALUOpD, MULOpD, MemWriteD, ALUSrcD, RegWriteD, ALUfuncD, ShamtD}),
@@ -186,7 +184,7 @@ EX ex(
     .PCout()
     );
 
-PIPE #(n=0) pipe2(  // n need to be calculated
+PIPE #(.n(73)) pipe2(  
     .Clock(Clock),
     .nReset(nReset),
     .In({ALUDataE, RtDataEout, RAddrEout, RegWriteEout, MemReadEout, MemtoRegEout, MemWriteEout}),
@@ -213,7 +211,7 @@ MEM mem0(
     .ALUDataOut(ALUDataMout)
     );
 
-PIPE #(n=0) pipe3(  // n need to be calculated
+PIPE #(.n(71)) pipe3(  
     .Clock(Clock),
     .nReset(nReset),
     .In({RegWriteMout, MemtoRegMout, RAddrMout, MemDataM, ALUDataMout}),
