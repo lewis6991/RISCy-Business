@@ -20,20 +20,21 @@ module memory #(
     output logic [   WordSize-1:0] Data
 );
 
-    logic [WordSize-1:0] memory[0:1 << (AddressSize - 1)];
+    logic [WordSize-1:0] memory[0:1 << AddressSize];
 
     // Write block
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
-            memory <= #20 0;
+            for (int i = 0; i < (1 << AddressSize); ++i)
+                memory[i] <= #20 0;
         else if(WriteEn)
-            mem[Address] <= #20 WriteData;
+            memory[Address] <= #20 WriteData;
 
     // Read block
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
             Data <= #20 0;
         else if(~WriteEn)
-            Data <= #20 mem[Address];
+            Data <= #20 memory[Address];
 
 endmodule
