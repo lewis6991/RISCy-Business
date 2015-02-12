@@ -18,7 +18,7 @@ module memory #(
                                    ReadEn   ,
     input        [AddressSize-1:0] Address  ,
     input        [   WordSize-1:0] WriteData,
-    output logic [   WordSize-1:0] Data
+    output logic [   WordSize-1:0] ReadData
 );
 
     assert #0 (AddressSize < 32)
@@ -38,10 +38,10 @@ module memory #(
     // Read block
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
-            Data <= #20 0;
+            ReadData <= #20 0;
         else if(ReadEn)
-            Data <= #20 memory[Address];
+            ReadData <= #20 memory[Address];
         else
-            Data <= #20 0;
+            ReadData <= #20 0;
 
 endmodule
