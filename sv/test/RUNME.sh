@@ -13,6 +13,7 @@ main()
     case $1 in
         (-h|--help) usage;;
         (-a|--all)  all;;
+        (-proc)     proc;;
         (-if)       IF;;
         (-id)       ID;;
         (-ex)       EX;;
@@ -47,6 +48,13 @@ all()
     EX
     MEM
     WB
+}
+
+proc()
+{
+    echo "##### Testing the entire processor"
+    ncverilog  -sv  -q  -y ../src/ +incdir+../src/ +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
+    echo "##### Processor done"
 }
 
 IF()
