@@ -127,11 +127,12 @@ EX ex(
 	.ALUOp(ALUOpE),
 	.MULOp(MULOpE),
     .Jump(),
-    .Branch(),
+    .Branch(BranchE),
     .PCin(),
     .RegWriteIn(RegWriteE),
     .MemReadIn(MemReadE),
     .MemtoRegIn(MemtoRegE),
+	.ALUSrc(),
     .A(RsDataE),
     .B(RtDataE),
 	.Immediate(ImmDataE),
@@ -145,7 +146,6 @@ EX ex(
     .RegWriteOut(),
     .MemReadOut(),
     .MemtoRegOut(),
-	.ALUSrc(),
     .PCout()
     );
 

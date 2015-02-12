@@ -17,6 +17,7 @@ module EX(
                         RegWriteIn ,
                         MemReadIn  ,
                         MemtoRegIn ,
+                        ALUSrc     ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
                         Immediate  , // Immediate from Decode stage.
@@ -30,7 +31,6 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
-                        ALUSrc     ,
                         PCout        // Program counter output.
 );
 
