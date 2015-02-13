@@ -41,8 +41,8 @@ module EX(
 
     wire [ 5:0] ALUfunc;
     wire [31:0] ALUout ;
-    wire [63:0] MULout ;
     wire [31:0] ACCout ;
+    wire [63:0] MULout ;
     wire [31:0] Y      ;
 
     wire ALUO;
@@ -52,12 +52,16 @@ module EX(
     wire ACCO;
     wire ACCZ;
     wire ACCN;
+    wire ACCC;
+    
+    wire ACCEn;
+    wire MULSelB;
 
     alu alu0 (
         .A       (A      ),
         .B       (Y      ),
         .Shamt   (Shamt  ),
-        .ALUfunc (Func),
+        .ALUfunc (Func   ),
         .Out     (ALUout ),
         .En      (LoadReg),
         .C       (ALUC   ),
@@ -65,12 +69,62 @@ module EX(
         .O       (ALUO   ),
         .N       (ALUN   )
     );
+    
+    acc_control acc_control0 (
+        .Clock   (Clock ),
+        .nReset  (nReset),
+        .Enable  (ACCEn ),
+        .MULfunc (Func  ),
+        .In      (MULout),
+        .Out     (ACCout),
+        .C       (ACCC  ), // Carry flag.
+        .Z       (ACCZ  ), // Zero flag.
+        .O       (ACCO  ), // Overflow flag.
+        .N       (ACCN  )  // Negative flag.
+    );
+
+    ex_mult ex_mult0 (
+        .A   (A      ),
+        .B   (Y      ),
+        .SelB(MULSelB), // MUL module select
+        .Out (MULout )
+    );
 
     mux mux2(
         .A  (B),
         .B  (Immediate),
         .Y  (Y),
         .Sel(ALUSrc)
+    );
+    
+    ex_control ex_control0 (
+        .ALUOp       (ALUOp      ),
+        .MULOp       (MULOp      ),
+        .Jump        (Jump       ),
+        .Branch      (Branch     ),
+        .RegWriteIn  (RegWriteIn ),
+        .ALUO        (ALUO       ), // ALU Flag outputs
+        .ALUZ        (ALUZ       ),
+        .ALUN        (ALUN       ),
+        .ALUC        (ALUC       ),
+        .ACCO        (ACCO       ), // ACC Flag outputs
+        .ACCZ        (ACCZ       ),
+        .ACCN        (ACCN       ),
+        .ACCC        (ACCC       ),
+        .ACCEn       (ACCEn      ),
+        .PCin        (PCin       ), // Program counter input.
+        .ALUout      (ALUout     ), // ALU Module output
+        .ACCout      (ACCout     ), // ACC Module output
+        .MULout      (MULout     ), // MUL Module output
+        .Func        (Func       ),
+        .Out         (Out        ),
+        .PCout       (PCout      ), // Program counter 
+        .C           (C          ), // Carry out flag.
+        .Z           (Z          ), // Output zero flag.
+        .O           (O          ), // Overflow flag.
+        .N           (N          ), // Output negative flag.
+        .MULSelB     (MULSelB    ), // MUL module select
+        .RegWriteOut (RegWriteOut)
     );
 
 
@@ -80,58 +134,4 @@ module EX(
     assign RAddrOut    = RAddrIn;
     assign RtDataOut   = B;
 
-    // TODO: These will eventually do something
-    assign RegWriteOut = RegWriteIn;
-    assign PCout       = PCin;
-
-    always_comb
-    begin
-        Out     = 0;
-        //MULfunc = 0;
-        //ACCfunc = 0;
-
-        C = 0;
-        Z = 0;
-        O = 0;
-        N = 0;
-
-        if (ALUOp)
-            case (Func)
-                // TODO: Non-ALU instructions with ALU opcode
-                `MULT:;
-                `MULTU:;
-                `MFHI:;
-                `MFLO:;
-                `MTHI:;
-                `MTLO:;
-
-                `JALR:;
-                `JR:;
-
-                default:
-                begin
-                    //ALUfunc = Func  ;
-                    Out     = ALUout;
-                    C       = ALUC;
-                    Z       = ALUZ;
-                    O       = ALUO;
-                    N       = ALUN;
-                end
-            endcase
-
-        if (MULOp)
-            case (Func)
-                // TODO: Non-MUL instructions with MUL opcode
-                `CLZ:;
-                `CLO:;
-
-                default:
-                begin
-                    // TODO: MUL instructions
-                    Z = ACCZ;
-                    O = ACCO;
-                    N = ACCN;
-                end
-            endcase
-    end
 endmodule
