@@ -1,137 +1,167 @@
-//------------------------------------------------------------------------------
-// File              : EX.sv
-// Description       : Execute stage logic
+//-----------------------------------------------------------------------------
+// File              : alu.sv
+// Description       : Arithmetic Logic Unit
 // Primary Author    : Ethan Bishop
-// Other Contributors: Lewis Russell, Dhanushan Raveendran
+// Other Contributors: Lewis Russell
 // Notes             :
-//------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
-module EX(
-    input               Clock      ,
-                        nReset     ,
-                        ALUOp      ,
-                        MULOp      ,
-                        Jump       ,
-                        Branch     ,
-                        RegWriteIn ,
-                        MemReadIn  ,
-                        MemtoRegIn ,
-                        MemWriteIn ,
-                        ALUSrc     ,
-    input        [31:0] A          , // ALU Input A.
-                        B          , // ALU Input B.
-                        Immediate  , // Immediate from Decode stage.
-                        PCin       , // Program counter input.
-    input        [ 4:0] Shamt      , // Shift amount.
-    input        [ 4:0] RAddrIn    ,
-    input        [ 5:0] Func       ,
-    output logic [31:0] Out        ,
-                        RtDataOut  ,
-                        PCout      ,  // Program counter output.
-    output logic [ 4:0] RAddrOut   ,
-    output logic        C          , // Carry out flag.
-                        Z          , // Output zero flag.
-                        O          , // Overflow flag.
-                        N          , // Output negative flag.
-                        RegWriteOut,
-                        MemReadOut ,
-                        MemtoRegOut,
-                        MemWriteOut
+module alu(
+    input        [31:0] A      ,
+                        B      ,
+    input        [ 4:0] Shamt  ,
+    input        [ 5:0] ALUfunc,
+    output logic [31:0] Out    ,
+    output logic        En     ,
+                        C      , // Carry out flag.
+                        Z      , // Zero output flag.
+                        O      , // Overflow flag.
+                        N        // Negative output flag.
 );
 
-    wire [ 5:0] ALUfunc;
-    wire [31:0] ALUout ;
-    wire [31:0] ACCout ;
-    wire [63:0] MULout ;
-    wire [31:0] Y      ;
+    always_comb
+    begin
+        Out = 0         ;
+        En  = 1         ;
+        C   = 0         ;
+        O   = 0         ;
+        N   = Out[31]   ;
+        Z   = (Out == 0);
 
-    wire ALUO;
-    wire ALUZ;
-    wire ALUN;
-    wire ALUC;
-    wire ACCO;
-    wire ACCZ;
-    wire ACCN;
-    wire ACCC;
-    
-    wire ACCEn;
-    wire MULSelB;
+        case (ALUfunc)
+            `ADD:
+            begin
+                {C, Out} = A + B;
+                if (A[31] == B[31])
+                    O = (A[31] ^ N);
+            end
 
-    alu alu0 (
-        .A       (A      ),
-        .B       (Y      ),
-        .Shamt   (Shamt  ),
-        .ALUfunc (Func   ),
-        .Out     (ALUout ),
-        .En      (LoadReg),
-        .C       (ALUC   ),
-        .Z       (ALUZ   ),
-        .O       (ALUO   ),
-        .N       (ALUN   )
-    );
-    
-    acc_control acc_control0 (
-        .Clock   (Clock ),
-        .nReset  (nReset),
-        .Enable  (ACCEn ),
-        .MULfunc (Func  ),
-        .In      (MULout),
-        .Out     (ACCout),
-        .C       (ACCC  ), // Carry flag.
-        .Z       (ACCZ  ), // Zero flag.
-        .O       (ACCO  ), // Overflow flag.
-        .N       (ACCN  )  // Negative flag.
-    );
+            `ADDU:
+            begin
+                {C, Out} = A + B;
+                O = C;
+            end
 
-    ex_mult ex_mult0 (
-        .A   (A      ),
-        .B   (Y      ),
-        .SelB(MULSelB), // MUL module select
-        .Out (MULout )
-    );
+            `SUB:
+            begin
+                {C, Out} = A - B;
+                if (A[31] == B[31])
+                    O = (A[31] ^ N);
+            end
 
-    mux mux2(
-        .A  (B),
-        .B  (Immediate),
-        .Y  (Y),
-        .Sel(ALUSrc)
-    );
-    
-    ex_control ex_control0 (
-        .ALUOp       (ALUOp      ),
-        .MULOp       (MULOp      ),
-        .Jump        (Jump       ),
-        .Branch      (Branch     ),
-        .RegWriteIn  (RegWriteIn ),
-        .ALUO        (ALUO       ), // ALU Flag outputs
-        .ALUZ        (ALUZ       ),
-        .ALUN        (ALUN       ),
-        .ALUC        (ALUC       ),
-        .ACCO        (ACCO       ), // ACC Flag outputs
-        .ACCZ        (ACCZ       ),
-        .ACCN        (ACCN       ),
-        .ACCC        (ACCC       ),
-        .ACCEn       (ACCEn      ),
-        .PCin        (PCin       ), // Program counter input.
-        .ALUout      (ALUout     ), // ALU Module output
-        .ACCout      (ACCout     ), // ACC Module output
-        .MULout      (MULout     ), // MUL Module output
-        .Func        (Func       ),
-        .Out         (Out        ),
-        .PCout       (PCout      ), // Program counter 
-        .C           (C          ), // Carry out flag.
-        .Z           (Z          ), // Output zero flag.
-        .O           (O          ), // Overflow flag.
-        .N           (N          ), // Output negative flag.
-        .MULSelB     (MULSelB    ), // MUL module select
-        .RegWriteOut (RegWriteOut)
-    );
+            `SUBU:
+            begin
+                {C, Out} = A - B;
+                O = C;
+            end
 
+            `SLL : Out = B <<  Shamt;
+            `SLLV: Out = B <<  A    ;
+            `SRA : Out = B >>> Shamt;
+            `SRAV: Out = B >>> A    ;
+            `SRL : Out = B >>  Shamt;
+            `SRLV: Out = B >>  A    ;
+            `AND : Out = A & B      ;
+            `NOR : Out = ~(A | B)   ;
+            `OR  : Out = A | B      ;
+            `XOR : Out = A ^ B      ;
 
-    assign MemReadOut  = MemReadIn;
-    assign MemtoRegOut = MemtoRegIn;
-    assign MemWriteOut = MemWriteIn;
-    assign RAddrOut    = RAddrIn;
-    assign RtDataOut   = B;
+            `MOVN:
+            begin
+                Out = A;
+                En = (B != 0);
+            end
 
+            `MOVZ:
+            begin
+                Out = A;
+                En = (B == 0);
+            end
+
+            `SLT:
+                if (int'(A) < int'(B))
+                    Out = 1;
+                else
+                    Out = 0;
+            `SLTU:
+                if (unsigned'(A) < unsigned'(B))
+                    Out = 1;
+                else
+                    Out = 0;
+
+            `ALU_CLZ:
+                case (A)
+                    32'b1???????????????????????????????: Out = 0 ;
+                    32'b01??????????????????????????????: Out = 1 ;
+                    32'b001?????????????????????????????: Out = 2 ;
+                    32'b0001????????????????????????????: Out = 3 ;
+                    32'b00001???????????????????????????: Out = 4 ;
+                    32'b000001??????????????????????????: Out = 5 ;
+                    32'b0000001?????????????????????????: Out = 6 ;
+                    32'b00000001????????????????????????: Out = 7 ;
+                    32'b000000001???????????????????????: Out = 8 ;
+                    32'b0000000001??????????????????????: Out = 9 ;
+                    32'b00000000001?????????????????????: Out = 10;
+                    32'b000000000001????????????????????: Out = 11;
+                    32'b0000000000001???????????????????: Out = 12;
+                    32'b00000000000001??????????????????: Out = 13;
+                    32'b000000000000001?????????????????: Out = 14;
+                    32'b0000000000000001????????????????: Out = 15;
+                    32'b00000000000000001???????????????: Out = 16;
+                    32'b000000000000000001??????????????: Out = 17;
+                    32'b0000000000000000001?????????????: Out = 18;
+                    32'b00000000000000000001????????????: Out = 19;
+                    32'b000000000000000000001???????????: Out = 20;
+                    32'b0000000000000000000001??????????: Out = 21;
+                    32'b00000000000000000000001?????????: Out = 22;
+                    32'b000000000000000000000001????????: Out = 23;
+                    32'b0000000000000000000000001???????: Out = 24;
+                    32'b00000000000000000000000001??????: Out = 25;
+                    32'b000000000000000000000000001?????: Out = 26;
+                    32'b0000000000000000000000000001????: Out = 27;
+                    32'b00000000000000000000000000001???: Out = 28;
+                    32'b000000000000000000000000000001??: Out = 29;
+                    32'b0000000000000000000000000000001?: Out = 30;
+                    32'b00000000000000000000000000000001: Out = 31;
+                    32'b00000000000000000000000000000000: Out = 32;
+                endcase
+
+            `ALU_CLO:
+                case (A)
+                    32'b0???????????????????????????????: Out = 0 ;
+                    32'b10??????????????????????????????: Out = 1 ;
+                    32'b110?????????????????????????????: Out = 2 ;
+                    32'b1110????????????????????????????: Out = 3 ;
+                    32'b11110???????????????????????????: Out = 4 ;
+                    32'b111110??????????????????????????: Out = 5 ;
+                    32'b1111110?????????????????????????: Out = 6 ;
+                    32'b11111110????????????????????????: Out = 7 ;
+                    32'b111111110???????????????????????: Out = 8 ;
+                    32'b1111111110??????????????????????: Out = 9 ;
+                    32'b11111111110?????????????????????: Out = 10;
+                    32'b111111111110????????????????????: Out = 11;
+                    32'b1111111111110???????????????????: Out = 12;
+                    32'b11111111111110??????????????????: Out = 13;
+                    32'b111111111111110?????????????????: Out = 14;
+                    32'b1111111111111110????????????????: Out = 15;
+                    32'b11111111111111110???????????????: Out = 16;
+                    32'b111111111111111110??????????????: Out = 17;
+                    32'b1111111111111111110?????????????: Out = 18;
+                    32'b11111111111111111110????????????: Out = 19;
+                    32'b111111111111111111110???????????: Out = 20;
+                    32'b1111111111111111111110??????????: Out = 21;
+                    32'b11111111111111111111110?????????: Out = 22;
+                    32'b111111111111111111111110????????: Out = 23;
+                    32'b1111111111111111111111110???????: Out = 24;
+                    32'b11111111111111111111111110??????: Out = 25;
+                    32'b111111111111111111111111110?????: Out = 26;
+                    32'b1111111111111111111111111110????: Out = 27;
+                    32'b11111111111111111111111111110???: Out = 28;
+                    32'b111111111111111111111111111110??: Out = 29;
+                    32'b1111111111111111111111111111110?: Out = 31;
+                    32'b11111111111111111111111111111110: Out = 31;
+                    32'b11111111111111111111111111111111: Out = 32;
+                endcase
+        endcase
+    end
 endmodule
