@@ -23,9 +23,9 @@ module acc_control(
                         N        // Negative flag.
 );
 
-    wire  [63:0] ACCin;
+    logic [63:0] ACCin;
     logic [63:0] ACCout;
-    
+
     always_ff@(posedge Clock, negedge nReset)
         if (~nReset)
             ACCout <= 64'd0;
@@ -75,7 +75,7 @@ module acc_control(
                 // TODO: Do I need to anything else for these?
                 `MULT:  ACCin = In;
                 `MULTU: ACCin = In;
-            
+
             endcase
 
     end

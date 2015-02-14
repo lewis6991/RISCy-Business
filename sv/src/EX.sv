@@ -53,7 +53,7 @@ module EX(
     wire ACCZ;
     wire ACCN;
     wire ACCC;
-    
+
     wire ACCEn;
     wire MULSelB;
 
@@ -69,11 +69,11 @@ module EX(
         .O       (ALUO   ),
         .N       (ALUN   )
     );
-    
+
     acc_control acc_control0 (
         .Clock   (Clock ),
         .nReset  (nReset),
-        .Enable  (ACCEn ),
+        .ACCEn   (ACCEn ),
         .MULfunc (Func  ),
         .In      (MULout),
         .Out     (ACCout),
@@ -96,7 +96,7 @@ module EX(
         .Y  (Y),
         .Sel(ALUSrc)
     );
-    
+
     ex_control ex_control0 (
         .ALUOp       (ALUOp      ),
         .MULOp       (MULOp      ),
@@ -118,7 +118,7 @@ module EX(
         .MULout      (MULout     ), // MUL Module output
         .Func        (Func       ),
         .Out         (Out        ),
-        .PCout       (PCout      ), // Program counter 
+        .PCout       (PCout      ), // Program counter
         .C           (C          ), // Carry out flag.
         .Z           (Z          ), // Output zero flag.
         .O           (O          ), // Overflow flag.
