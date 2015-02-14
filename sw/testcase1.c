@@ -12,13 +12,13 @@ asm(
    ".set noat             \n\t"
    "li  $1,     0x12340000\n\t"
    "ori $1, $1, 0x5678    \n\t"
-   "li  $2,     0x0       \n\t"
+   "li  $2,     0x55550000\n\t"
    "nop                   \n\t"
-   "ori $2, $2, 0x0005    \n\t"
-   "mul $3, $2, $1        \n\t"
+   "ori $2, $2, 0x7777    \n\t"
+   "add $3, $2, $1        \n\t"
    "nop                   \n\t"
 );
 // Register values on test finish:
 // $1 [0x12345678]
-// $2 [0x00000005]
-// $3 [0x05B05B03]
+// $2 [0x55557777]
+// $3 [0x6789CDEF]
