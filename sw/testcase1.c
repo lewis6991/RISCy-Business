@@ -15,7 +15,7 @@ asm(
    "li  $2,     0x55550000\n\t"
    "nop                   \n\t"
    "ori $2, $2, 0x7777    \n\t"
-   "add $3, $2, $1        \n\t"
+   "mul $3, $2, $1        \n\t"
    "nop                   \n\t"
 );
 // Register values on test finish:
