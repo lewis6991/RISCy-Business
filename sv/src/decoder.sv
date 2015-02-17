@@ -142,7 +142,7 @@ module decoder(
                     end
 
                     `OR:
-                    begin
+                    beginMOVZ
                         RegDst   = 1'b1;
                         Func     = `OR ;
                         ALUOp    = 1'b1;
@@ -229,18 +229,10 @@ module decoder(
 
                     `JALR:
                     begin
-                        Func     = `JALR;
-                        ALUOp    = 1'b1 ;
-                        ALUSrc   = 1'b1 ;
-                        RegWrite = 1'b1 ;
                     end
 
                     `JR:
                     begin
-                        Func     = `JR ;
-                        ALUOp    = 1'b1;
-                        ALUSrc   = 1'b1;
-                        RegWrite = 1'b1;
                     end
 
                     default:;
