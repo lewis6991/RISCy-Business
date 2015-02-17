@@ -202,9 +202,10 @@ function void finish_test();
         3: begin
             static int var2 = 32'h01234567;
             static longint prd1 = var1*var2;
-            static longint prd2 = 2*prd1   ;
+            static longint prd2 = prd1 + var1*var2;
             static longint prd3 = prd2 - var2*var2;
             static longint prd4 = prd3 + var2*var2;
+            static longint prd5 = prd4 - var2*var2;
             check_register(1 , var1       );
             check_register(2 , var2       );
             check_register(3 , prd1[31: 0]);
@@ -216,15 +217,18 @@ function void finish_test();
             check_register(9 , prd3[31: 0]);
             check_register(10, prd4[63:32]);
             check_register(11, prd4[31: 0]);
-            check_register(12, 32'h00136B06);
-            check_register(13, 32'hDDCA72D7);
-            check_register(14, 32'h0014B66D);
-            check_register(15, 32'hB8C52248);
-            check_register(16, 32'h12345678);
-            check_register(17, 32'h01234567);
+            check_register(12, prd5[63:32]);
+            check_register(13, prd5[31: 0]);
+            check_register(14, prd1[31: 0]);
+            check_register(15, prd1[63:32]);
+            check_register(16, var1       );
+            check_register(17, var2       );
         end
 
-        default: assert(0) else $warning("WARNING: Checking has not been implemented for testcase %0d", test_no);
+        default:
+            assert(0)
+            else
+                $warning("WARNING: Checking has not been implemented for testcase %0d", test_no);
     endcase
     $display("\nINFO: Test Finished.\n");
     $finish;
