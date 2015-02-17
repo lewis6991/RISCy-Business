@@ -127,7 +127,7 @@ module ex_control(
 
         if (MULOp)
             case (Func)
-                `CLZ:
+                `ALU_CLZ:
                 begin
                     Out     = ALUout;
                     C       = ALUC;
@@ -135,7 +135,7 @@ module ex_control(
                     O       = ALUO;
                     N       = ALUN;
                 end
-                `CLO:
+                `ALU_CLO:
                 begin
                     Out     = ALUout;
                     C       = ALUC;

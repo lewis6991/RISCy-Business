@@ -243,14 +243,14 @@ module decoder(
                     `CLO:
                     begin
                         RegDst   = 1'b1;
-                        Func     = `CLO;
+                        Func     = `ALU_CLO;
                         MULOp    = 1'b1;
                         RegWrite = 1'b1;
                     end
                     `CLZ:
                     begin
                         RegDst   = 1'b1;
-                        Func     = `CLO;
+                        Func     = `ALU_CLZ;
                         MULOp    = 1'b1;
                         RegWrite = 1'b1;
                     end
