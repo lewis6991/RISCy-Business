@@ -259,26 +259,26 @@ module decoder(
 
                     `MADDU:
                     begin
-                        Func  = `MADD;
+                        Func  = `MADDU;
                         MULOp = 1'b1 ;
                     end
 
                     `MSUB:
                     begin
-                        Func  = `MADD;
+                        Func  = `MSUB;
                         MULOp = 1'b1 ;
                     end
 
                     `MSUBU:
                     begin
-                        Func  = `MADD;
+                        Func  = `MSUBU;
                         MULOp = 1'b1 ;
                     end
 
                     `MUL:
                     begin
                         RegDst   = 1'b1 ;
-                        Func     = `MADD;
+                        Func     = `MUL;
                         MULOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
                     end
