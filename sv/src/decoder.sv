@@ -142,7 +142,7 @@ module decoder(
                     end
 
                     `OR:
-                    beginMOVZ
+                    begin
                         RegDst   = 1'b1;
                         Func     = `OR ;
                         ALUOp    = 1'b1;

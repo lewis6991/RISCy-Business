@@ -182,7 +182,7 @@ function void finish_test();
             check_register( 7, 32'h00005650);
             check_register( 8, 32'h1337577F);
             check_register( 9, 32'h1317131F);
-            check_register(10, 32'hEBB8A880);
+            check_register(10, 32'hECC8A880);
             check_register(11, 32'h1234032D);
             check_register(12, 32'h00005678);
             check_register(13, 32'h00000011);
