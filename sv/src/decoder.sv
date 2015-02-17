@@ -22,6 +22,7 @@ module decoder(
                        ALUSrc  ,
                        RegWrite,
                        ShiftSel,
+                       Unsgnsel,
     output logic [5:0] Func    ,
     input        [5:0] OpCode  ,
                        FuncCode
@@ -39,6 +40,7 @@ module decoder(
         ALUSrc   = 1'b0     ;
         RegWrite = 1'b0     ;
         ShiftSel = 1'b0     ;
+        Unsgnsel = 1'b0     ;
         MULOp    = 1'b0     ;
         Func     = 6'b000000;
 
@@ -296,10 +298,12 @@ module decoder(
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
+               
             end
 
             `ADDIU:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `ADDU;
                 ALUOp    = 1'b1  ;
                 ALUSrc   = 1'b1  ;
@@ -317,6 +321,7 @@ module decoder(
 
             `ANDI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `AND;
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
@@ -325,6 +330,7 @@ module decoder(
 
             `ORI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `OR ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
@@ -333,6 +339,7 @@ module decoder(
 
             `XORI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `XOR ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
@@ -349,6 +356,7 @@ module decoder(
 
             `SLTIU:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `SLTU ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;

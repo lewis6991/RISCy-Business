@@ -32,8 +32,11 @@ module DEC(
         output logic [4:0]   Shamt
 );
 
-wire [31:0] instrse;
-wire shiftsel;
+wire [31:0] instrse,
+            instruse,
+            extdata;
+wire shiftsel,
+     unsgnsel;
 
 assign Shamt = Instruction[10:6];
 assign PCAddrIncOut = PCAddrIncIn;
@@ -50,6 +53,7 @@ decoder dec0(
         .ALUSrc(ALUSrc),
         .RegWrite(RegWriteOut),
         .ShiftSel(shiftsel),
+	.Unsgnsel(unsgnsel),
         .Func(ALUfunc),
         .OpCode(Instruction[31:26]),
         .FuncCode(Instruction[5:0])
@@ -72,14 +76,26 @@ signextend se0(
         .Out(instrse)
         );
 
+unsignextend use0(
+        .In(Instruction[15:0]),
+        .Out(instruse),
+)
+
 mux #(.n(32)) mux1(
-    .A  (instrse                   ),
-    .B  ({Instruction[15:0], 16'd0}),
-    .Y  (ImmData                   ),
-    .Sel(shiftsel                  )
+        .A  (instrse  ),
+        .B  (instruse ),
+        .Y  (extdata  ),
+        .Sel(unsgnsel )
 );
 
-mux #(.n(5)) mux2(
+mux #(.n(32)) mux2(
+        .A  (extdata                   ),
+        .B  ({Instruction[15:0], 16'd0}),
+        .Y  (ImmData                   ),
+        .Sel(shiftsel                  )
+);
+
+mux #(.n(5)) mux3(
         .A(Instruction[20:16]),
         .B(Instruction[15:11]),
         .Y(RAddrOut),
