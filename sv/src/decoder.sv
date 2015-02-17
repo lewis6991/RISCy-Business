@@ -248,8 +248,20 @@ module decoder(
 
             `MULL:
                 case(FuncCode)
-                    `CLO:;
-                    `CLZ:;
+                    `CLO:
+                    begin
+                        RegDst   = 1'b1;
+                        Func     = `CLO;
+                        MULOp    = 1'b1;
+                        RegWrite = 1'b1;
+                    end
+                    `CLZ:
+                    begin
+                        RegDst   = 1'b1;
+                        Func     = `CLO;
+                        MULOp    = 1'b1;
+                        RegWrite = 1'b1;
+                    end
 
                     `MADD:
                     begin
