@@ -207,7 +207,8 @@ module decoder(
                     begin
                         RegDst = 1'b1 ;
                         Func   = `MFHI;
-                        ALUOp  = 1'b1 ;
+                        ALUOp  = 1'b1 ; 
+                        RegWrite = 1'b1 ;
                     end
 
                     `MFLO:
@@ -215,6 +216,7 @@ module decoder(
                         RegDst = 1'b1 ;
                         Func   = `MFLO;
                         ALUOp  = 1'b1 ;
+                        RegWrite = 1'b1 ;
                     end
 
                     `MTHI:

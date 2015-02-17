@@ -231,8 +231,8 @@ function void finish_test();
             check_register(11, prd4[31: 0]);
             check_register(12, prd5[63:32]);
             check_register(13, prd5[31: 0]);
-            check_register(14, prd1[31: 0]);
-            check_register(15, prd1[63:32]);
+            check_register(14, prd1[63:32]);
+            check_register(15, prd1[31: 0]);
             check_register(16, var1       );
             check_register(17, var2       );
         end
