@@ -156,54 +156,66 @@ function void check_register(int reg_no, int reg_val);
     act_reg_val = int'(prcsr0.de0.reg0.data[reg_no]);
 
     assert (act_reg_val == reg_val)
-    $display("INFO: \$%0d == 32'h%H", reg_no, reg_val);
+    $display("INFO: \$%-2d == 32'h%x", reg_no, reg_val);
     else
     $error("ERROR: \$%0d != 32'h%H, value is 32'h%H",
     reg_no, reg_val, act_reg_val);
 endfunction
 
 function void finish_test();
+    static int var1 = 32'h12345678;
     $display("INFO: Checking register values...");
     case (test_no)
         1: begin
-            check_register(1, 32'h12345678);
-            check_register(2, 32'h55557777);
-            check_register(3, 32'h12345678 + 32'h55557777);
+            static int var2 = 32'h55557777;
+            check_register(1, var1       );
+            check_register(2, var2       );
+            check_register(3, var1 + var2);
         end
 
         2: begin
-            check_register( 1, 32'h12345678);
-            check_register( 2, 32'h01234567);
-            check_register( 3, 32'h13579BDF);
-            check_register( 4, 32'h11111111);
-            check_register( 5, 32'h01239A67);
-            check_register( 6, 32'h00204460);
-            check_register( 7, 32'h00005650);
-            check_register( 8, 32'h1337577F);
-            check_register( 9, 32'h1317131F);
-            check_register(10, 32'hECC8A880);
-            check_register(11, 32'h1234032D);
-            check_register(12, 32'h00005678);
-            check_register(13, 32'h00000011);
-            check_register(14, 32'hFFFFA987);
-            check_register(15, 32'h00000011);
-            check_register(16, 32'h13579BDF);
-            check_register(17, 32'h11111111);
-            check_register(18, 32'h01239A67);
+            static int var2 = 32'h01234567;
+            static int imm1 = 16'h5500    ;
+            static int imm2 = 16'hFFFF    ;
+            static int imm3 = 16'h7654    ;
+            static int imm4 = 16'h5555    ;
+            check_register( 1, var1          );
+            check_register( 2, var2          );
+            check_register( 3, var1 + var2   );
+            check_register( 4, var1 - var2   );
+            check_register( 5, var2 + imm1   );
+            check_register( 6, var1 & var2   );
+            check_register( 7, var1 & imm3   );
+            check_register( 8, var1 | var2   );
+            check_register( 9, var1 ^ var2   );
+            check_register(10, ~(var1 | var2));
+            check_register(11, var1 ^ imm4   );
+            check_register(12, var1 & imm2   );
+            check_register(13, 32'h00000011  );
+            check_register(14, -(var1 & imm2));
+            check_register(15, 32'h00000011  );
+            check_register(16, var1 + var2   );
+            check_register(17, var1 - var2   );
+            check_register(18, var2 + imm1   );
         end
 
         3: begin
-            check_register(1 , 32'h12345678);
-            check_register(2 , 32'h01234567);
-            check_register(3 , 32'hB8C52248);
-            check_register(4 , 32'h0014B66D);
-            check_register(5 , 32'hB8C52248);
-            check_register(6 , 32'h00296CDB);
-            check_register(7 , 32'h718A4490);
-            check_register(8 , 32'h00136B06);
-            check_register(9 , 32'hDDCA72D7);
-            check_register(10, 32'h0014B66D);
-            check_register(11, 32'hB8C52248);
+            static int var2 = 32'h01234567;
+            static longint prd1 = var1*var2;
+            static longint prd2 = 2*prd1   ;
+            static longint prd3 = prd2 - var2*var2;
+            static longint prd4 = prd3 + var2*var2;
+            check_register(1 , var1       );
+            check_register(2 , var2       );
+            check_register(3 , prd1[31: 0]);
+            check_register(4 , prd1[63:32]);
+            check_register(5 , prd1[31: 0]);
+            check_register(6 , prd2[63:32]);
+            check_register(7 , prd2[31: 0]);
+            check_register(8 , prd3[63:32]);
+            check_register(9 , prd3[31: 0]);
+            check_register(10, prd4[63:32]);
+            check_register(11, prd4[31: 0]);
             check_register(12, 32'h00136B06);
             check_register(13, 32'hDDCA72D7);
             check_register(14, 32'h0014B66D);
