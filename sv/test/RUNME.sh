@@ -10,20 +10,25 @@
 
 main()
 {
-    case $1 in
-        (-h|--help)     usage;;
-        (-a|--all)      all;;
-        (-proc)         proc "$2" "$3";;
-        (-if)           IF;;
-        (-id)           ID;;
-        (-ex)           EX;;
-        (-mem)          MEM;;
-        (-wb)           WB;;
-        (-s|--specific) specific "$2" "$3";;
-        (-gui)          proc "$1";;
-        (-*)            echo "Unknown argument. Try --help for information";;
-        (*)             proc;;
-    esac
+    while [ "$1" != "" ]; do
+        case $1 in
+            (-h|--help)     usage;;
+            (-a|--all)      all;;
+            (-proc)         RUN_PROC=1;;
+            (-if)           IF;;
+            (-id)           ID;;
+            (-ex)           EX;;
+            (-mem)          MEM;;
+            (-wb)           WB;;
+            (-s|--specific) specific "$2" "$3";;
+            (-gui)          GUI_VAR="+gui"
+                            echo "Include GUI";;
+            (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
+            (-*)            echo "Unknown argument. Try --help for information";;
+            (*)             proc;;
+        esac
+        shift
+    done
 }
 
 usage()
@@ -49,7 +54,7 @@ usage()
                       within the testbench itself. Full list below.
                       Arguments can be chained by including a single
                       comma between them. Left blank if not set
-    \"+START=10000\"   
+    \"+START=10000\"
     \"+FINISH=10000\"
     \"+FINISH=10000\"
     "
@@ -69,43 +74,34 @@ all()
 proc()
 {
     echo "##### Testing the entire processor"
-    if [ "$1" = "-gui" ]
-    then
-        echo "Include GUI"
-        allvars=${2//"-plusargs="/}
-        ncverilog +ncaccess+r -sv -q +gui +incdir+../src/ $allvars +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
-    else
-        echo "Default"
-        allvars=${1//"-plusargs="/}
-        ncverilog +ncaccess+r -sv -q +incdir+../src/ $allvars +nctimescale+1ns/10ps processor_tb.sv ../src/*.sv
-    fi
+    ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS processor_tb.sv ../src/*.sv
     echo "##### Processor done"
 }
 
 IF()
 {
     echo "##### Testing the IF stage"
-    
+
     MODULES=(mux pcinc pc IF)
 
     for i in ${MODULES[@]};
     do
         echo "##### Testing ${i}.sv"
-        ncverilog -sv -q +nctimescale+1ns/10ps ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
 
 ID()
 {
-    echo "##### Testing the ID stage"    
+    echo "##### Testing the ID stage"
 
     MODULES=(registers nleftshift signextend)
 
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog -sv -q +nctimescale+1ns/10ps ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -119,7 +115,7 @@ EX()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog -sv -q +nctimescale+1ns/10ps ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -139,13 +135,13 @@ WB()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog -sv -q +nctimescale+1ns/10ps ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
 
 #Note: $1 in this function actually corresponds to $2 from the command line.
-specific() 
+specific()
 {
     if [ "$1" = "" ]
     then
@@ -154,19 +150,18 @@ specific()
     fi
 
     echo "Testing specific module: ${1}.sv"
-    if [ "$2" = "-gui" ]
-    then
-        echo "Include GUI"
-        ncverilog +ncaccess+r -sv -q +gui +nctimescale+1ns/10ps ${1}_tb.sv ../src/${1}.sv
-    else
-        echo "Default"
-        ncverilog -sv -q +nctimescale+1ns/10ps ${1}_tb.sv ../src/${1}.sv
-    fi
+    ncverilog $GUI_VAR $NC_ARGS ${1}_tb.sv ../src/${1}.sv
 
     echo "##### ${1}.sv done"
 }
 
+NC_ARGS="+ncaccess+r -sv -q +nctimescale+1ns/10ps"
 main "$@"
+
+if [ -n "$RUN_PROC" ]
+then
+    proc
+fi
 
 
 
