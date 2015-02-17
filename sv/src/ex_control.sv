@@ -47,12 +47,13 @@ module ex_control(
     always_comb
     begin
 
-        Out   = 0;
-        C     = 0;
-        Z     = 0;
-        O     = 0;
-        N     = 0;
-        ACCEn = 0;
+        Out     = 0;
+        C       = 0;
+        Z       = 0;
+        O       = 0;
+        N       = 0;
+        ACCEn   = 0;
+        MULSelB = 1;
 
         // TODO: Branch operations
         if (ALUOp)
@@ -95,6 +96,7 @@ module ex_control(
                 end
                 `MTHI:
                 begin
+                    MULSelB = 0;
                     ACCEn   = 1;
                     Out     = ACCout;
                     Z       = ACCZ;
@@ -104,6 +106,7 @@ module ex_control(
                 end
                 `MTLO:
                 begin
+                    MULSelB = 0;
                     ACCEn   = 1;
                     Out     = ACCout;
                     Z       = ACCZ;
