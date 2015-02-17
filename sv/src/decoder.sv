@@ -292,7 +292,7 @@ module decoder(
 
             `ADDI:
             begin
-                Func     = `ADDI;
+                Func     = `ADD;
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
@@ -300,7 +300,7 @@ module decoder(
 
             `ADDIU:
             begin
-                Func     = `ADDIU;
+                Func     = `ADDU;
                 ALUOp    = 1'b1  ;
                 ALUSrc   = 1'b1  ;
                 RegWrite = 1'b1  ;
@@ -317,7 +317,7 @@ module decoder(
 
             `ANDI:
             begin
-                Func     = `ANDI;
+                Func     = `AND;
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
@@ -333,7 +333,7 @@ module decoder(
 
             `XORI:
             begin
-                Func     = `OR ;
+                Func     = `XOR ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
@@ -341,7 +341,7 @@ module decoder(
 
             `SLTI:
             begin
-                Func     = `OR ;
+                Func     = `SLT ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
@@ -349,7 +349,7 @@ module decoder(
 
             `SLTIU:
             begin
-                Func     = `OR ;
+                Func     = `SLTU ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
