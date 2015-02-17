@@ -17,13 +17,13 @@ parameter clk = 100;
 logic Clock  = 1'b0,
       nReset = 1'b0;
 
-logic [31:0] instrData    ;
-wire  [15:0] instrAddr    ,
-             memAddr      ;
-wire  [31:0] memRData     ,
-             memWData     ;
-wire         memReadEn    ,
-             memWriteEn   ;
+logic [31:0] instrData ;
+wire  [15:0] instrAddr ,
+             memAddr   ;
+wire  [31:0] memRData  ,
+             memWData  ;
+wire         memReadEn ,
+             memWriteEn;
 
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
@@ -120,7 +120,6 @@ logic [31:0] testcase_memory_3[$] = {
 };
 
 int test_no = 1;
-int fail    = 0;
 
 //Testing procedure
 initial
@@ -130,11 +129,11 @@ begin
         1      : program_memory = testcase_memory_1;
         2      : program_memory = testcase_memory_2;
         3      : program_memory = testcase_memory_3;
-        default: fail = 1;
+        default:
+            assert (0)
+            else
+                $fatal(1, "FATAL: Testcase %0d does not exist.", test_no);
     endcase
-    assert (!fail)
-    else
-        $fatal(1, "FATAL: Testcase %0d does not exist.", test_no);
     $display("\nINFO: Testcase %0d selected.", test_no);
     $display("\nINFO: Starting Test...\n");
     // De-assert reset after non-integer amount of clock cycles.
