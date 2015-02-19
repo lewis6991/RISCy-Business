@@ -6,9 +6,9 @@
 // Notes: Full test coverage
 //----------------------------------------
 
-`include "../src/op_definition.sv"
-`include "../src/alu_definition.sv"
-`include "../src/mul_definition.sv"
+`include "op_definition.sv"
+`include "alu_definition.sv"
+`include "mul_definition.sv"
 
 module decoder_tb;
 

@@ -40,25 +40,32 @@ main()
         shift
     done
 
-    if [ -n "$SPECIFIC" ] then
+    if [ -n "$SPECIFIC" ] 
+    then
         specific 
     fi
-    if [ -n "$RUN_IF" ] then
+    if [ -n "$RUN_IF" ] 
+    then
         IF 
     fi
-    if [ -n "$RUN_ID" ] then
+    if [ -n "$RUN_ID" ] 
+    then
         ID 
     fi
-    if [ -n "$RUN_EX" ] then
+    if [ -n "$RUN_EX" ] 
+    then
         EX 
     fi
-    if [ -n "$RUN_MEM" ] then
+    if [ -n "$RUN_MEM" ] 
+    then
         MEM 
     fi
-    if [ -n "$RUN_WB" ] then
+    if [ -n "$RUN_WB" ] 
+    then
         WB 
     fi
-    if [ -n "$RUN_PROC" ] then
+    if [ -n "$RUN_PROC" ] 
+    then
         proc 
     fi
 
@@ -100,11 +107,11 @@ proc()
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS processor_tb.sv ../src/*.sv
+        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv
     else
         for test in {1..4}
         do
-            ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS "+test="$test processor_tb.sv ../src/*.sv
+            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv
         done
     fi
     echo "##### Processor done"
@@ -118,7 +125,7 @@ IF()
     for i in ${MODULES[@]};
     do
         echo "##### Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -131,7 +138,7 @@ ID()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -144,7 +151,7 @@ EX()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -157,7 +164,7 @@ MEM()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -170,7 +177,7 @@ WB()
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -178,7 +185,7 @@ WB()
 specific()
 {
     echo "Testing specific module: ${1}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${SPECIFIC}_tb.sv ../src/${SPECIFIC}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${SPECIFIC}_tb.sv" src/${SPECIFIC}.sv
     echo "##### ${1}.sv done"
 }
 
