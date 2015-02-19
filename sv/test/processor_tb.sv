@@ -131,6 +131,22 @@ logic [31:0] testcase_memory_3[$] = {
     32'h00000000  // nop
 };
 
+logic [31:0] testcase_memory_4[$] = {
+    32'h3C018005, // li   $1,     0x80050000
+    32'h34420004, // ori  $2, $2, 0x4
+    32'h00011943, // sra  $3, $1, 0x5
+    32'h00412007, // srav $4, $1, $2
+    32'h00012940, // sll  $5, $1, 0x5
+    32'h00013142, // srl  $6, $1, 0x5
+    32'h00413804, // sllv $7, $1, $2
+    32'h00414006, // srlv $8, $1, $2
+    32'h00000000, // nop
+    32'h00000000, // nop
+    32'h00000000, // nop
+    32'h00000000, // nop
+    32'h00000000  // nop
+};
+
 int test_no = 1;
 
 //Testing procedure
@@ -141,6 +157,7 @@ begin
         1      : program_memory = testcase_memory_1;
         2      : program_memory = testcase_memory_2;
         3      : program_memory = testcase_memory_3;
+        4      : program_memory = testcase_memory_4;
         default:
             assert (0)
             else
@@ -235,6 +252,19 @@ function void finish_test();
             check_register(15, prd1[63:32]);
             check_register(16, var1       );
             check_register(17, var2       );
+        end
+
+        4: begin
+            static int var2 = 32'h80050000;
+            static int var3 = 32'h00000004;
+            check_register(1, var2         );
+            check_register(2, var3         );
+            check_register(3, var2 >>> 5   );
+            check_register(4, var2 >>> var3);
+            check_register(5, var2 <<  5   );
+            check_register(6, var2 >>  5   );
+            check_register(7, var2 <<  var3);
+            check_register(8, var2 >>  var3);
         end
 
         default:
