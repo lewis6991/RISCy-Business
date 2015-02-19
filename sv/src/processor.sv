@@ -59,8 +59,8 @@ wire RegWriteW   ;
 wire ALUOpD      ;
 wire ALUOpE      ;
 
-wire MulOpD      ;
-wire MulOpE      ;
+wire MULOpD      ;
+wire MULOpE      ;
 
 wire [31:0] InstructionF ;
 wire [31:0] InstructionD ;
