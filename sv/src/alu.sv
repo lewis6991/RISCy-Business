@@ -57,8 +57,8 @@ module alu(
 
             `SLL : Out = B <<  Shamt;
             `SLLV: Out = B <<  A    ;
-            `SRA : Out = B >>> Shamt;
-            `SRAV: Out = B >>> A    ;
+            `SRA : Out = int'(B) >>> Shamt;
+            `SRAV: Out = int'(B) >>> A    ;
             `SRL : Out = B >>  Shamt;
             `SRLV: Out = B >>  A    ;
             `AND : Out = A & B      ;
