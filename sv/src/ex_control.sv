@@ -58,33 +58,9 @@ module ex_control(
         // TODO: Branch operations
         if (ALUOp)
             case (Func)
-                `MULT:
-                begin
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
-                end
-                `MULTU:
-                begin
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
-                end
-                `MFHI:
-                begin
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
-                end
+                `MULT,
+                `MULTU,
+                `MFHI,
                 `MFLO:
                 begin
                     ACCEn   = 1;
@@ -94,16 +70,7 @@ module ex_control(
                     N       = ACCN;
                     C       = ACCC;
                 end
-                `MTHI:
-                begin
-                    MULSelB = 0;
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
-                end
+                `MTHI,
                 `MTLO:
                 begin
                     MULSelB = 0;
@@ -127,14 +94,7 @@ module ex_control(
 
         if (MULOp)
             case (Func)
-                `ALU_CLZ:
-                begin
-                    Out     = ALUout;
-                    C       = ALUC;
-                    Z       = ALUZ;
-                    O       = ALUO;
-                    N       = ALUN;
-                end
+                `ALU_CLZ,
                 `ALU_CLO:
                 begin
                     Out     = ALUout;
