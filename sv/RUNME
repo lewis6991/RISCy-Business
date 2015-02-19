@@ -17,8 +17,7 @@ main()
     while [ "$1" != "" ]; do
         case $1 in
             (-h|--help)     usage;;
-            (-a|--all)      RUN_PROC=1
-                            RUN_IF=1
+            (-a|--all)      RUN_IF=1
                             RUN_ID=1
                             RUN_EX=1
                             RUN_MEM=1
@@ -30,7 +29,8 @@ main()
             (-ex)           RUN_EX=1;;
             (-mem)          RUN_MEM=1;;
             (-wb)           RUN_WB=1;;
-            (-specific=*)   SPECIFIC=${1//"-specific="/};;
+            (--specific=*)  SPECIFIC="$SPECIFIC ${1//"-specific="/}";;
+            (-s=*)          SPECIFIC="$SPECIFIC ${1//"-s="/}";;
             (-gui)          GUI_VAR="+gui"
                             echo "Include GUI";;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
@@ -40,34 +40,42 @@ main()
         shift
     done
 
-    if [ -n "$SPECIFIC" ] 
+    if [ -n "$SPECIFIC" ]
     then
-        specific 
+        specific
     fi
-    if [ -n "$RUN_IF" ] 
+    if [ -n "$RUN_IF" ]
     then
-        IF 
+        MODULES=(mux pcinc pc IF)
+        stages "IF"
     fi
-    if [ -n "$RUN_ID" ] 
+    if [ -n "$RUN_ID" ]
     then
-        ID 
+        MODULES=(registers nleftshift signextend)
+        stages "ID"
     fi
-    if [ -n "$RUN_EX" ] 
+    if [ -n "$RUN_EX" ]
     then
-        EX 
+        MODULES=(mux alu EX)
+        stages "EX"
     fi
-    if [ -n "$RUN_MEM" ] 
+    if [ -n "$RUN_MEM" ]
     then
-        MEM 
+        MODULES=(MEM)
+        stages "MEM"
     fi
-    if [ -n "$RUN_WB" ] 
+    if [ -n "$RUN_WB" ]
     then
-        WB 
+        MODULES=(mux WB)
+        stages "WB"
     fi
-    if [ -n "$RUN_PROC" ] 
+    if [ -n "$RUN_PROC" ]
     then
-        proc 
+        proc
     fi
+
+    echo -e "\n$summarytext" >> run.log
+    echo -e "\n$summarytext"
 
     exit 0
 }
@@ -75,29 +83,24 @@ main()
 usage()
 {
     echo "
-    -h,--help         Displays this message
-    -a,--all          Runs all test conditions
-    -proc (-gui)      Runs the top level processor test
-    -if               Runs the instruction fetch tests
-    -id               Runs the instruction decode tests
-    -ex               Runs the execute tests
-    -mem              Runs the memory tests
-    -wb               Runs the write back tests
-    -s,--specific=<module> (-gui)
-                      Runs a singular test on 'module'
-    -gui              Runs the top level processor test (With GUI)
-     NO ARGUMENT      Runs the top level processor test (Without GUI)
+    -h,--help          Displays this message
+    -a,--all           Runs all test conditions
+    -proc              Runs the top level processor test
+    -if                Runs the instruction fetch tests
+    -id                Runs the instruction decode tests
+    -ex                Runs the execute tests
+    -mem               Runs the memory tests
+    -wb                Runs the write back tests
+    -s,--specific=\"\"   Runs a singular test on 'module'
+    -gui               Runs the gui
+     NO ARGUMENT       Runs the top level processor test (Without GUI)
 
-    NOTE: Options in <> are required
-          Options in () are optional
-
-    -plusargs=\"\"      Include plusargs to any command to set arguments
-                      within the testbench itself. Full list below.
-                      Arguments can be chained by including a single
-                      comma between them. Left blank if not set
-    \"+START=10000\"
-    \"+FINISH=10000\"
-    \"+FINISH=10000\"
+    -plusargs=\"\"       Include plusargs to any command to set arguments
+                       within the testbench itself. Full list below.
+                       Arguments can be chained by including a single
+                       comma between them. Left blank if not set
+        \"+test=<>\"     Used within the top level processor to choose
+                       the testcase
     "
     exit 1
 }
@@ -107,88 +110,64 @@ proc()
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
-        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv
+        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv >> run.log
+        if [ "$?" = "0" ]
+        then
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. PASS\n"
+        else
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. FAIL\n"
+        fi
     else
         for test in {1..4}
         do
-            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv
+            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv >> run.log
+            if [ "$?" = "0" ]
+            then
+                summarytext="${summarytext}processor testcase $test .. PASS\n"
+            else
+                summarytext="${summarytext}processor testcase $test .. FAIL\n"
+            fi
         done
     fi
     echo "##### Processor done"
 }
 
-IF()
+stages()
 {
-    echo "##### Testing the IF stage"
-    MODULES=(mux pcinc pc IF)
-
+    echo "##### Testing the $1 stage"
     for i in ${MODULES[@]};
     do
         echo "##### Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
+        if [ "$?" = "0" ]
+        then
+            summarytext="${summarytext}$i .. PASS\n"
+        else
+            summarytext="${summarytext}$i .. FAIL\n"
+        fi
         echo "##### ${i}.sv done"
     done
-}
-
-ID()
-{
-    echo "##### Testing the ID stage"
-    MODULES=(registers nleftshift signextend)
-
-    for i in ${MODULES[@]};
-    do
-        echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
-        echo "##### ${i}.sv done"
-    done
-}
-
-EX()
-{
-    echo "##### Testing the EX stage"
-    MODULES=(mux alu)
-
-    for i in ${MODULES[@]};
-    do
-        echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
-        echo "##### ${i}.sv done"
-    done
-}
-
-MEM()
-{
-    echo "##### Testing the MEM stage"
-    MODULES=(mux alu)
-
-    for i in ${MODULES[@]};
-    do
-        echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
-        echo "##### ${i}.sv done"
-    done
-}
-
-WB()
-{
-    echo "##### Testing the WB stage"
-    MODULES=(mux)
-
-    for i in ${MODULES[@]};
-    do
-        echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
-        echo "##### ${i}.sv done"
-    done
+    echo "##### $1 stage done"
 }
 
 specific()
 {
-    echo "Testing specific module: ${1}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${SPECIFIC}_tb.sv" src/${SPECIFIC}.sv
-    echo "##### ${1}.sv done"
+    for i in ${SPECIFIC[@]}
+    do
+        echo "##### Testing ${i}.sv"
+        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
+        if [ "$?" = "0" ]
+        then
+            summarytext="${summarytext}$i .. PASS\n"
+        else
+            summarytext="${summarytext}$i .. FAIL\n"
+        fi
+        echo "##### ${i}.sv done"
+    done
 }
 
+echo 'run.log\n\n' > run.log
+summarytext=""
 NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
 
