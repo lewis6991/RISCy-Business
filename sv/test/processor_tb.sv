@@ -51,7 +51,18 @@ memory memory0 (
 always
     #(clk/2) Clock = ~Clock;
 
+const int reg_var1 = 32'h12345678;
+const int reg_var2 = 32'h55557777;
+const int reg_var3 = 32'h01234567;
+const int reg_var4 = 32'h80050000;
+const int reg_var5 = 32'h00000004;
+const int imm1 = 16'h5500    ;
+const int imm2 = 16'hFFFF    ;
+const int imm3 = 16'h7654    ;
+const int imm4 = 16'h5555    ;
+
 logic [31:0] program_memory[$];
+logic [31:0] register_memory[$];
 
 logic [31:0] testcase_memory_1[$] = {
     32'h3C011234, // LUI $1 'h1234
@@ -64,6 +75,12 @@ logic [31:0] testcase_memory_1[$] = {
     32'h00000000, // NOP
     32'h00000000, // NOP
     32'h00000000  // NOP
+};
+
+logic [31:0] testcase_registers_1[$] = {
+    reg_var1       ,
+    reg_var2       ,
+    reg_var1 + reg_var2
 };
 
 logic [31:0] testcase_memory_2[$] = {
@@ -92,6 +109,27 @@ logic [31:0] testcase_memory_2[$] = {
     32'h00000000, // nop
     32'h00000000, // nop
     32'h00000000  // nop
+};
+
+logic [31:0] testcase_registers_2[$] = {
+    reg_var1              ,
+    reg_var3              ,
+    reg_var1 + reg_var3   ,
+    reg_var1 - reg_var3   ,
+    reg_var3 + imm1       ,
+    reg_var1 & reg_var3   ,
+    reg_var1 & imm3       ,
+    reg_var1 | reg_var3   ,
+    reg_var1 ^ reg_var3   ,
+    ~(reg_var1 | reg_var3),
+    reg_var1 ^ imm4       ,
+    reg_var1 & imm2       ,
+    32'h00000011          ,
+    -(reg_var1 & imm2    ),
+    32'h00000011          ,
+    reg_var1 + reg_var3   ,
+    reg_var1 - reg_var3   ,
+    reg_var3 + imm1
 };
 
 logic [31:0] testcase_memory_3[$] = {
@@ -131,20 +169,71 @@ logic [31:0] testcase_memory_3[$] = {
     32'h00000000  // nop
 };
 
+const longint reg_prd1 = reg_var1*reg_var3           ;
+const longint reg_prd2 = reg_prd1 + reg_var1*reg_var3;
+const longint reg_prd3 = reg_prd2 - reg_var3*reg_var3;
+const longint reg_prd4 = reg_prd3 + reg_var3*reg_var3;
+const longint reg_prd5 = reg_prd4 - reg_var3*reg_var3;
+
+logic [31:0] testcase_registers_3[$] = {
+    reg_var1       ,
+    reg_var3       ,
+    reg_prd1[31: 0],
+    reg_prd1[63:32],
+    reg_prd1[31: 0],
+    reg_prd2[63:32],
+    reg_prd2[31: 0],
+    reg_prd3[63:32],
+    reg_prd3[31: 0],
+    reg_prd4[63:32],
+    reg_prd4[31: 0],
+    reg_prd5[63:32],
+    reg_prd5[31: 0],
+    reg_prd1[63:32],
+    reg_prd1[31: 0],
+    reg_var1       ,
+    reg_var3
+};
+
 logic [31:0] testcase_memory_4[$] = {
-    32'h3C018005, // li   $1,     0x80050000
-    32'h34420004, // ori  $2, $2, 0x4
-    32'h00011943, // sra  $3, $1, 0x5
-    32'h00412007, // srav $4, $1, $2
-    32'h00012940, // sll  $5, $1, 0x5
-    32'h00013142, // srl  $6, $1, 0x5
-    32'h00413804, // sllv $7, $1, $2
-    32'h00414006, // srlv $8, $1, $2
+    32'h3C018005, // li    $1 ,      0x80050000
+    32'h34420004, // ori   $2 , $2 , 0x4
+    32'h00011943, // sra   $3 , $1 , 0x5
+    32'h00412007, // srav  $4 , $1 , $2
+    32'h00012940, // sll   $5 , $1 , 0x5
+    32'h00013142, // srl   $6 , $1 , 0x5
+    32'h00413804, // sllv  $7 , $1 , $2
+    32'h00414006, // srlv  $8 , $1 , $2
+    32'h0027480B, // movn  $9 , $1 , $7
+    32'h00C0500A, // movz  $10, $6 , $0
+    32'h0046582A, // slt   $11, $2 , $6
+    32'h284C0100, // slti  $12, $2 , 0x0100
+    32'h3C0D8800, // li    $13,      0x88000000
+    32'h002D702B, // sltu  $14, $1 , $13
+    32'h2D6F3200, // sltiu $15, $11, 0x3200
     32'h00000000, // nop
     32'h00000000, // nop
     32'h00000000, // nop
     32'h00000000, // nop
     32'h00000000  // nop
+};
+
+logic [31:0] testcase_registers_4[$] = {
+    reg_var4             ,
+    reg_var5             ,
+    reg_var4 >>> 5       ,
+    reg_var4 >>> reg_var5,
+    reg_var4 <<  5       ,
+    reg_var4 >>  5       ,
+    reg_var4 <<  reg_var5,
+    reg_var4 >>  reg_var5,
+    (reg_var4 >>  reg_var5 != 0) ? reg_var4 : 32'b0,
+    reg_var4 >> 5,
+    1,
+    1,
+    32'h88000000,
+    1,
+    1
 };
 
 int test_no = 1;
@@ -154,10 +243,27 @@ initial
 begin
     void'($value$plusargs("test=%d", test_no));
     case (test_no)
-        1      : program_memory = testcase_memory_1;
-        2      : program_memory = testcase_memory_2;
-        3      : program_memory = testcase_memory_3;
-        4      : program_memory = testcase_memory_4;
+
+        1: begin
+            program_memory  = testcase_memory_1   ;
+            register_memory = testcase_registers_1;
+        end
+
+        2: begin
+            program_memory  = testcase_memory_2   ;
+            register_memory = testcase_registers_2;
+        end
+
+        3: begin
+            program_memory  = testcase_memory_3   ;
+            register_memory = testcase_registers_3;
+        end
+
+        4: begin
+            program_memory  = testcase_memory_4   ;
+            register_memory = testcase_registers_4;
+        end
+
         default:
             assert (0)
             else
@@ -172,6 +278,7 @@ end
 
 // Control test depending on program counter.
 always @ (posedge Clock)
+
     if(instrAddr/4 < program_memory.size())
         instrData <= #20 program_memory[instrAddr/4];
     else if(instrAddr/4 == program_memory.size())
@@ -192,86 +299,11 @@ function void check_register(int reg_no, int reg_val);
 endfunction
 
 function void finish_test();
-    static int var1 = 32'h12345678;
     $display("INFO: Checking register values...");
-    case (test_no)
-        1: begin
-            static int var2 = 32'h55557777;
-            check_register(1, var1       );
-            check_register(2, var2       );
-            check_register(3, var1 + var2);
-        end
 
-        2: begin
-            static int var2 = 32'h01234567;
-            static int imm1 = 16'h5500    ;
-            static int imm2 = 16'hFFFF    ;
-            static int imm3 = 16'h7654    ;
-            static int imm4 = 16'h5555    ;
-            check_register( 1, var1          );
-            check_register( 2, var2          );
-            check_register( 3, var1 + var2   );
-            check_register( 4, var1 - var2   );
-            check_register( 5, var2 + imm1   );
-            check_register( 6, var1 & var2   );
-            check_register( 7, var1 & imm3   );
-            check_register( 8, var1 | var2   );
-            check_register( 9, var1 ^ var2   );
-            check_register(10, ~(var1 | var2));
-            check_register(11, var1 ^ imm4   );
-            check_register(12, var1 & imm2   );
-            check_register(13, 32'h00000011  );
-            check_register(14, -(var1 & imm2));
-            check_register(15, 32'h00000011  );
-            check_register(16, var1 + var2   );
-            check_register(17, var1 - var2   );
-            check_register(18, var2 + imm1   );
-        end
+    foreach (register_memory[i])
+        check_register(i + 1, register_memory[i]);
 
-        3: begin
-            static int var2 = 32'h01234567;
-            static longint prd1 = var1*var2;
-            static longint prd2 = prd1 + var1*var2;
-            static longint prd3 = prd2 - var2*var2;
-            static longint prd4 = prd3 + var2*var2;
-            static longint prd5 = prd4 - var2*var2;
-            check_register(1 , var1       );
-            check_register(2 , var2       );
-            check_register(3 , prd1[31: 0]);
-            check_register(4 , prd1[63:32]);
-            check_register(5 , prd1[31: 0]);
-            check_register(6 , prd2[63:32]);
-            check_register(7 , prd2[31: 0]);
-            check_register(8 , prd3[63:32]);
-            check_register(9 , prd3[31: 0]);
-            check_register(10, prd4[63:32]);
-            check_register(11, prd4[31: 0]);
-            check_register(12, prd5[63:32]);
-            check_register(13, prd5[31: 0]);
-            check_register(14, prd1[63:32]);
-            check_register(15, prd1[31: 0]);
-            check_register(16, var1       );
-            check_register(17, var2       );
-        end
-
-        4: begin
-            static int var2 = 32'h80050000;
-            static int var3 = 32'h00000004;
-            check_register(1, var2         );
-            check_register(2, var3         );
-            check_register(3, var2 >>> 5   );
-            check_register(4, var2 >>> var3);
-            check_register(5, var2 <<  5   );
-            check_register(6, var2 >>  5   );
-            check_register(7, var2 <<  var3);
-            check_register(8, var2 >>  var3);
-        end
-
-        default:
-            assert(0)
-            else
-                $warning("WARNING: Checking has not been implemented for testcase %0d", test_no);
-    endcase
     $display("\nINFO: Test Finished.\n");
     $finish;
 endfunction
