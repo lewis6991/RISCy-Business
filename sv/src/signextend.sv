@@ -8,9 +8,10 @@
 
 module signextend(
     input        [15:0] In ,
+    input               Unsgnsel,
     output logic [31:0] Out
 );
 
-    assign Out = {{16{In[15]}}, In};
+    assign Out = Unsgnsel? {{16{1'b0}}, In}:{{16{In[15]}}, In};
 
 endmodule
