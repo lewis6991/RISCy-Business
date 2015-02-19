@@ -20,6 +20,7 @@ module ex_control(
                         ALUZ       ,
                         ALUN       ,
                         ALUC       ,
+                        ALUEn      , // ALU output enable
                         ACCO       , // ACC Flag outputs
                         ACCZ       ,
                         ACCN       ,
@@ -41,19 +42,19 @@ module ex_control(
 );
 
     // TODO: These will eventually do something
-    assign RegWriteOut = RegWriteIn;
     assign PCout       = PCin;
 
     always_comb
     begin
 
-        Out     = 0;
-        C       = 0;
-        Z       = 0;
-        O       = 0;
-        N       = 0;
-        ACCEn   = 0;
-        MULSelB = 1;
+        Out         = 0;
+        C           = 0;
+        Z           = 0;
+        O           = 0;
+        N           = 0;
+        ACCEn       = 0;
+        MULSelB     = 1;
+        RegWriteOut = RegWriteIn;
 
         // TODO: Branch operations
         if (ALUOp)
@@ -63,32 +64,33 @@ module ex_control(
                 `MFHI,
                 `MFLO:
                 begin
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
+                    ACCEn       = 1;
+                    Out         = ACCout;
+                    Z           = ACCZ;
+                    O           = ACCO;
+                    N           = ACCN;
+                    C           = ACCC;
                 end
                 `MTHI,
                 `MTLO:
                 begin
-                    MULSelB = 0;
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
+                    MULSelB     = 0;
+                    ACCEn       = 1;
+                    Out         = ACCout;
+                    Z           = ACCZ;
+                    O           = ACCO;
+                    N           = ACCN;
+                    C           = ACCC;
                 end
-
+                
                 default:
                 begin
-                    Out     = ALUout;
-                    C       = ALUC;
-                    Z       = ALUZ;
-                    O       = ALUO;
-                    N       = ALUN;
+                    Out         = ALUout;
+                    RegWriteOut = ALUEn;
+                    C           = ALUC;
+                    Z           = ALUZ;
+                    O           = ALUO;
+                    N           = ALUN;
                 end
             endcase
 
@@ -97,31 +99,31 @@ module ex_control(
                 `ALU_CLZ,
                 `ALU_CLO:
                 begin
-                    Out     = ALUout;
-                    C       = ALUC;
-                    Z       = ALUZ;
-                    O       = ALUO;
-                    N       = ALUN;
+                    Out         = ALUout;
+                    C           = ALUC;
+                    Z           = ALUZ;
+                    O           = ALUO;
+                    N           = ALUN;
                 end
                 
                 `MUL:
                 begin
-                    Out     = MULout[31:0];
-                    C       = (MULout[63:32] != 0);
-                    N       = MULout[31];
-                    Z       = (MULout[31:0]  == 0);
-                    O       = (MULout[63:32] != 0);
+                    Out         = MULout[31:0];
+                    C           = (MULout[63:32] != 0);
+                    N           = MULout[31];
+                    Z           = (MULout[31:0]  == 0);
+                    O           = (MULout[63:32] != 0);
                 end
                
 
                 default:
                 begin
-                    ACCEn   = 1;
-                    Out     = ACCout;
-                    Z       = ACCZ;
-                    O       = ACCO;
-                    N       = ACCN;
-                    C       = ACCC;
+                    ACCEn       = 1;
+                    Out         = ACCout;
+                    Z           = ACCZ;
+                    O           = ACCO;
+                    N           = ACCN;
+                    C           = ACCC;
                 end
             endcase
     end

@@ -56,6 +56,7 @@ module EX(
 
     wire ACCEn;
     wire MULSelB;
+    wire ALUEn;
 
     alu alu0 (
         .A       (A      ),
@@ -63,7 +64,7 @@ module EX(
         .Shamt   (Shamt  ),
         .ALUfunc (Func   ),
         .Out     (ALUout ),
-        .En      (LoadReg),
+        .En      (ALUEn  ),
         .C       (ALUC   ),
         .Z       (ALUZ   ),
         .O       (ALUO   ),
@@ -107,6 +108,7 @@ module EX(
         .ALUZ        (ALUZ       ),
         .ALUN        (ALUN       ),
         .ALUC        (ALUC       ),
+        .ALUEn       (ALUEn      ),
         .ACCO        (ACCO       ), // ACC Flag outputs
         .ACCZ        (ACCZ       ),
         .ACCN        (ACCN       ),
