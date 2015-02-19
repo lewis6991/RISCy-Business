@@ -10,6 +10,10 @@
 
 main()
 {
+    if [ ${#} = "0" ]
+    then
+        RUN_PROC=1
+    fi
     while [ "$1" != "" ]; do
         case $1 in
             (-h|--help)     usage;;
@@ -25,7 +29,7 @@ main()
                             echo "Include GUI";;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
             (-*)            echo "Unknown argument. Try --help for information";;
-            (*)             proc;;
+            (*)             echo "No arguments defined";;
         esac
         shift
     done
@@ -74,7 +78,15 @@ all()
 proc()
 {
     echo "##### Testing the entire processor"
-    ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS processor_tb.sv ../src/*.sv
+    if [[ $PLUSARGS = *"+test"* ]]
+    then
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS processor_tb.sv ../src/*.sv
+    else
+        for test in {1..4}
+        do
+            ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS "+test="$test processor_tb.sv ../src/*.sv
+        done
+    fi
     echo "##### Processor done"
 }
 
@@ -155,12 +167,13 @@ specific()
     echo "##### ${1}.sv done"
 }
 
-NC_ARGS="+ncaccess+r -sv -q +nctimescale+1ns/10ps"
+NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
+echo $RUN_PROC
 
 if [ -n "$RUN_PROC" ]
 then
-    proc
+    proc 
 fi
 
 
