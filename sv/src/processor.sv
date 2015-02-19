@@ -26,7 +26,6 @@ wire JumpE       ;
 
 wire BranchD     ;
 wire BranchEin   ;
-wire BranchEout  ;
 wire BranchM     ;
 
 wire MemReadD    ;
