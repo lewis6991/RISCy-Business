@@ -1,0 +1,10 @@
+
+# The Following commands connects DC to ams 35 Library files
+lappend search_path /opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V
+set target_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELIB.db}
+set link_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELIB.db}
+set symbol_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELIB.sdb}
+set allow_newer_db_files "true"
+set designer "Basel HALAK"
+
+#end of setup
