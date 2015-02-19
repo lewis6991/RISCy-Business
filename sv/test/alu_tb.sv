@@ -4,7 +4,7 @@
 // Primary Author: Ethan Bishop
 // Other Contributors: Jack Barnes
 // Notes: Full test coverage of ALU instructions
-//        Select sample for each instruction
+//        Random sample for each instruction
 //        Uses adapted checkassert from decoder_tb
 //----------------------------------------
 
@@ -528,6 +528,7 @@ begin
     
     
     $display("All tests passed.");
+    $finish;
     
 end
 

@@ -72,7 +72,6 @@ module acc_control(
                 `MTHI:  ACCin[63:32] = In;
                 `MTLO:  ACCin[31:0] = In;
 
-                // TODO: Do I need to anything else for these?
                 `MULT,
                 `MULTU: ACCin = In;
 
