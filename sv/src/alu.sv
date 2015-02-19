@@ -19,14 +19,15 @@ module alu(
                         N        // Negative output flag.
 );
 
+    assign N = Out[31]   ;
+    assign Z = (Out == 0);
+
     always_comb
     begin
         Out = 0         ;
         En  = 1         ;
         C   = 0         ;
         O   = 0         ;
-        N   = Out[31]   ;
-        Z   = (Out == 0);
 
         case (ALUfunc)
             `ADD:
@@ -66,11 +67,16 @@ module alu(
             `OR  : Out = A | B      ;
             `XOR : Out = A ^ B      ;
 
-            `MOVN,
-            `MOVZ:
+            `MOVN:
             begin
                 Out = A;
                 En = (B != 0);
+            end
+            
+            `MOVZ:
+            begin
+                Out = A;
+                En = (B == 0);
             end
 
             `SLT:
@@ -157,5 +163,6 @@ module alu(
                     32'b11111111111111111111111111111111: Out = 32;
                 endcase
         endcase
+        
     end
 endmodule
