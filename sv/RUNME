@@ -17,14 +17,20 @@ main()
     while [ "$1" != "" ]; do
         case $1 in
             (-h|--help)     usage;;
-            (-a|--all)      all;;
+            (-a|--all)      RUN_PROC=1
+                            RUN_IF=1
+                            RUN_ID=1
+                            RUN_EX=1
+                            RUN_MEM=1
+                            RUN_WB=1
+                            RUN_PROC=1;;
             (-proc)         RUN_PROC=1;;
-            (-if)           IF;;
-            (-id)           ID;;
-            (-ex)           EX;;
-            (-mem)          MEM;;
-            (-wb)           WB;;
-            (-s|--specific) specific "$2" "$3";;
+            (-if)           RUN_IF=1;;
+            (-id)           RUN_ID=1;;
+            (-ex)           RUN_EX=1;;
+            (-mem)          RUN_MEM=1;;
+            (-wb)           RUN_WB=1;;
+            (-specific=*)   SPECIFIC=${1//"-specific="/};;
             (-gui)          GUI_VAR="+gui"
                             echo "Include GUI";;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
@@ -33,6 +39,30 @@ main()
         esac
         shift
     done
+
+    if [ -n "$SPECIFIC" ] then
+        specific 
+    fi
+    if [ -n "$RUN_IF" ] then
+        IF 
+    fi
+    if [ -n "$RUN_ID" ] then
+        ID 
+    fi
+    if [ -n "$RUN_EX" ] then
+        EX 
+    fi
+    if [ -n "$RUN_MEM" ] then
+        MEM 
+    fi
+    if [ -n "$RUN_WB" ] then
+        WB 
+    fi
+    if [ -n "$RUN_PROC" ] then
+        proc 
+    fi
+
+    exit 0
 }
 
 usage()
@@ -46,7 +76,7 @@ usage()
     -ex               Runs the execute tests
     -mem              Runs the memory tests
     -wb               Runs the write back tests
-    -s,--specific <module> (-gui)
+    -s,--specific=<module> (-gui)
                       Runs a singular test on 'module'
     -gui              Runs the top level processor test (With GUI)
      NO ARGUMENT      Runs the top level processor test (Without GUI)
@@ -63,16 +93,6 @@ usage()
     \"+FINISH=10000\"
     "
     exit 1
-}
-
-all()
-{
-    echo "##### Testing all stages"
-    IF
-    DE
-    EX
-    MEM
-    WB
 }
 
 proc()
@@ -93,13 +113,12 @@ proc()
 IF()
 {
     echo "##### Testing the IF stage"
-
     MODULES=(mux pcinc pc IF)
 
     for i in ${MODULES[@]};
     do
         echo "##### Testing ${i}.sv"
-        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -107,13 +126,12 @@ IF()
 ID()
 {
     echo "##### Testing the ID stage"
-
     MODULES=(registers nleftshift signextend)
 
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -121,13 +139,12 @@ ID()
 EX()
 {
     echo "##### Testing the EX stage"
-
     MODULES=(mux alu)
 
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
@@ -135,46 +152,38 @@ EX()
 MEM()
 {
     echo "##### Testing the MEM stage"
-    echo "Not implemented yet"
+    MODULES=(mux alu)
+
+    for i in ${MODULES[@]};
+    do
+        echo "Testing ${i}.sv"
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
+        echo "##### ${i}.sv done"
+    done
 }
 
 WB()
 {
     echo "##### Testing the WB stage"
-
     MODULES=(mux)
 
     for i in ${MODULES[@]};
     do
         echo "Testing ${i}.sv"
-        ncverilog $NC_ARGS ${i}_tb.sv ../src/${i}.sv
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${i}_tb.sv ../src/${i}.sv
         echo "##### ${i}.sv done"
     done
 }
 
-#Note: $1 in this function actually corresponds to $2 from the command line.
 specific()
 {
-    if [ "$1" = "" ]
-    then
-        echo "No argument given. Try --help for information"
-        exit
-    fi
-
     echo "Testing specific module: ${1}.sv"
-    ncverilog $GUI_VAR $NC_ARGS ${1}_tb.sv ../src/${1}.sv
-
+        ncverilog $NC_ARGS $GUI_VAR +incdir+../src/ $PLUSARGS ${SPECIFIC}_tb.sv ../src/${SPECIFIC}.sv
     echo "##### ${1}.sv done"
 }
 
 NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
-echo $RUN_PROC
-
-if [ -n "$RUN_PROC" ]
-then
-    proc 
-fi
 
 
 
