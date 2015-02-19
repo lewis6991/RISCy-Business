@@ -16,7 +16,7 @@ module WB(
         output logic [31:0] WBData
 );
 
-    mux mux3(
+    mux mux4(
         .Sel(MemtoReg),
         .A  (ALUData ),
         .B  (MemData ),

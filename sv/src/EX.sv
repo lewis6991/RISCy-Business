@@ -91,7 +91,7 @@ module EX(
         .Out (MULout )
     );
 
-    mux mux2(
+    mux mux3(
         .A  (B),
         .B  (Immediate),
         .Y  (Y),
