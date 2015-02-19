@@ -73,7 +73,7 @@ module acc_control(
                 `MTLO:  ACCin[31:0] = In;
 
                 // TODO: Do I need to anything else for these?
-                `MULT:  ACCin = In;
+                `MULT,
                 `MULTU: ACCin = In;
 
             endcase

@@ -66,16 +66,11 @@ module alu(
             `OR  : Out = A | B      ;
             `XOR : Out = A ^ B      ;
 
-            `MOVN:
-            begin
-                Out = A;
-                En = (B != 0);
-            end
-
+            `MOVN,
             `MOVZ:
             begin
                 Out = A;
-                En = (B == 0);
+                En = (B != 0);
             end
 
             `SLT:
