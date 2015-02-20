@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------------
 # File              : RUN_SYN.sh
-# Description       : Bash script to run a simple synthesis of the design
+# Description       : Tcsh script to run a simple synthesis of the design
 # Primary Author    : Dominic Murphy
 # Other Contributors:
 #------------------------------------------------------------------------------
