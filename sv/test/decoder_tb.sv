@@ -17,78 +17,78 @@ const int clk = 100;
 
 logic [5:0] OpCode, FuncCode;
 wire [5:0] Func;
-wire RegDst, Branch, Jump, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel;
+wire RegDst, Branch, Jump, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel, Unsgnsel;
 
 parameter num = 60; //Minus 1 from total number of elements
 
-//RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel, Jump, Func
-logic [16:0] testcases [num:0] = '{17'b1000100010_0_100000, ////////// ADD
-                                   17'b1000100010_0_100001, //      // ADDU
-                                   17'b1000100010_0_100010, //      // SUB
-                                   17'b1000100010_0_100011, //      // SUBU
-                                   17'b1000100010_0_000000, //      // SLL
-                                   17'b1000100010_0_000100, //      // SLLV
-                                   17'b1000100010_0_000011, //      // SRA
-                                   17'b1000100010_0_000111, //      // SRAV
-                                   17'b1000100010_0_000010, //      // SRL
-                                   17'b1000100010_0_000110, //      // SRLV
+//RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel, _ Jump, Unsgnsel, _ Func
+logic [17:0] testcases [num:0] = '{18'b1000100010_00_100000, ////////// ADD
+                                   18'b1000100010_00_100001, //      // ADDU
+                                   18'b1000100010_00_100010, //      // SUB
+                                   18'b1000100010_00_100011, //      // SUBU
+                                   18'b1000100010_00_000000, //      // SLL
+                                   18'b1000100010_00_000100, //      // SLLV
+                                   18'b1000100010_00_000011, //      // SRA
+                                   18'b1000100010_00_000111, //      // SRAV
+                                   18'b1000100010_00_000010, //      // SRL
+                                   18'b1000100010_00_000110, //      // SRLV
 
-                                   17'b1000100010_0_100100, //      // AND
-                                   17'b1000100010_0_100111, //      // NOR
-                                   17'b1000100010_0_100101, // ALU  // OR
-                                   17'b1000100010_0_100110, //      // XOR
-                                   17'b1000100010_0_001011, //      // MOVN
-                                   17'b1000100010_0_001010, //      // MOVZ
-                                   17'b1000100010_0_101010, //      // SLT
-                                   17'b1000100010_0_101011, //      // SLTU
-                                   17'b0000100000_0_011000, //      // MULT
-                                   17'b0000100000_0_011001, //      // MULTU
+                                   18'b1000100010_00_100100, //      // AND
+                                   18'b1000100010_00_100111, //      // NOR
+                                   18'b1000100010_00_100101, // ALU  // OR
+                                   18'b1000100010_00_100110, //      // XOR
+                                   18'b1000100010_00_001011, //      // MOVN
+                                   18'b1000100010_00_001010, //      // MOVZ
+                                   18'b1000100010_00_101010, //      // SLT
+                                   18'b1000100010_00_101011, //      // SLTU
+                                   18'b0000100000_00_011000, //      // MULT
+                                   18'b0000100000_00_011001, //      // MULTU
 
-                                   17'b1000100000_0_010000, //      // MFHI
-                                   17'b1000100000_0_010010, //      // MFLO
-                                   17'b0000100000_0_010001, //      // MTHI
-                                   17'b0000100000_0_010011, //      // MTLO
-                                   17'b0000100110_0_001001, //      // JALR
-                                   17'b0000100110_0_001000, ////////// JR
-                                   17'b0000000000_0_000000, ////////// CLO
-                                   17'b0000000000_0_000000, //      // CLZ
-                                   17'b0000010000_0_000000, //      // MADD
-                                   17'b0000010000_0_000000, // MULL // MADDU
+                                   18'b1000100010_00_010000, //      // MFHI
+                                   18'b1000100010_00_010010, //      // MFLO
+                                   18'b0000100000_00_010001, //      // MTHI
+                                   18'b0000100000_00_010011, //      // MTLO
+                                   18'b0000000000_00_000000, //      // JALR
+                                   18'b0000000000_00_000000, ////////// JR
+                                   18'b1000010010_00_110001, ////////// CLO
+                                   18'b1000010010_00_110000, //      // CLZ
+                                   18'b0000010000_00_000000, //      // MADD
+                                   18'b0000010000_00_000001, // MULL // MADDU
 
-                                   17'b0000010000_0_000000, //      // MSUB
-                                   17'b0000010000_0_000000, //      // MSUBU
-                                   17'b1000010010_0_000000, ////////// MUL
-                                   17'b0000100110_0_001000, // ADDI
-                                   17'b0000100110_0_001001, // ADDIU
-                                   17'b0000100111_0_100000, // LUI
-                                   17'b0000100110_0_001100, // ANDI
-                                   17'b0000100110_0_100101, // ORI
-                                   17'b0000100110_0_100101, // XORI
-                                   17'b0000100110_0_100101, // SLTI
+                                   18'b0000010000_00_000100, //      // MSUB
+                                   18'b0000010000_00_000101, //      // MSUBU
+                                   18'b1000010010_00_000010, ////////// MUL
+                                   18'b0000100110_00_100000, // ADDI
+                                   18'b0000100110_01_100001, // ADDIU
+                                   18'b0000100111_00_100000, // LUI
+                                   18'b0000100110_01_100100, // ANDI
+                                   18'b0000100110_01_100101, // ORI
+                                   18'b0000100110_01_100110, // XORI
+                                   18'b0000100110_00_101010, // SLTI
 
-                                   17'b0000100110_0_100101, // SLTIU
-                                   17'b0000000000_0_000000, // BEQ
-                                   17'b0000000000_0_000000, // BGTZ
-                                   17'b0000000000_0_000000, // BLEZ
-                                   17'b0000000000_0_000000, // BNE
-                                   17'b0000000000_0_000000, // J
-                                   17'b0000000000_0_000000, // JAL
-                                   17'b0000000000_0_000000, // LB
-                                   17'b0000000000_0_000000, // LBU
-                                   17'b0000000000_0_000000, // LH
+                                   18'b0000100110_01_101011, // SLTIU
+                                   18'b0000000000_00_000000, // BEQ
+                                   18'b0000000000_00_000000, // BGTZ
+                                   18'b0000000000_00_000000, // BLEZ
+                                   18'b0000000000_00_000000, // BNE
+                                   18'b0000000000_00_000000, // J
+                                   18'b0000000000_00_000000, // JAL
+                                   18'b0000000000_00_000000, // LB
+                                   18'b0000000000_00_000000, // LBU
+                                   18'b0000000000_00_000000, // LH
 
-                                   17'b0000000000_0_000000, // LHU
-                                   17'b0000000000_0_000000, // LW
-                                   17'b0000000000_0_000000, // LWL
-                                   17'b0000000000_0_000000, // LWR
-                                   17'b0000000000_0_000000, // SB
-                                   17'b0000000000_0_000000, // SH
-                                   17'b0000000000_0_000000, // SW
-                                   17'b0000000000_0_000000, // SWL
-                                   17'b0000000000_0_000000, // SWR
-                                   17'b0000000000_0_000000, // LL
+                                   18'b0000000000_00_000000, // LHU
+                                   18'b0000000000_00_000000, // LW
+                                   18'b0000000000_00_000000, // LWL
+                                   18'b0000000000_00_000000, // LWR
+                                   18'b0000000000_00_000000, // SB
+                                   18'b0000000000_00_000000, // SH
+                                   18'b0000000000_00_000000, // SW
+                                   18'b0000000000_00_000000, // SWL
+                                   18'b0000000000_00_000000, // SWR
+                                   18'b0000000000_00_000000, // LL
 
-                                   17'b0000000000_0_000000};// SC
+                                   18'b0000000000_00_000000};// SC
 
 logic [5:0] testALU  [0:25] = '{
     `ADD,  `ADDU, `SUB,  `SUBU, `SLL,  `SLLV, `SRA, `SRAV, `SRL,  `SRLV,
@@ -117,10 +117,11 @@ decoder decoder0 (
     .MemtoReg (MemtoReg),
     .ALUOp    (ALUOp   ),
     .MULOp    (MULOp   ),
-    .Memwrite (Memwrite),
+    .MemWrite (MemWrite),
     .ALUSrc   (ALUSrc  ),
     .RegWrite (RegWrite),
     .ShiftSel (ShiftSel),
+    .Unsgnsel (Unsgnsel),
     .Func     (Func    ),
     .OpCode   (OpCode  ),
     .FuncCode (FuncCode)
@@ -175,56 +176,55 @@ begin
 
 $finish;
 
-    OpCode = `ADDI;
-    OpCode = `ADDIU;
-    OpCode = `LUI;
-    OpCode = `ANDI;
-    OpCode = `ORI;
-    OpCode = `XORI;
-    OpCode = `SLTI;
-    OpCode = `SLTIU;
-
-    OpCode = `BEQ;
-    OpCode = `BGTZ;
-    OpCode = `BLEZ;
-    OpCode = `BNE;
-    OpCode = `J;
-    OpCode = `JAL;
-    OpCode = `LB;
-    OpCode = `LBU;
-    OpCode = `LH;
-    OpCode = `LHU;
-    OpCode = `LW;
-    OpCode = `LWL;
-    OpCode = `LWR;
-    OpCode = `SB;
-    OpCode = `SH;
-    OpCode = `SW;
-    OpCode = `SWL;
-    OpCode = `SWR;
-    OpCode = `LL;
-    OpCode = `SC;
-
-
-
-    $finish;
-
+    //Still to be added and then tested
+    //OpCode = `BEQ;
+    //OpCode = `BGTZ;
+    //OpCode = `BLEZ;
+    //OpCode = `BNE;
+    //OpCode = `J;
+    //OpCode = `JAL;
+    //OpCode = `LB;
+    //OpCode = `LBU;
+    //OpCode = `LH;
+    //OpCode = `LHU;
+    //OpCode = `LW;
+    //OpCode = `LWL;
+    //OpCode = `LWR;
+    //OpCode = `SB;
+    //OpCode = `SH;
+    //OpCode = `SW;
+    //OpCode = `SWL;
+    //OpCode = `SWR;
+    //OpCode = `LL;
+    //OpCode = `SC;
 end
 
 
 task checkassert;
     #clk
-    OutBits = {RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, Memwrite, ALUSrc, RegWrite, ShiftSel};
+    OutBits = {RegDst, Branch, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel};
 
-    assert ({OutBits, Jump, Func} == testcases[num-count])
+    assert ({OutBits, Jump, Unsgnsel, Func} == testcases[num-count])
     else
-        $display("ERROR: testcase no. %d\n         Output  Expected\nRegDst   %b       %b\nBranch   %b       %b\nMemRead  %b       %b\nMemtoReg %b       %b\nALUOp    %b       %b\nMemwrite %b       %b\nALUSrc   %b       %b\nRegWrite %b       %b\nShiftSel %b       %b\nMULOp    %b       %b\nJump     %b       %b\nFunc     %b  %b%b%b%b%b%b\n", (count+1), RegDst, testcases[num-count][16], Branch, testcases[num-count][15], MemRead, testcases[num-count][14], MemtoReg, testcases[num-count][13], ALUOp, testcases[num-count][12], MULOp, testcases[num-count][11], Memwrite, testcases[num-count][10], ALUSrc, testcases[num-count][9], RegWrite, testcases[num-count][8], ShiftSel, testcases[num-count][7], Jump, testcases[num-count][6], Func, testcases[num-count][5], testcases[num-count][4], testcases[num-count][3], testcases[num-count][2], testcases[num-count][1], testcases[num-count][0]);
+    begin
+        $display("ERROR: testcase no. %d", (count+1));
+        $display("       Opcode   = %d", OpCode);
+        $display("       Funccode = %d", FuncCode);
+        $display("         Output  Expected\n");
+        $display("RegDst   %b       %b", RegDst,   testcases[num-count][17]);
+        $display("Branch   %b       %b", Branch,   testcases[num-count][16]);
+        $display("MemRead  %b       %b", MemRead,  testcases[num-count][15]);
+        $display("MemtoReg %b       %b", MemtoReg, testcases[num-count][14]);
+        $display("ALUOp    %b       %b", ALUOp,    testcases[num-count][13]);
+        $display("MULOp    %b       %b", MULOp,    testcases[num-count][12]);
+        $display("MemWrite %b       %b", MemWrite, testcases[num-count][11]);
+        $display("ALUSrc   %b       %b", ALUSrc,   testcases[num-count][10]);
+        $display("RegWrite %b       %b", RegWrite, testcases[num-count][9]);
+        $display("ShiftSel %b       %b", ShiftSel, testcases[num-count][8]);
+        $display("Jump     %b       %b", Jump,     testcases[num-count][7]);
+        $display("Unsgnsel %b       %b", Unsgnsel, testcases[num-count][6]);
+        $display("Func     %b  %b", Func, testcases[num-count][5:0]);
+    end
 endtask
 
 endmodule
-
-
-
-
-
-
