@@ -1,11 +1,13 @@
 #------------------------------------------------------------------------------
-# File              : check.tcl
-# Description       : Script will read in files and report potential issues
+# File              : syn_script.tcl
+# Description       : Synthesis script
 # Primary Author    : Dominic Murphy
 # Other Contributors:
 #------------------------------------------------------------------------------
 
 source library_Setup
+
+#analyze -format sverilog {../src/processor.sv}
 
 analyze -library WORK -format sverilog {
 ../src/signextend.sv
@@ -34,6 +36,20 @@ analyze -library WORK -format sverilog {
 
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
-check_design
+check_timing
+create_clock i_clk -name i_clk -period 10
+set_max_area 0
+ungroup -all -flatten
+compile -map_effort high -incremental_mapping
+report_area > synth_area.rpt
+report_power > synth_power.rpt
+report_timing > synth_timing.rpt
+report_qor > synth_summary.rpt
+change_names -rules verilog -hierarchy -verbose
+
+write -f verilog -hierarchy -output "processor_synth.v"
+
+write_sdc design.sdc
+write_sdf design.sdf
 
 exit

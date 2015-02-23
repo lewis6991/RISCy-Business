@@ -21,9 +21,9 @@ endif
 source DC_Setup.sh
 
 if($1 == check) then
-    dc_shell -f "check.tcl" > check.log
+    dc_shell -f "syn_check.tcl" > check.log
     echo "Complete. Results written to check.log"
     exit
 endif
  
-dc_shell -f "script.tcl"
+dc_shell -f "syn_script.tcl"
