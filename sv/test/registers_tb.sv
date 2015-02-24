@@ -49,6 +49,7 @@ begin
     for (int h = 0 ; h < 2; h++)
     begin
         #clk
+        nReset = 0;
         //Test nReset condition
         RdData = 9673;
         RegWrite = h;
@@ -78,10 +79,10 @@ begin
             RsAddr = i;
             RtAddr = i;
             #clk
-            assert (RsData[i] == RdData[i]) 
+            assert ((RsData[i] == RdData[i]) || ~RegWrite)
             else
                 $error("ERROR: RsAddr = %b, RsData = %b, RdData = %b\n", RsAddr, RsData, RdData);
-            assert (RtData[i] == RdData[i]) 
+            assert ((RtData[i] == RdData[i]) || ~RegWrite) 
             else
                 $error("ERROR: RtAddr = %b, RtData = %b, RdData = %b\n", RtAddr, RtData, RdData);
         end
