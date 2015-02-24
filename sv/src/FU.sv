@@ -9,7 +9,7 @@
 module FU(
     input               RegWriteM,
                         RegWriteW,
-    input        [31:0] RAddrM,
+    input        [ 4:0] RAddrM,
                         RAddrW,
                         RsAddr,
 	                RtAddr,
@@ -19,16 +19,19 @@ module FU(
 
 always_comb
     begin
-        if((RegWriteM) & (RAddrM != 0) & (RAddrM == RsAddr))
+       ForwardA = 2'b00;
+       ForwardB = 2'b00;
+
+       if((RegWriteM) & (RAddrM != 0) & (RAddrM == RsAddr))
             ForwardA = 2'b01;
 
-        if((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddr))
+       if((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddr))
             ForwardB = 2'b01;
 
-       if((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddr))
+       if((RegWriteW) & (RAddrW != 0) & !(RegWriteM & (RAddrM != 0)) & (RAddrM != RsAddr) & (RAddrW == RsAddr))
             ForwardA = 2'b10;
  
-       if((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddr))
+       if((RegWriteW) & (RAddrW != 0) & !(RegWriteM & (RAddrM != 0)) & (RAddrM != RtAddr) & (RAddrW == RtAddr))
             ForwardB = 2'b10;
     end
 
