@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
-// File              : forwarding_unit.sv
+// File              : FU.sv
 // Description       : Forwarding Unit to prevent Data Hazards
 // Primary Author    : Dhanushan Raveendran
 // Other Contributors: 
 // Notes             :
 //------------------------------------------------------------------------------
 
-module forwarding_unit(
+module FU(
     input               RegWriteM,
                         RegWriteW,
     input        [31:0] RAddrM,
@@ -23,13 +23,13 @@ always_comb
             ForwardA = 2'b01;
 
         if((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddr))
-            ForwardB = 1'b01;
+            ForwardB = 2'b01;
 
        if((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddr))
             ForwardA = 2'b10;
  
        if((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddr))
-            ForwardB = 1'b10;
+            ForwardB = 2'b10;
     end
 
 endmodule

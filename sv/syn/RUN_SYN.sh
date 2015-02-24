@@ -12,7 +12,7 @@ if ($1 == clean) then
     if ($? != 0) then
         echo "Already clean!"
     else
-        rm ./*.pvl ./*.syn ./*.rpt ./*.mr
+        rm ./*.pvl ./*.syn ./*.rpt ./*.mr ./*.log ./*.svf
         echo "Cleaned!"
     endif
     exit
@@ -25,5 +25,18 @@ if($1 == check) then
     echo "Complete. Results written to check.log"
     exit
 endif
- 
-dc_shell -f "syn_script.tcl"
+
+if($1 == opt) then
+    dc_shell -f "syn_script_opt.tcl" > opt.log
+    echo "Complete. Results written to opt.log"
+    exit
+endif
+
+if($1 == basic) then
+    dc_shell -f "syn_script_basic.tcl" > basic.log
+    echo "Complete. Results written to basic.log"
+    exit
+endif
+
+echo "Error: No/Unrecognised argument provided."
+exit 1
