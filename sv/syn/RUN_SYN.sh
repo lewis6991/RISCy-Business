@@ -34,7 +34,7 @@ endif
 
 if($1 == basic) then
     dc_shell -f "syn_script_basic.tcl" > basic.log
-    echo "Complete. Results written to basic"
+    echo "Complete. Results written to basic.log"
     exit
 endif
 
