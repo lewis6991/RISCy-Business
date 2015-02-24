@@ -12,7 +12,7 @@ if ($1 == clean) then
     if ($? != 0) then
         echo "Already clean!"
     else
-        rm ./*.pvl ./*.syn ./*.rpt ./*.mr
+        rm ./*.pvl ./*.syn ./*.rpt ./*.mr ./*.log ./*.svf
         echo "Cleaned!"
     endif
     exit
@@ -23,6 +23,12 @@ source DC_Setup.sh
 if($1 == check) then
     dc_shell -f "syn_check.tcl" > check.log
     echo "Complete. Results written to check.log"
+    exit
+endif
+
+if($1 == basic) then
+    dc_shell -f "syn_script_basic.tcl" #> check.log
+    #echo "Complete. Results written to check.log"
     exit
 endif
  
