@@ -29,10 +29,11 @@ main()
             (-ex)           RUN_EX=1;;
             (-mem)          RUN_MEM=1;;
             (-wb)           RUN_WB=1;;
-            (--specific=*)  SPECIFIC="$SPECIFIC ${1//"-specific="/}";;
+            (--specific=*)  SPECIFIC="$SPECIFIC ${1//"--specific="/}";;
             (-s=*)          SPECIFIC="$SPECIFIC ${1//"-s="/}";;
             (-gui)          GUI_VAR="+gui"
                             echo "Include GUI";;
+            (-q|--quiet)    QUIET=1;;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
             (-*)            echo "Unknown argument. Try --help for information";;
             (*)             echo "No arguments defined";;
@@ -46,17 +47,17 @@ main()
     fi
     if [ -n "$RUN_IF" ]
     then
-        MODULES=(mux pcinc pc IF)
+        MODULES=(pcinc pc IF)
         stages "IF"
     fi
     if [ -n "$RUN_ID" ]
     then
-        MODULES=(registers nleftshift signextend)
+        MODULES=(decoder registers signextend)
         stages "ID"
     fi
     if [ -n "$RUN_EX" ]
     then
-        MODULES=(mux alu EX)
+        MODULES=(alu acc_control ex_mult ex_control EX)
         stages "EX"
     fi
     if [ -n "$RUN_MEM" ]
@@ -66,7 +67,7 @@ main()
     fi
     if [ -n "$RUN_WB" ]
     then
-        MODULES=(mux WB)
+        MODULES=(mux)
         stages "WB"
     fi
     if [ -n "$RUN_PROC" ]
@@ -74,8 +75,9 @@ main()
         proc
     fi
 
-    echo -e "\n$summarytext" >> run.log
-    echo -e "\n$summarytext"
+    padding
+    echo -e "\n$newtext" >> run.log
+    echo -e "\n$newtext"
 
     exit 0
 }
@@ -93,6 +95,8 @@ usage()
     -wb                Runs the write back tests
     -s,--specific=\"\"   Runs a singular test on 'module'
     -gui               Runs the gui
+    -q,--quiet         Runs the tests with little feedback.
+                       Default case shows errors within module tests
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
     -plusargs=\"\"       Include plusargs to any command to set arguments
@@ -113,9 +117,15 @@ proc()
         ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv >> run.log
         if [ "$?" = "0" ]
         then
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. PASS\n"
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. PASS
+"
         else
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. FAIL\n"
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. FAIL
+"
+            if [ -z "$QUIET" ]
+            then
+                ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv >> run.log
+            fi
         fi
     else
         for test in {1..4}
@@ -123,13 +133,19 @@ proc()
             ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv >> run.log
             if [ "$?" = "0" ]
             then
-                summarytext="${summarytext}processor testcase $test .. PASS\n"
+                summarytext="${summarytext}processor testcase $test .. PASS
+"
             else
-                summarytext="${summarytext}processor testcase $test .. FAIL\n"
+                summarytext="${summarytext}processor testcase $test .. FAIL
+"
+                if [ -z "$QUIET" ]
+                then
+                    ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv
+                fi
             fi
         done
     fi
-    echo "##### Processor done"
+    echo "      .. done"
 }
 
 stages()
@@ -137,17 +153,23 @@ stages()
     echo "##### Testing the $1 stage"
     for i in ${MODULES[@]};
     do
-        echo "##### Testing ${i}.sv"
+        echo "  ### Testing ${i}.sv"
         ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
         if [ "$?" = "0" ]
         then
-            summarytext="${summarytext}$i .. PASS\n"
+            summarytext="${summarytext}$i .. PASS
+"
         else
-            summarytext="${summarytext}$i .. FAIL\n"
+            summarytext="${summarytext}$i .. FAIL
+"
+            if [ -z "$QUIET" ]
+            then
+                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+            fi
         fi
-        echo "##### ${i}.sv done"
+        echo "      .. done"
     done
-    echo "##### $1 stage done"
+    echo "##### .. done"
 }
 
 specific()
@@ -158,16 +180,44 @@ specific()
         ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
         if [ "$?" = "0" ]
         then
-            summarytext="${summarytext}$i .. PASS\n"
+            summarytext="${summarytext}$i .. PASS
+"
         else
-            summarytext="${summarytext}$i .. FAIL\n"
+            summarytext="${summarytext}$i .. FAIL
+"
+            if [ -z "$QUIET" ]
+            then
+                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+            fi
         fi
-        echo "##### ${i}.sv done"
+        echo "      .. done"
     done
 }
 
-echo 'run.log\n\n' > run.log
+padding()
+{
+    while read a 
+    do 
+       declare -i NUMCS
+       TOTAL=${#a}
+       NUMCS=$TOTAL
+       if [ $NUMCS -gt 8 ]
+       then
+           NUMCS=$NUMCS-8
+           newtext="${newtext}${a:0:$NUMCS} "
+           for (( j=1; j<=14-$NUMCS; j++ ))
+           do
+               newtext="${newtext}."
+           done
+           newtext="${newtext} ${a:$TOTAL-4:$TOTAL}\n"
+       fi
+    done <<< "$summarytext"
+}
+
+echo -e 'run.log
+' > run.log
 summarytext=""
+newtext=""
 NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
 
