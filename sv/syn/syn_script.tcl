@@ -37,10 +37,9 @@ analyze -library WORK -format sverilog {
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
-create_clock i_clk -name i_clk -period 10
-set_max_area 0
-ungroup -all -flatten
-compile -map_effort high -incremental_mapping
+create_clock Clock -name Clock -period 50
+compile_ultra
+#compile -map_effort high -incremental_mapping
 report_area > synth_area.rpt
 report_power > synth_power.rpt
 report_timing > synth_timing.rpt
