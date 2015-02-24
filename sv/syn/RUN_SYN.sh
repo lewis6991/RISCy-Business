@@ -32,7 +32,7 @@ if($1 == opt) then
     exit
 endif
 
-if($1 == opt) then
+if($1 == basic) then
     dc_shell -f "syn_script_basic.tcl" > basic.log
     echo "Complete. Results written to basic"
     exit
