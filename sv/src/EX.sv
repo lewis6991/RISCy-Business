@@ -39,7 +39,6 @@ module EX(
                         MemWriteOut
 );
 
-    wire [ 5:0] ALUfunc;
     wire [31:0] ALUout ;
     wire [31:0] ACCout ;
     wire [63:0] MULout ;

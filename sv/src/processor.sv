@@ -108,6 +108,9 @@ wire [31:0] MemDataW     ;
 wire [ 1:0] ForwardA     ;
 wire [ 1:0] ForwardB     ;
 
+wire [31:0] A            ;
+wire [31:0] B            ;
+
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
@@ -211,8 +214,8 @@ EX ex(
     .MemtoRegIn (MemtoRegEin ),
     .MemWriteIn (MemWriteEin ),
     .ALUSrc     (ALUSrcE     ),
-    .A          (RsDataE     ),
-    .B          (RtDataEin   ),
+    .A          (RsDataE     ),//(A           ),
+    .B          (RtDataEin   ),//(B           ),
     .Immediate  (ImmDataE    ),
     .Shamt      (ShamtE      ),
     .RAddrIn    (RAddrEin    ),
@@ -300,7 +303,7 @@ WB wb0(
     .WBData  (RDataW   )
 );
 
-FU dfu0(
+/*FU dfu0(
     .RegWriteM(RegWriteMin),
     .RegWriteW(RegWriteW  ),
     .RAddrM   (RAddrMin   ),
@@ -310,5 +313,21 @@ FU dfu0(
     .ForwardA (ForwardA   ),
     .ForwardB (ForwardB   )
 );
+
+muxthree m0(
+    .Sel(ForwardA  ),
+    .A  (RsDataE   ),
+    .B  (ALUDataMin),
+    .C  (RDataW    ),
+    .Y  (A         )
+);
+
+muxthree m1(
+    .Sel(ForwardB  ),
+    .A  (RtDataEin ),
+    .B  (ALUDataMin),
+    .C  (RDataW    ),
+    .Y  (B         )
+);*/
 
 endmodule
