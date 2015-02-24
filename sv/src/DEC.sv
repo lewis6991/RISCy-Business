@@ -33,7 +33,7 @@ module DEC(
 
 wire [31:0] instrse;
 wire        shiftsel,
-            unsgnsel;
+            unsgnsel,
             regdst;
 
 assign Shamt        = Instruction[10:6];
