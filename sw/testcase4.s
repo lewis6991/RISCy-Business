@@ -1,12 +1,12 @@
-//-----------------------------------------------------------------------------
-// File              : testcase4.s
-// Description       : Assembler code for test case 4 of the directed tests.
-//                     This test exercises all the shift instructions.
-// Pimrary Author    : Lewis Russell
-// Other Contributers:
-// Notes             : To generate machine code, run cross-compiler using:
-//                         gcc -Wa,-adhln -c -O -mips32 -EB testcase4.s
-//------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+# File              : testcase4.s
+# Description       : Assembler code for test case 4 of the directed tests.
+#                     This test exercises all the shift instructions.
+# Pimrary Author    : Lewis Russell
+# Other Contributers:
+# Notes             : To generate machine code, run cross-compiler using:
+#                         gcc -Wa,-adhln -c -O -mips32 -EB testcase4.s
+#------------------------------------------------------------------------------
 .set noreorder
 .set noat
 li    $1 ,      0x80050000
