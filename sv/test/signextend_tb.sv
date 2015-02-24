@@ -21,7 +21,7 @@ signextend sgnext0 (
 //Initial conditions
 initial
 begin
-    In  = 1'b0;
+    In  = 0;
 end
 
 //Testing procedure
