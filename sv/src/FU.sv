@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
-// File              : forwarding_unit.sv
+// File              : FU.sv
 // Description       : Forwarding Unit to prevent Data Hazards
 // Primary Author    : Dhanushan Raveendran
 // Other Contributors: 
 // Notes             :
 //------------------------------------------------------------------------------
 
-module forwarding_unit(
+module FU(
     input               RegWriteM,
                         RegWriteW,
     input        [31:0] RAddrM,
