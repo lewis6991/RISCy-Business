@@ -13,6 +13,8 @@ module DEC(
                              RData       ,
                              PCAddrIncIn ,
         input        [4:0]   RAddrIn     ,
+                             RsAddr      ,
+                             RtAddr      ,
         output logic [31:0]  ImmData     ,
                              RsData      ,
                              RtData      ,
@@ -36,8 +38,10 @@ wire        shiftsel,
             unsgnsel,
             regdst;
 
-assign Shamt        = Instruction[10:6];
-assign PCAddrIncOut = PCAddrIncIn      ;
+assign Shamt        = Instruction[10:6] ;
+assign PCAddrIncOut = PCAddrIncIn       ;
+assign RsAddr       = Instruction[25:21];
+assign RtAddr       = Instruction[20:16];
 
 decoder dec0 (
     .RegDst  (regdst            ),

@@ -70,6 +70,11 @@ wire [4:0]  RAddrMin     ;
 wire [4:0]  RAddrMout    ;
 wire [4:0]  RAddrW       ;
 
+wire [4:0]  RsAddrD      ;
+wire [4:0]  RsAddrE      ;
+wire [4:0]  RtAddrD      ;
+wire [4:0]  RtAddrE      ;
+
 wire [31:0] ImmDataD     ;
 wire [31:0] ImmDataE     ;
 
@@ -127,6 +132,8 @@ DEC de0(
     .PCAddrIncIn (PCAddrIncDin ),
     .RAddrIn     (RAddrW       ),
     .ImmData     (ImmDataD     ),
+    .RsAddr      (RsAddrD      ),
+    .RtAddr      (RtAddrD      ),
     .RsData      (RsDataD      ),
     .RtData      (RtDataD      ),
     .PCAddrIncOut(PCAddrIncDout),
@@ -144,11 +151,13 @@ DEC de0(
     .Shamt       (ShamtD       )
 );
 
-PIPE #(.n(153)) pipe1(
+PIPE #(.n(163)) pipe1(
     .Clock(Clock),
     .nReset(nReset),
     .In ({
         ImmDataD     ,
+        RsAddrD      ,
+        RtAddrD      ,
         RsDataD      ,
         RtDataD      ,
         PCAddrIncDout,
@@ -166,6 +175,8 @@ PIPE #(.n(153)) pipe1(
     ShamtD})         ,
     .Out({
         ImmDataE   ,
+        RsAddrE    ,
+        RtAddrE    ,
         RsDataE    ,
         RtDataEin  ,
         PCAddrIncE ,
