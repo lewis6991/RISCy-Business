@@ -307,8 +307,8 @@ FU dfu0(
     .RAddrW   (RAddrW     ),
     .RsAddr   (RsAddrE    ),
     .RtAddr   (RtAddrE    ),
-    .ForwardA (           ),
-    .ForwardB (           ),
+    .ForwardA (ForwardA   ),
+    .ForwardB (ForwardB   )
 );
 
 endmodule

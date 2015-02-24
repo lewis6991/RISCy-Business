@@ -14,11 +14,12 @@ module muxthree #(parameter n = 32)(
     output logic [n-1:0] Y            
 );
 
-case(Sel)
-	0:       Y = A;
-	1:       Y = B;
-	2:       Y = C;
-	default: Y = A;
-endcase
+always_comb
+	case(Sel)
+		0:       Y = A;
+		1:       Y = B;
+		2:       Y = C;
+		default: Y = A;
+	endcase
 
 endmodule
