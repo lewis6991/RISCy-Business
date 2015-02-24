@@ -105,6 +105,9 @@ wire [31:0] ALUDataW     ;
 wire [31:0] MemDataM     ;
 wire [31:0] MemDataW     ;
 
+wire [ 1:0] ForwardA     ;
+wire [ 1:0] ForwardB     ;
+
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
@@ -295,6 +298,17 @@ WB wb0(
     .ALUData (ALUDataW ),
     .MemData (MemDataW ),
     .WBData  (RDataW   )
+);
+
+FU dfu0(
+    .RegWriteM(RegWriteMin),
+    .RegWriteW(RegWriteW  ),
+    .RAddrM   (RAddrMin   ),
+    .RAddrW   (RAddrW     ),
+    .RsAddr   (RsAddrE    ),
+    .RtAddr   (RtAddrE    ),
+    .ForwardA (           ),
+    .ForwardB (           ),
 );
 
 endmodule
