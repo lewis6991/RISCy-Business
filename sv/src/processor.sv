@@ -18,9 +18,6 @@ module PROCESSOR(
                         MemRead
 );
 
-wire RegDstD     ;
-wire RegDstE     ;
-
 wire JumpD       ;
 wire JumpE       ;
 
@@ -134,7 +131,6 @@ DEC de0(
     .RtData      (RtDataD      ),
     .PCAddrIncOut(PCAddrIncDout),
     .RAddrOut    (RAddrD       ),
-    .RegDst      (RegDstD      ),
     .Branch      (BranchD      ),
     .Jump        (JumpD        ),
     .MemRead     (MemReadD     ),
@@ -148,7 +144,7 @@ DEC de0(
     .Shamt       (ShamtD       )
 );
 
-PIPE #(.n(154)) pipe1(
+PIPE #(.n(153)) pipe1(
     .Clock(Clock),
     .nReset(nReset),
     .In ({
@@ -157,7 +153,6 @@ PIPE #(.n(154)) pipe1(
         RtDataD      ,
         PCAddrIncDout,
         RAddrD       ,
-        RegDstD      ,
         BranchD      ,
         JumpD        ,
         MemReadD     ,
@@ -175,7 +170,6 @@ PIPE #(.n(154)) pipe1(
         RtDataEin  ,
         PCAddrIncE ,
         RAddrEin   ,
-        RegDstE    ,
         BranchE    ,
         JumpE      ,
         MemReadEin ,
