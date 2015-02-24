@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
-// File : 3inmux.sv
+// File : muxthree.sv
 // Description : 3 input multiplexers
 // Primary Author : Dhanushan Raveendran
 // Other Contributors:
 // Notes :
 //------------------------------------------------------------------------------
 
-module 3inmux #(parameter n = 32)(
+module muxthree #(parameter n = 32)(
     input        [  1:0] Sel,
     input        [n-1:0] A,
                          B,
