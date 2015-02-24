@@ -26,10 +26,17 @@ if($1 == check) then
     exit
 endif
 
-if($1 == basic) then
-    dc_shell -f "syn_script_basic.tcl" #> check.log
-    #echo "Complete. Results written to check.log"
+if($1 == opt) then
+    dc_shell -f "syn_script_opt.tcl" > opt.log
+    echo "Complete. Results written to opt.log"
     exit
 endif
- 
-dc_shell -f "syn_script.tcl"
+
+if($1 == opt) then
+    dc_shell -f "syn_script_basic.tcl" > basic.log
+    echo "Complete. Results written to basic"
+    exit
+endif
+
+echo "Error: No/Unrecognised argument provided."
+exit 1
