@@ -18,8 +18,7 @@ module DEC(
                              RtData      ,
                              PCAddrIncOut,
         output logic [4:0]   RAddrOut    ,
-        output logic         RegDst      ,
-                             Branch      ,
+        output logic         Branch      ,
                              Jump        ,
                              MemRead     ,
                              MemtoReg    ,
@@ -35,12 +34,13 @@ module DEC(
 wire [31:0] instrse;
 wire        shiftsel,
             unsgnsel;
+            regdst;
 
 assign Shamt        = Instruction[10:6];
 assign PCAddrIncOut = PCAddrIncIn      ;
 
 decoder dec0 (
-    .RegDst  (RegDst            ),
+    .RegDst  (regdst            ),
     .Branch  (Branch            ),
     .Jump    (Jump              ),
     .MemRead (MemRead           ),
@@ -86,7 +86,7 @@ mux #(.n(5))mux2(
     .A  (Instruction[20:16]),
     .B  (Instruction[15:11]),
     .Y  (RAddrOut          ),
-    .Sel(RegDst            )
+    .Sel(regdst            )
 );
 
 endmodule
