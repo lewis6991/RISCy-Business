@@ -95,6 +95,8 @@ usage()
     -wb                Runs the write back tests
     -s,--specific=\"\"   Runs a singular test on 'module'
     -gui               Runs the gui
+    -q,--quiet         Runs the tests with little feedback.
+                       Default case shows errors within module tests
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
     -plusargs=\"\"       Include plusargs to any command to set arguments
