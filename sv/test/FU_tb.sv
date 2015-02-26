@@ -1,16 +1,16 @@
 //----------------------------------------
-// File: forwarding_unit_tb.sv
+// File: FU_tb.sv
 // Description: Data forwarding unit testbench
 // Primary Author: Jack Barnes
 // Other Contributors:
 // Notes: Full test coverage
 //----------------------------------------
-module forwarding_unit_tb;
+module FU_tb;
 
 timeunit 10ns; timeprecision 100ps;
 const int clk = 100;
 
-forwarding_unit forwarding_unit0 (
+FU FU0 (
 );
 
 //Initial conditions
