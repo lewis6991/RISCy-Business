@@ -34,7 +34,7 @@ task read_registers();
     begin
         regAddr = i;
         @ (posedge Clock);
-        registers[i] = regData;
+        #20 registers[i] = regData;
     end
 endtask
 
