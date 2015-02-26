@@ -39,19 +39,19 @@ fail:
     beq     $0,  $0, finish
     beq     $0,  $0, finish
     beq     $0,  $0, finish
-level7:
-    add    $13, $12, $1
-    bgezal  $1       fail
-    bgezal  $1       fail
-    bgezal  $1       fail
-    bgezal  $1       fail
-    bgezal  $1       fail
-    bgezal  $0,      finish
-    beq     $0,  $0, fail
-    beq     $0,  $0, fail
-    beq     $0,  $0, fail
-    beq     $0,  $0, fail
-    beq     $0,  $0, fail
+#level7:
+#    add    $13, $12, $1
+#    bgezal  $1       fail
+#    bgezal  $1       fail
+#    bgezal  $1       fail
+#    bgezal  $1       fail
+#    bgezal  $1       fail
+#    bgezal  $0,      finish
+#    beq     $0,  $0, fail
+#    beq     $0,  $0, fail
+#    beq     $0,  $0, fail
+#    beq     $0,  $0, fail
+#    beq     $0,  $0, fail
 level6:
     add    $11, $10, $1
     blez    $2,      fail
@@ -67,7 +67,7 @@ level6:
     beq     $0,  $0, fail
 level6b:
     add    $12, $11, $1
-    blez    $1,      level7
+    blez    $1,      finish
     beq     $0,  $0, fail
     beq     $0,  $0, fail
     beq     $0,  $0, fail
