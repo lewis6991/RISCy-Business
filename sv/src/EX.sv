@@ -36,7 +36,8 @@ module EX(
                         RegWriteOut,
                         MemReadOut ,
                         MemtoRegOut,
-                        MemWriteOut
+                        MemWriteOut,
+                        BranchTaken
 );
 
     wire [31:0] ALUout ;
@@ -141,7 +142,8 @@ module EX(
         .N           (N          ), // Output negative flag.
         .MULSelB     (MULSelB    ), // MUL module select
         .RegWriteOut (RegWriteOut),
-        .BRAEn       (BRAEn      )
+        .BRAEn       (BRAEn      ),
+        .BranchTaken (BranchTaken)
     );
 
 

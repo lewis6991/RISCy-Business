@@ -39,7 +39,8 @@ module ex_control(
                         ACCEn      , // Enable ACC write
                         MULSelB    , // MUL module select
                         RegWriteOut,
-                        BRAEn      
+                        BRAEn      ,
+                        BranchTaken
 );
     always_comb
     begin
@@ -53,6 +54,7 @@ module ex_control(
         MULSelB     = 1;
         RegWriteOut = RegWriteIn;
         BRAEn       = 0;
+        BranchTaken = 0;
 
         if (ALUOp)
             case (Func)
@@ -128,6 +130,7 @@ module ex_control(
             begin
                 Out         = BRAret;
                 RegWriteOut = RegWriteIn & BRAtaken;
+                BranchTaken = BRAtaken;
                 BRAEn       = 1;
             end
         
@@ -135,6 +138,7 @@ module ex_control(
             begin
                 Out         = BRAret;
                 RegWriteOut = RegWriteIn & BRAtaken;
+                BranchTaken = BRAtaken;
                 BRAEn       = 1;
             end
         

@@ -43,7 +43,7 @@ module IF(
     );
 
     mux mux0(
-        .Sel(1'b0),//(BranchTaken ),
+        .Sel(BranchTaken ),
         .A  (progaddrinc ),
         .B  (BranchAddr  ),
         .Y  (progaddrnext)

@@ -60,6 +60,8 @@ wire ALUOpE      ;
 wire MULOpD      ;
 wire MULOpE      ;
 
+wire BranchTaken ;
+
 wire [31:0] InstructionF ;
 wire [31:0] InstructionD ;
 
@@ -113,11 +115,13 @@ wire [ 1:0] ForwardB     ;
 wire [31:0] A            ;
 wire [31:0] B            ;
 
+wire [31:0] BranchAddr   ;
+
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
-    .BranchTaken(            ),
-    .BranchAddr (            ),
+    .BranchTaken(BranchTaken ),
+    .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
     .InstrOut   (InstructionF),
@@ -235,7 +239,8 @@ EX ex(
     .MemReadOut (MemReadEout ),
     .MemtoRegOut(MemtoRegEout),
     .MemWriteOut(MemWriteEout),
-    .PCout      (            )
+    .PCout      (BranchAddr  ),
+    .BranchTaken(BranchTaken )
 );
 
 PIPE #(.n(73)) pipe2(

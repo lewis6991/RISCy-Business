@@ -13,7 +13,7 @@ module branch(
     input        [31:0] PCIn   , // Program counter input.
                         A      , // ALU input A
                         B      , // ALU input B
-    input        [25:0] Address, // Address input
+    input        [31:0] Address, // Address input
     input        [ 5:0] Func   , 
     output logic [31:0] PCout  , // Program counter
                         Ret    , // Return address
@@ -30,20 +30,20 @@ module branch(
                 `J,
                 `JAL:
                     begin
-                        PCout = {PCIn[31:28], Address, 2'b00};
+                        PCout = {PCIn[31:28], Address[25:0], 2'b00};
                         Taken = 1;
                     end
                     
                 `BEQ:
                     if (A == B)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                 `BNE:
                     if (A != B)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                         
@@ -51,19 +51,19 @@ module branch(
                 `BGEZAL:
                     if (A >= 0)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                 `BGTZ:
                     if (A > 0)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                 `BLEZ:
                     if (A <= 0)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                         
@@ -71,7 +71,7 @@ module branch(
                 `BLTZAL:
                     if (A < 0)
                         begin
-                            PCout = PCIn + {Address[15:0], 2'b00};
+                            PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                         
