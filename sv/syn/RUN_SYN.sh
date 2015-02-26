@@ -21,20 +21,20 @@ endif
 source DC_Setup.sh
 
 if($1 == check) then
-    dc_shell -f "syn_check.tcl" > check.log
-    echo "Complete. Results written to check.log"
+    dc_shell -f "syn_check.tcl" > check_syn.log
+    echo "Complete. Results written to check_syn.log"
     exit
 endif
 
 if($1 == opt) then
-    dc_shell -f "syn_script_opt.tcl" > opt.log
-    echo "Complete. Results written to opt.log"
+    dc_shell -f "syn_script_opt.tcl" > opt_syn.log
+    echo "Complete. Results written to opt_syn.log"
     exit
 endif
 
 if($1 == basic) then
-    dc_shell -f "syn_script_basic.tcl" > basic.log
-    echo "Complete. Results written to basic.log"
+    dc_shell -f "syn_script_basic.tcl" > basic_syn.log
+    echo "Complete. Results written to basic_syn.log"
     exit
 endif
 
