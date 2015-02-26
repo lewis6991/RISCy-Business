@@ -92,12 +92,12 @@ main()
     fi
     if [ -n "$RUN_SYN" ]
     then
-        PROCLOC="test/processor_tb.sv syn/processor_synth.v"
+        PROCLOC="test/processor_tb.sv syn/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
         proc
     fi
     if [ -n "$RUN_PNR" ]
     then
-        PROCLOC="test/processor_tb.sv syn/processor_net.v"
+        PROCLOC="test/processor_tb.sv syn/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
         proc
     fi
 
