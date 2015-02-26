@@ -22,6 +22,8 @@ main()
                             RUN_EX=1
                             RUN_MEM=1
                             RUN_WB=1
+                            RUN_FU=1
+                            RUN_BP=1
                             RUN_PROC=1;;
             (-proc)         RUN_PROC=1;;
             (-if)           RUN_IF=1;;
@@ -29,12 +31,16 @@ main()
             (-ex)           RUN_EX=1;;
             (-mem)          RUN_MEM=1;;
             (-wb)           RUN_WB=1;;
+            (-fu)           RUN_FU=1;;
+            (-bp)           RUN_BP=1;;
             (--specific=*)  SPECIFIC="$SPECIFIC ${1//"--specific="/}";;
             (-s=*)          SPECIFIC="$SPECIFIC ${1//"-s="/}";;
             (-gui)          GUI_VAR="+gui"
                             echo "Include GUI";;
             (-q|--quiet)    QUIET=1;;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
+            (-syn)          RUN_SYN=1;;
+            (-pnr)          RUN_PNR=1;;
             (-*)            echo "Unknown argument. Try --help for information";;
             (*)             echo "No arguments defined";;
         esac
@@ -70,10 +76,33 @@ main()
         MODULES=(mux)
         stages "WB"
     fi
+    if [ -n "$RUN_FU" ]
+    then
+        MODULES=(FU)
+        stages "FU"
+    fi
+    if [ -n "$RUN_BP" ]
+    then
+        MODULES=(BP)
+        stages "BP"
+    fi
     if [ -n "$RUN_PROC" ]
     then
         proc
     fi
+    if [ -n "$RUN_SYN" ]
+    then
+        PROCLOC="test/processor_tb.sv syn/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
+        proc
+    fi
+    if [ -n "$RUN_PNR" ]
+    then
+        PROCLOC="test/processor_tb.sv syn/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
+        proc
+    fi
+
+
+
 
     padding
     echo -e "\n$newtext" >> run.log
@@ -93,6 +122,8 @@ usage()
     -ex                Runs the execute tests
     -mem               Runs the memory tests
     -wb                Runs the write back tests
+    -fu                Runs the forwarding unit test
+    -bp                Runs the branch prediction test
     -s,--specific=\"\"   Runs a singular test on 'module'
     -gui               Runs the gui
     -q,--quiet         Runs the tests with little feedback.
@@ -114,7 +145,7 @@ proc()
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
-        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv >> run.log
+        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC >> run.log
         if [ "$?" = "0" ]
         then
             summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. PASS
@@ -124,13 +155,13 @@ proc()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "test/processor_tb.sv" src/*.sv >> run.log
+                ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
             fi
         fi
     else
         for test in {1..4}
         do
-            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv >> run.log
+            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC >> run.log
             if [ "$?" = "0" ]
             then
                 summarytext="${summarytext}processor testcase $test .. PASS
@@ -140,7 +171,7 @@ proc()
 "
                 if [ -z "$QUIET" ]
                 then
-                    ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "test/processor_tb.sv" src/*.sv
+                    ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
                 fi
             fi
         done
@@ -164,7 +195,7 @@ stages()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
             fi
         fi
         echo "      .. done"
@@ -187,7 +218,7 @@ specific()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
             fi
         fi
         echo "      .. done"
@@ -218,6 +249,7 @@ echo -e 'run.log
 ' > run.log
 summarytext=""
 newtext=""
+PROCLOC="test/processor_tb.sv src/*.sv"
 NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
 
