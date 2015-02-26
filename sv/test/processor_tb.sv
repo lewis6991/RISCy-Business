@@ -62,6 +62,8 @@ const int reg_var2 = 32'h55557777;
 const int reg_var3 = 32'h01234567;
 const int reg_var4 = 32'h80050000;
 const int reg_var5 = 32'h00000004;
+const int reg_var6 = 32'h82345678;
+const int reg_var7 = 32'h00000011;
 const int imm1 = 16'h5500    ;
 const int imm2 = 16'hFFFF    ;
 const int imm3 = 16'h7654    ;
@@ -70,52 +72,16 @@ const int imm4 = 16'h5555    ;
 logic [31:0] program_memory[$];
 logic [31:0] register_memory[$];
 
-logic [31:0] testcase_memory_1[$] = {
-    32'h3C011234, // LUI $1 'h1234
-    32'h34215678, // ORI $1 'h5678
-    32'h3C025555, // LUI $2 'h5555
-    32'h00000000, // NOP
-    32'h34427777, // ORI $2 'h7777
-    32'h00411820, // ADD $3 $1 $2
-    32'h00000000, // NOP
-    32'h00000000, // NOP
-    32'h00000000, // NOP
-    32'h00000000, // NOP
-    32'h00000000  // NOP
-};
+logic [31:0] testcase_memory_1[$] = { `include "testcase1.sv" };
+logic [31:0] testcase_memory_2[$] = { `include "testcase2.sv" };
+logic [31:0] testcase_memory_3[$] = { `include "testcase3.sv" };
+logic [31:0] testcase_memory_4[$] = { `include "testcase4.sv" };
+logic [31:0] testcase_memory_5[$] = { `include "testcase5.sv" };
 
 logic [31:0] testcase_registers_1[$] = {
     reg_var1       ,
     reg_var2       ,
     reg_var1 + reg_var2
-};
-
-logic [31:0] testcase_memory_2[$] = {
-    32'h3C011234, // li     $1,      0x12340000
-    32'h34215678, // ori    $1,  $1, 0x5678
-    32'h3C020123, // li     $2,      0x01230000
-    32'h34424567, // ori    $2,  $2, 0x4567
-    32'h00221820, // add    $3,  $1, $2
-    32'h00222022, // sub    $4,  $1, $2
-    32'h20455500, // addi   $5,  $2, 0x5500
-    32'h00223024, // and    $6,  $1, $2
-    32'h30277654, // andi   $7,  $1, 0x7654
-    32'h00224025, // or     $8,  $1, $2
-    32'h00224826, // xor    $9,  $1, $2
-    32'h00225027, // nor   $10,  $1, $2
-    32'h382B5555, // xori  $11,  $1, 0x5555
-    32'h302CFFFF, // andi  $12,  $1, 0xFFFF
-    32'h718D6820, // clz   $13, $12
-    32'h000C7022, // sub   $14,  $0, $12
-    32'h71CF7821, // clo   $15, $14
-    32'h00228021, // addu  $16,  $1, $2
-    32'h00228823, // subu  $17,  $1, $2
-    32'h24525500, // addiu $18,  $2, 0x5500
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000  // nop
 };
 
 logic [31:0] testcase_registers_2[$] = {
@@ -137,43 +103,6 @@ logic [31:0] testcase_registers_2[$] = {
     reg_var1 + reg_var3   ,
     reg_var1 - reg_var3   ,
     reg_var3 + imm1
-};
-
-logic [31:0] testcase_memory_3[$] = {
-    32'h3C011234, // li    $1,     0x12340000
-    32'h34215678, // ori   $1, $1, 0x5678
-    32'h3C020123, // li    $2,     0x01230000
-    32'h34424567, // ori   $2, $2, 0x4567
-    32'h70221802, // mul   $3, $1, $2
-    32'h00200011, // mthi  $1
-    32'h00200013, // mtlo  $1
-    32'h00220018, // mult  $1, $2
-    32'h00002010, // mfhi  $4
-    32'h00002812, // mflo  $5
-    32'h70220000, // madd  $1, $2
-    32'h00003010, // mfhi  $6
-    32'h00003812, // mflo  $7
-    32'h70420004, // msub  $2, $2
-    32'h00004010, // mfhi  $8
-    32'h00004812, // mflo  $9
-    32'h70420001, // maddu $2, $2
-    32'h00005010, // mfhi  $10
-    32'h00005812, // mflo  $11
-    32'h70420005, // msubu $2, $2
-    32'h00006010, // mfhi  $12
-    32'h00006812, // mflo  $13
-    32'h00220019, // multu $1, $2
-    32'h00007010, // mfhi  $14
-    32'h00007812, // mflo  $15
-    32'h00200011, // mthi  $1
-    32'h00400013, // mtlo  $2
-    32'h00008010, // mfhi  $16
-    32'h00008812, // mflo  $17
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000  // nop
 };
 
 const longint reg_prd1 = reg_var1*reg_var3           ;
@@ -202,29 +131,6 @@ logic [31:0] testcase_registers_3[$] = {
     reg_var3
 };
 
-logic [31:0] testcase_memory_4[$] = {
-    32'h3C018005, // li    $1 ,      0x80050000
-    32'h34420004, // ori   $2 , $2 , 0x4
-    32'h00011943, // sra   $3 , $1 , 0x5
-    32'h00412007, // srav  $4 , $1 , $2
-    32'h00012940, // sll   $5 , $1 , 0x5
-    32'h00013142, // srl   $6 , $1 , 0x5
-    32'h00413804, // sllv  $7 , $1 , $2
-    32'h00414006, // srlv  $8 , $1 , $2
-    32'h0027480B, // movn  $9 , $1 , $7
-    32'h00C0500A, // movz  $10, $6 , $0
-    32'h0046582A, // slt   $11, $2 , $6
-    32'h284C0100, // slti  $12, $2 , 0x0100
-    32'h3C0D8800, // li    $13,      0x88000000
-    32'h002D702B, // sltu  $14, $1 , $13
-    32'h2D6F3200, // sltiu $15, $11, 0x3200
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000, // nop
-    32'h00000000  // nop
-};
-
 logic [31:0] testcase_registers_4[$] = {
     reg_var4             ,
     reg_var5             ,
@@ -241,6 +147,21 @@ logic [31:0] testcase_registers_4[$] = {
     32'h88000000,
     1,
     1
+};
+
+logic [31:0] testcase_registers_5[$] = {
+    reg_var6,
+    reg_var2,
+    reg_var2,
+    reg_var7,
+    reg_var7 + reg_var6,
+    reg_var7 + 2*reg_var6,
+    reg_var7 + 3*reg_var6,
+    reg_var7 + 4*reg_var6,
+    reg_var7 + 5*reg_var6,
+    reg_var7 + 6*reg_var6,
+    reg_var7 + 7*reg_var6,
+    reg_var7 + 8*reg_var6
 };
 
 int test_no = 1;
@@ -270,6 +191,12 @@ begin
             program_memory  = testcase_memory_4   ;
             register_memory = testcase_registers_4;
         end
+
+        5: begin
+            program_memory  = testcase_memory_5   ;
+            register_memory = testcase_registers_5;
+        end
+
 
         default:
             assert (0)
