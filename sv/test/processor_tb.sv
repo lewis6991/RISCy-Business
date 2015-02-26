@@ -18,18 +18,25 @@ logic Clock  = 1'b0,
       nReset = 1'b0;
 
 logic [31:0] instrData ;
+logic [ 4:0] regAddr   ;
 wire  [15:0] instrAddr ,
              memAddr   ;
 wire  [31:0] memRData  ,
-             memWData  ;
+             memWData  ,
+             regData   ;
 wire         memReadEn ,
              memWriteEn;
 
-logic [31:0] registers[0:31];
+logic [31:0] registers[1:31];
 
-always_comb
+task read_registers();
     foreach(registers[i])
-        registers[i] = prcsr0.de0.reg0.data[i];
+    begin
+        regAddr = i;
+        @ (posedge Clock);
+        registers[i] = regData;
+    end
+endtask
 
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
@@ -40,7 +47,9 @@ PROCESSOR prcsr0 (
     .WriteData(memWData  ),
     .MemAddr  (memAddr   ),
     .MemWrite (memWriteEn),
-    .MemRead  (memReadEn )
+    .MemRead  (memReadEn ),
+    .RegAddr  (regAddr   ),
+    .RegData  (regData   )
 );
 
 memory memory0 (
@@ -232,14 +241,16 @@ function void check_register(int reg_no, int reg_val);
     reg_no, reg_val, act_reg_val);
 endfunction
 
-function void finish_test();
+task finish_test();
     $display("INFO: Checking register values...");
+
+    read_registers();
 
     foreach (register_memory[i])
         check_register(i + 1, register_memory[i]);
 
     $display("\nINFO: Test Finished.\n");
     $finish;
-endfunction
+endtask
 
 endmodule
