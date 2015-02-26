@@ -62,6 +62,8 @@ const int reg_var2 = 32'h55557777;
 const int reg_var3 = 32'h01234567;
 const int reg_var4 = 32'h80050000;
 const int reg_var5 = 32'h00000004;
+const int reg_var6 = 32'h82345678;
+const int reg_var7 = 32'h00000011;
 const int imm1 = 16'h5500    ;
 const int imm2 = 16'hFFFF    ;
 const int imm3 = 16'h7654    ;
@@ -147,6 +149,21 @@ logic [31:0] testcase_registers_4[$] = {
     1
 };
 
+logic [31:0] testcase_registers_5[$] = {
+    reg_var6,
+    reg_var2,
+    reg_var2,
+    reg_var7,
+    reg_var7 + reg_var6,
+    reg_var7 + 2*reg_var6,
+    reg_var7 + 3*reg_var6,
+    reg_var7 + 4*reg_var6,
+    reg_var7 + 5*reg_var6,
+    reg_var7 + 6*reg_var6,
+    reg_var7 + 7*reg_var6,
+    reg_var7 + 8*reg_var6
+};
+
 int test_no = 1;
 
 //Testing procedure
@@ -177,7 +194,7 @@ begin
 
         5: begin
             program_memory  = testcase_memory_5   ;
-            //register_memory = testcase_registers_4;
+            register_memory = testcase_registers_5;
         end
 
 
