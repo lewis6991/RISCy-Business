@@ -128,8 +128,10 @@ module EX(
         .ACCN        (ACCN       ),
         .ACCC        (ACCC       ),
         .ACCEn       (ACCEn      ),
+        .BRAtaken    (BRAtaken   ),
         .ALUout      (ALUout     ), // ALU Module output
         .ACCout      (ACCout     ), // ACC Module output
+        .BRAret      (BRAret     ), // BRANCH return address
         .MULout      (MULout     ), // MUL Module output
         .Func        (Func       ),
         .Out         (Out        ),
@@ -138,7 +140,8 @@ module EX(
         .O           (O          ), // Overflow flag.
         .N           (N          ), // Output negative flag.
         .MULSelB     (MULSelB    ), // MUL module select
-        .RegWriteOut (RegWriteOut)
+        .RegWriteOut (RegWriteOut),
+        .BRAEn       (BRAEn      )
     );
 
 
