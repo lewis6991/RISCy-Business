@@ -155,7 +155,7 @@ proc()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC
+                ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
             fi
         fi
     else
@@ -171,7 +171,7 @@ proc()
 "
                 if [ -z "$QUIET" ]
                 then
-                    ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC
+                    ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
                 fi
             fi
         done
@@ -195,7 +195,7 @@ stages()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
             fi
         fi
         echo "      .. done"
@@ -218,7 +218,7 @@ specific()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
             fi
         fi
         echo "      .. done"
