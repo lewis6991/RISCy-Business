@@ -16,20 +16,23 @@ analyze -library WORK -format sverilog {
 ../src/pcinc.sv 
 ../src/pc.sv 
 ../src/op_definition.sv 
-../src/nleftshift.sv 
-../src/mux.sv 
+../src/nleftshift.sv
+../src/muxthree.sv  
+../src/mux.sv
 ../src/mult.sv 
 ../src/mul_definition.sv 
 ../src/ex_mult.sv 
 ../src/ex_control.sv 
 ../src/decoder.sv
+../src/branch.sv
 ../src/alu_definition.sv 
 ../src/alu.sv 
 ../src/acc_control.sv 
 ../src/WB.sv 
 ../src/PIPE.sv 
 ../src/MEM.sv 
-../src/IF.sv 
+../src/IF.sv
+../src/FU.sv 
 ../src/EX.sv 
 ../src/DEC.sv
 }
@@ -37,7 +40,7 @@ analyze -library WORK -format sverilog {
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
-create_clock Clock -name Clock -period 50
+create_clock Clock -name Clock -period 1000
 #compile_ultra
 compile
 report_area > synth_area.rpt
