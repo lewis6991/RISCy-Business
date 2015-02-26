@@ -13,10 +13,12 @@ module DEC(
                              RData       ,
                              PCAddrIncIn ,
         input        [4:0]   RAddrIn     ,
+                             RegAddr     ,
         output logic [31:0]  ImmData     ,
                              RsData      ,
                              RtData      ,
                              PCAddrIncOut,
+                             RegData     ,
         output logic [4:0]   RAddrOut    ,
                              RsAddr      ,
                              RtAddr      ,
@@ -69,12 +71,14 @@ registers reg0(
     .Clock   (Clock             ),
     .nReset  (nReset            ),
     .RegWrite(RegWriteIn        ),
+    .RegAddr (RegAddr           ),
     .RdAddr  (RAddrIn           ),
     .RsAddr  (Instruction[25:21]),
     .RtAddr  (Instruction[20:16]),
     .RdData  (RData             ),
     .RsData  (RsData            ),
-    .RtData  (RtData            )
+    .RtData  (RtData            ),
+    .RegData (RegData           )
 );
 
 signextend se0(
@@ -92,7 +96,7 @@ mux #(.n(32)) mux1(
 
 mux #(.n(32)) mux2(
     .A  (instrimm                 ),
-    .B  ({5'd0, Instruction[25:0]}),
+    .B  ({6'd0, Instruction[25:0]}),
     .Y  (ImmData                  ),
     .Sel(immsize                  )
 );

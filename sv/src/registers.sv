@@ -14,12 +14,22 @@ module registers(
     input        [ 4:0] RdAddr  ,
                         RsAddr  ,
                         RtAddr  ,
+                        RegAddr ,
     input        [31:0] RdData  ,
     output logic [31:0] RsData  ,
-                        RtData
+                        RtData  ,
+                        RegData
 );
 
 logic [31:0] data[31:1]; // 31 registers of 32 bit width (respectively).
+
+// Debug functionality to allow access to registers post-synthesis and post-pnr
+assign RegData = data[RegAddr];
+always_ff @ (posedge Clock, negedge nReset)
+    if (~nReset)
+        RegData <= 32'd0;
+    else
+        RegData <= data[RegAddr];
 
 // Synchronous write
 always_ff @ (posedge Clock, negedge nReset)
