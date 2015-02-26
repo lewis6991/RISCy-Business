@@ -22,7 +22,7 @@ wire JumpD       ;
 wire JumpE       ;
 
 wire BranchD     ;
-wire BranchEin   ;
+wire BranchE     ;
 wire BranchM     ;
 
 wire MemReadD    ;
@@ -214,8 +214,8 @@ EX ex(
     .MemtoRegIn (MemtoRegEin ),
     .MemWriteIn (MemWriteEin ),
     .ALUSrc     (ALUSrcE     ),
-    .A          (RsDataE     ),//(A           ),
-    .B          (RtDataEin   ),//(B           ),
+    .A          (A           ),//(RsDataE     ),//(A           ),
+    .B          (B           ),//(RtDataEin   ),//(B           ),
     .Immediate  (ImmDataE    ),
     .Shamt      (ShamtE      ),
     .RAddrIn    (RAddrEin    ),
@@ -303,7 +303,7 @@ WB wb0(
     .WBData  (RDataW   )
 );
 
-/*FU dfu0(
+FU dfu0(
     .RegWriteM(RegWriteMin),
     .RegWriteW(RegWriteW  ),
     .RAddrM   (RAddrMin   ),
@@ -328,6 +328,6 @@ muxthree m1(
     .B  (ALUDataMin),
     .C  (RDataW    ),
     .Y  (B         )
-);*/
+);
 
 endmodule
