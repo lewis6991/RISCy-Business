@@ -128,6 +128,8 @@ usage()
     -gui               Runs the gui
     -q,--quiet         Runs the tests with little feedback.
                        Default case shows errors within module tests
+    -syn               Runs the test cases on the synthesised design
+    -pnr               Runs the test cases on the placed and routed design
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
     -plusargs=\"\"       Include plusargs to any command to set arguments
@@ -171,7 +173,7 @@ proc()
 "
                 if [ -z "$QUIET" ]
                 then
-                    ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
+                    ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC
                 fi
             fi
         done
