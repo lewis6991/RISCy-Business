@@ -34,9 +34,12 @@ module DEC(
 );
 
 wire [31:0] instrse;
+wire [31:0] instrimm;
 wire        shiftsel,
             unsgnsel,
-            regdst;
+            immsize;
+wire [1:0]  regdst;
+wire [4:0]  raddrinstr;
 
 assign Shamt        = Instruction[10:6] ;
 assign PCAddrIncOut = PCAddrIncIn       ;
@@ -55,6 +58,7 @@ decoder dec0 (
     .ALUSrc  (ALUSrc            ),
     .RegWrite(RegWriteOut       ),
     .ShiftSel(shiftsel          ),
+    .ImmSize (immsize           ),
     .Unsgnsel(unsgnsel          ),
     .Func    (ALUfunc           ),
     .OpCode  (Instruction[31:26]),
@@ -82,15 +86,29 @@ signextend se0(
 mux #(.n(32)) mux1(
     .A  (instrse                   ),
     .B  ({Instruction[15:0], 16'd0}),
-    .Y  (ImmData                   ),
+    .Y  (instrimm                  ),
     .Sel(shiftsel                  )
 );
 
-mux #(.n(5))mux2(
-    .A  (Instruction[20:16]),
+mux #(.n(32)) mux2(
+    .A  (instrimm                 ),
+    .B  ({5'd0, Instruction[25:0]}),
+    .Y  (ImmData                  ),
+    .Sel(immsize                  )
+);
+
+mux #(.n(5))mux3(             // regdst = 00, RAddrOut = rd
+    .A  (Instruction[20:16]), // regdst = 01, RAddrOut = rt
     .B  (Instruction[15:11]),
+    .Y  (raddrinstr        ),
+    .Sel(regdst[0]         )
+);
+
+mux #(.n(5))mux4(             // regdst = 1x, RAddrOut = 31
+    .A  (raddrinstr        ),
+    .B  (5'd31             ), // ra = Reg 31 (return register)
     .Y  (RAddrOut          ),
-    .Sel(regdst            )
+    .Sel(regdst[1]         )
 );
 
 endmodule
