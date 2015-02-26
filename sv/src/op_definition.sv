@@ -2,7 +2,7 @@
 // File              : op_definition.sv
 // Description       : Operational instruction codes
 // Primary Author    : Dhanushan Raveendran
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Ethan Bishop
 // Notes             :  
 //------------------------------------------------------------------------------
 
@@ -18,8 +18,12 @@
 `define SLTIU  6'b001011
 
 `define BEQ    6'b000100
+`define BGEZ   6'b000001
+`define BGEZAL 6'b010001
 `define BGTZ   6'b000111
 `define BLEZ   6'b000110
+`define BLTZ   6'b000000
+`define BLTZAL 6'b010000
 `define BNE    6'b000101
 `define J      6'b000010
 `define JAL    6'b000011
@@ -41,4 +45,5 @@
 `define SC     6'b111000
 
 `define ALU    6'b000000
+`define BRANCH 6'b000001
 `define MULL   6'b011100

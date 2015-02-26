@@ -42,6 +42,7 @@ module EX(
     wire [31:0] ALUout ;
     wire [31:0] ACCout ;
     wire [63:0] MULout ;
+    wire [31:0] BRAret ;
     wire [31:0] Y      ;
 
     wire ALUO;
@@ -56,6 +57,8 @@ module EX(
     wire ACCEn;
     wire MULSelB;
     wire ALUEn;
+    wire BRAEn;
+    wire BRAtaken;
 
     alu alu0 (
         .A       (A      ),
@@ -81,6 +84,18 @@ module EX(
         .Z       (ACCZ  ), // Zero flag.
         .O       (ACCO  ), // Overflow flag.
         .N       (ACCN  )  // Negative flag.
+    );
+
+    branch branch0 (
+        .Enable (BRAEn    ), // Enable branch module
+        .PCIn   (PCin     ), // Program counter input.
+        .A      (A        ), // ALU input A
+        .B      (B        ), // ALU input B
+        .Address(Immediate), // Address input
+        .Func   (Func     ), 
+        .PCout  (PCout    ), // Program counter
+        .Ret    (BRAret   ), // Return address
+        .Taken  (BRAtaken )  // Branch taken
     );
 
     ex_mult ex_mult0 (
@@ -113,13 +128,11 @@ module EX(
         .ACCN        (ACCN       ),
         .ACCC        (ACCC       ),
         .ACCEn       (ACCEn      ),
-        .PCin        (PCin       ), // Program counter input.
         .ALUout      (ALUout     ), // ALU Module output
         .ACCout      (ACCout     ), // ACC Module output
         .MULout      (MULout     ), // MUL Module output
         .Func        (Func       ),
         .Out         (Out        ),
-        .PCout       (PCout      ), // Program counter
         .C           (C          ), // Carry out flag.
         .Z           (Z          ), // Output zero flag.
         .O           (O          ), // Overflow flag.
