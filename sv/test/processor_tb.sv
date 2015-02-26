@@ -25,6 +25,12 @@ wire  [31:0] memRData  ,
 wire         memReadEn ,
              memWriteEn;
 
+logic [31:0] registers[0:31];
+
+always_comb
+    foreach(registers[i])
+        registers[i] = prcsr0.de0.reg0.data[i];
+
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
@@ -290,7 +296,7 @@ always @ (posedge Clock)
 function void check_register(int reg_no, int reg_val);
     int act_reg_val;
     // Assignment needs to go on seperate line to work.
-    act_reg_val = int'(prcsr0.de0.reg0.data[reg_no]);
+    act_reg_val = int'(registers[reg_no]);
 
     assert (act_reg_val == reg_val)
     $display("INFO: \$%-2d == 32'h%x", reg_no, reg_val);
