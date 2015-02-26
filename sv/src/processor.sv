@@ -311,32 +311,32 @@ WB wb0(
     .MemData (MemDataW ),
     .WBData  (RDataW   )
 );
-//
-//FU dfu0(
-//    .RegWriteM(RegWriteMin),
-//    .RegWriteW(RegWriteW  ),
-//    .RAddrM   (RAddrMin   ),
-//    .RAddrW   (RAddrW     ),
-//    .RsAddr   (RsAddrE    ),
-//    .RtAddr   (RtAddrE    ),
-//    .ForwardA (ForwardA   ),
-//    .ForwardB (ForwardB   )
-//);
-//
-//muxthree m0(
-//    .Sel(ForwardA  ),
-//    .A  (RsDataE   ),
-//    .B  (ALUDataMin),
-//    .C  (RDataW    ),
-//    .Y  (A         )
-//);
-//
-//muxthree m1(
-//    .Sel(ForwardB  ),
-//    .A  (RtDataEin ),
-//    .B  (ALUDataMin),
-//    .C  (RDataW    ),
-//    .Y  (B         )
-//);
+
+/*FU dfu0(
+    .RegWriteM(RegWriteMin),
+    .RegWriteW(RegWriteW  ),
+    .RAddrM   (RAddrMin   ),
+    .RAddrW   (RAddrW     ),
+    .RsAddr   (RsAddrE    ),
+    .RtAddr   (RtAddrE    ),
+    .ForwardA (ForwardA   ),
+    .ForwardB (ForwardB   )
+);
+
+muxthree m0(
+    .Sel(ForwardA  ),
+    .A  (RsDataE   ),
+    .B  (ALUDataMin),
+    .C  (RDataW    ),
+    .Y  (A         )
+);
+
+muxthree m1(
+    .Sel(ForwardB  ),
+    .A  (RtDataEin ),
+    .B  (ALUDataMin),
+    .C  (RDataW    ),
+    .Y  (B         )
+);*/
 
 endmodule
