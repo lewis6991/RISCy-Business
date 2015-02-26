@@ -7,6 +7,10 @@
 //------------------------------------------------------------------------------
 
 module BP(
+    input        placeIn ,
+    output logic placeOut
 );
+
+assign placeOut = placeIn;
 
 endmodule
