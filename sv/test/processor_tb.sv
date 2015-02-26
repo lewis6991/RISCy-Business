@@ -17,6 +17,8 @@ parameter clk = 100;
 logic Clock  = 1'b0,
       nReset = 1'b0;
 
+int   cycles = 0;
+
 logic [31:0] instrData ;
 logic [ 4:0] regAddr   ;
 wire  [15:0] instrAddr ,
@@ -28,15 +30,6 @@ wire         memReadEn ,
              memWriteEn;
 
 logic [31:0] registers[1:31];
-
-task read_registers();
-    foreach(registers[i])
-    begin
-        regAddr = i;
-        @ (posedge Clock);
-        #(clk/2) registers[i] = regData;
-    end
-endtask
 
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
@@ -62,10 +55,6 @@ memory memory0 (
     .WriteData(memWData  )
 );
 
-//Clock implementation
-always
-    #(clk/2) Clock = ~Clock;
-
 const int reg_var1 = 32'h12345678;
 const int reg_var2 = 32'h55557777;
 const int reg_var3 = 32'h01234567;
@@ -73,10 +62,10 @@ const int reg_var4 = 32'h80050000;
 const int reg_var5 = 32'h00000004;
 const int reg_var6 = 32'h82345678;
 const int reg_var7 = 32'h00000011;
-const int imm1 = 16'h5500    ;
-const int imm2 = 16'hFFFF    ;
-const int imm3 = 16'h7654    ;
-const int imm4 = 16'h5555    ;
+const int imm1     = 16'h5500    ;
+const int imm2     = 16'hFFFF    ;
+const int imm3     = 16'h7654    ;
+const int imm4     = 16'h5555    ;
 
 logic [31:0] program_memory[$];
 logic [31:0] register_memory[$];
@@ -88,8 +77,8 @@ logic [31:0] testcase_memory_4[$] = { `include "testcase4.sv" };
 logic [31:0] testcase_memory_5[$] = { `include "testcase5.sv" };
 
 logic [31:0] testcase_registers_1[$] = {
-    reg_var1       ,
-    reg_var2       ,
+    reg_var1           ,
+    reg_var2           ,
     reg_var1 + reg_var2
 };
 
@@ -151,19 +140,19 @@ logic [31:0] testcase_registers_4[$] = {
     reg_var4 >>  reg_var5,
     (reg_var4 >>  reg_var5 != 0) ? reg_var4 : 32'b0,
     reg_var4 >> 5,
-    1,
-    1,
-    32'h88000000,
-    1,
+    1            ,
+    1            ,
+    32'h88000000 ,
+    1            ,
     1
 };
 
 logic [31:0] testcase_registers_5[$] = {
-    reg_var6,
-    reg_var2,
-    reg_var2,
-    reg_var7,
-    reg_var7 + reg_var6,
+    reg_var6             ,
+    reg_var2             ,
+    reg_var2             ,
+    reg_var7             ,
+    reg_var7 +   reg_var6,
     reg_var7 + 2*reg_var6,
     reg_var7 + 3*reg_var6,
     reg_var7 + 4*reg_var6,
@@ -205,8 +194,6 @@ begin
             program_memory  = testcase_memory_5   ;
             register_memory = testcase_registers_5;
         end
-
-
         default:
             assert (0)
             else
@@ -218,10 +205,17 @@ begin
     #(5.5*clk) nReset = 1;
 end
 
+//Clock implementation
+always begin
+    #(clk/2) Clock = ~Clock;
+    ++cycles;
+    assert (cycles < 10000)
+    else
+        $fatal(1, "FATAL: Timeout");
+end
 
 // Control test depending on program counter.
 always @ (posedge Clock)
-
     if(instrAddr/4 < program_memory.size())
         instrData <= #20 program_memory[instrAddr/4];
     else if(instrAddr/4 == program_memory.size())
@@ -229,16 +223,25 @@ always @ (posedge Clock)
     else
         instrData <= #20 0;
 
+task read_registers();
+    foreach(registers[i])
+    begin
+        regAddr = i;
+        @ (posedge Clock);
+        #(clk/2) registers[i] = regData;
+    end
+endtask
+
 function void check_register(int reg_no, int reg_val);
     int act_reg_val;
     // Assignment needs to go on seperate line to work.
     act_reg_val = int'(registers[reg_no]);
 
     assert (act_reg_val == reg_val)
-    $display("INFO: \$%-2d == 32'h%x", reg_no, reg_val);
+        $display("INFO: \$%-2d == 32'h%x", reg_no, reg_val);
     else
-    $error("ERROR: \$%0d != 32'h%H, value is 32'h%H",
-    reg_no, reg_val, act_reg_val);
+        $error("ERROR: \$%0d != 32'h%H, value is 32'h%H",
+            reg_no, reg_val, act_reg_val);
 endfunction
 
 task finish_test();
