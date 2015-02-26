@@ -25,25 +25,22 @@ module ex_control(
                         ACCZ       ,
                         ACCN       ,
                         ACCC       ,
-    input        [31:0] PCin       , // Program counter input.
-                        ALUout     , // ALU Module output
+                        BRAtaken   ,
+    input        [31:0] ALUout     , // ALU Module output
                         ACCout     , // ACC Module output
+                        BRAret     , // BRANCH return address
     input        [63:0] MULout     , // MUL Module output
     input        [ 5:0] Func       ,
     output logic [31:0] Out        ,
-                        PCout      , // Program counter 
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
                         N          , // Output negative flag.
                         ACCEn      , // Enable ACC write
                         MULSelB    , // MUL module select
-                        RegWriteOut
+                        RegWriteOut,
+                        BRAEn      
 );
-
-    // TODO: These will eventually do something
-    assign PCout       = PCin;
-
     always_comb
     begin
 
@@ -55,8 +52,8 @@ module ex_control(
         ACCEn       = 0;
         MULSelB     = 1;
         RegWriteOut = RegWriteIn;
+        BRAEn       = 0;
 
-        // TODO: Branch operations
         if (ALUOp)
             case (Func)
                 `MULT,
@@ -126,5 +123,20 @@ module ex_control(
                     C           = ACCC;
                 end
             endcase
+        
+        if (Jump)
+            begin
+                Out         = BRAret;
+                RegWriteOut = RegWriteIn & BRAtaken;
+                BRAEn       = 1;
+            end
+        
+        if (Branch)
+            begin
+                Out         = BRAret;
+                RegWriteOut = RegWriteIn & BRAtaken;
+                BRAEn       = 1;
+            end
+        
     end
 endmodule
