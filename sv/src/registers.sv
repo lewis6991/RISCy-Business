@@ -26,7 +26,7 @@ module registers(
         if (~nReset)
             /* for loop resets all registers to zero in the event of an asserted
              * nReset.*/
-            for (int k = 1; k < 32; k++)
+            for (int k = 0; k < 32; k++)
                 data[k] <= 32'd0;
         else if (RegWrite && (RdAddr != 0))
             data[RdAddr] <= #20 RdData;
