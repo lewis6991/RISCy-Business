@@ -8,11 +8,12 @@
 #------------------------------------------------------------------------------
 
 if ($1 == clean) then
-    ls encounter* clock_report timingReports >&/dev/null
+    ls work *.log >&/dev/null
     if ($? != 0) then
         echo "Already clean!"
     else
-        rm ./*.pvl ./*.syn ./*.rpt ./*.mr ./*.log ./*.svf
+        rm ./*.log
+        rm -rf work
         echo "Cleaned!"
     endif
     exit
