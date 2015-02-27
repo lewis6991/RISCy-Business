@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
 #------------------------------------------------------------------------------
-# File              : RUN_PNR.sh
+# File              : RUN_PNR
 # Description       : Tcsh script to run a Place & Route
 # Primary Author    : Dominic Murphy
 # Other Contributors:
