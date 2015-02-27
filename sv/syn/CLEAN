@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------
+# File              : CLEAN
+# Description       : Crude script to perform git clean.
+# Primary Author    : Dominic Murphy
+# Other Contributors:
+#------------------------------------------------------------------------------
+
+main()
+{
+if [ ${1} = "-f" ]
+then
+    run
+fi
+
+echo "
+Warning: This script is crude and aggresive. It will perform git clean -fd on the current directory.
+"
+while true; do
+    read -p "Do you wish to continue?" yn
+    case $yn in
+        [Yy]* ) run;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+}
+
+run()
+{
+git clean -fd
+exit
+}
+
+main "$@"
