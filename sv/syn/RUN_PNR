@@ -20,6 +20,9 @@ endif
 
 source SOC_Setup.sh
 
-velocity -init pnr_script.tcl | tee pnr.log
+mkdir -p work
+cd work >&/dev/null
+
+velocity -init ../pnr_script.tcl > ../pnr.log
 echo "Complete. Results written to pnr.log"
 exit
