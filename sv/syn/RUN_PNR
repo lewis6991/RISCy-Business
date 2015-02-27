@@ -13,7 +13,7 @@ if ($1 == clean) then
         echo "Already clean!"
     else
         rm ./*.log
-        rm -rf work
+        rm -rf ./work
         echo "Cleaned!"
     endif
     exit
