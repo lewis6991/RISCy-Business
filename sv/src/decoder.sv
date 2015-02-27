@@ -37,13 +37,13 @@ module decoder(
         MemRead  = 1'b0     ;
         MemtoReg = 1'b0     ;
         ALUOp    = 1'b0     ;
+        MULOp    = 1'b0     ;
         MemWrite = 1'b0     ;
         ALUSrc   = 1'b0     ;
         RegWrite = 1'b0     ;
         ShiftSel = 1'b0     ;
         ImmSize  = 1'b0     ;
         Unsgnsel = 1'b0     ;
-        MULOp    = 1'b0     ;
         Func     = 6'b000000;
 
         case(OpCode)
