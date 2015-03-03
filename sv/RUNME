@@ -229,8 +229,8 @@ specific()
 
 padding()
 {
-    while read a 
-    do 
+    while read a
+    do
        declare -i NUMCS
        TOTAL=${#a}
        NUMCS=$TOTAL
@@ -252,7 +252,7 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
-NC_ARGS="+ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
+NC_ARGS="+nc64bit +ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
 main "$@"
 
 
