@@ -455,11 +455,62 @@ module decoder(
                 ImmSize  = 1'b1;
             end
             
-            `LB:;
-            `LBU:;
-            `LH:;
-            `LWL:;
-            `LWR:;
+            `LB:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LBU:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LH:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LHU:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LW:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LWL:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
+            `LWR:
+            begin
+                Func     = 'ADD;
+                ALUSrc   = 1'b1;
+                MemRead  = 1'b1;
+                MemtoReg = 1'b1;
+                RegWrite = 1'b1;
+            end
             `SB:;
             `SH:;
             `SW:;
