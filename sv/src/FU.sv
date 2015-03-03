@@ -2,7 +2,7 @@
 // File              : FU.sv
 // Description       : Forwarding Unit to prevent Data Hazards
 // Primary Author    : Dhanushan Raveendran
-// Other Contributors: 
+// Other Contributors: Lewis Russell
 // Notes             :
 //------------------------------------------------------------------------------
 
@@ -21,6 +21,13 @@ module FU(
                         ForwardB 
 );
 
+logic DataCheckM   = RegWriteM && RAddrM != 0;
+logic DataCheckW   = RegWriteW && RAddrW != 0;
+logic AddrCheckMRs = RAddrM == RsAddrE;
+logic AddrCheckMRt = RAddrM == RtAddrE;
+logic AddrCheckWRs = RAddrW == RsAddrE;
+logic AddrCheckWRt = RAddrW == RtAddrE;
+
 always_comb
     begin
        ForwardA = 2'b00;
@@ -28,19 +35,19 @@ always_comb
        ForwardSrcA = 0;
        ForwardSrcB = 0;
 
-       if((RegWriteM) & (RAddrM != 0) & (RAddrM == RsAddrE))
+       if(DataCheckM && AddrCheckMRs)
             ForwardA = 2'b01;
-       else if((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddrE))
+       else if(DataCheckW && AddrCheckWRs)
             ForwardA = 2'b10;	
 		   
-       if((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddrE))
+       if(DataCheckM && AddrCheckMRt)
             ForwardB = 2'b01; 
-       else if((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddrE))
+       else if(DataCheckW && AddrCheckWRt)
             ForwardB = 2'b10;
 
-       if((RegWriteW) & (RAddrW != 0) & (((RAddrM != 0) & 
-	     ((RAddrM == RsAddrE) | (RAddrM == RtAddrE))) | 
-          (RAddrW == RsAddrE) | (RAddrW == RtAddrE)))
+       if(DataCheckW && ((RAddrM != 0 && 
+	     (AddrCheckMRs || AddrCheckMRt)) || 
+          AddrCheckWRs || AddrCheckWRt))
             begin
                 ForwardSrcA = (RAddrW == RsAddr);
                 ForwardSrcB = (RAddrW == RtAddr);
