@@ -18,9 +18,10 @@ void compile_asm(const char* testcase) {
 
     char* int_ext = ".int";
     char* asm_ext = ".s";
+    char* rm_cmd  = "rm";
 
     char* command =
-        malloc(strlen(script) + strlen(testcase) + strlen(asm_ext) + 1);
+        malloc(strlen(script) + strlen(testcase) + strlen(asm_ext) + 2);
 
     char * int_file = malloc(strlen(testcase) + strlen(int_ext) + 1);
 
@@ -40,6 +41,13 @@ void compile_asm(const char* testcase) {
         ++i;
 
     instruction_count = i;
+    char * rm_int = malloc(strlen(rm_cmd) + strlen(int_file) + 2);
+    strcpy(rm_int, rm_cmd  );
+    strcat(rm_int, " "     );
+    strcat(rm_int, int_file);
+
+    system(rm_int);
+
 }
 
 int get_instruction_count() {
