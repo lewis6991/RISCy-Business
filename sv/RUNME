@@ -247,12 +247,17 @@ padding()
     done <<< "$summarytext"
 }
 
+if [ ! -f ./complib.so ]; then
+    echo "Warning: complib.so library file not found, will compile it from source."
+    gcc ../sw/complib.c -fPIC -shared -o complib.so -I /opt/cad/soft/cadence/ius/tools/inca/include
+fi
+
 echo -e 'run.log
 ' > run.log
 summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
-NC_ARGS="+nc64bit +ncaccess+r -sv -w -q +nctimescale+1ns/10ps"
+NC_ARGS="+nc64bit +ncaccess+r -sv -w -q +nctimescale+1ns/10ps -sv_lib complib.so"
 main "$@"
 
 

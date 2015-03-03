@@ -15,7 +15,7 @@ ori $1, $1, 0x5678
 li  $2,     0x55550000
 nop
 ori $2, $2, 0x7777
-mul $3, $2, $1
+add $3, $2, $1
 nop
 nop
 nop

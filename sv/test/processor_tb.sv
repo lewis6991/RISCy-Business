@@ -12,12 +12,21 @@
 module processor_tb;
 
 timeunit 10ns; timeprecision 100ps;
-parameter clk = 100;
 
-logic Clock  = 1'b0,
-      nReset = 1'b0;
+import "DPI-C" function void set_compile_script(string arg);
+import "DPI-C" function void compile_asm(string arg);
+import "DPI-C" function int  get_instruction_count();
+import "DPI-C" function int  get_instruction(int index);
 
-int   cycles = 0;
+parameter clk        = 100 ;
+
+logic     Clock      = 1'b0,
+          nReset     = 1'b0;
+
+int       cycles     = 0   ;
+
+int       test_no    = 1   ;
+int       inst_count       ;
 
 logic [31:0] instrData ;
 logic [ 4:0] regAddr   ;
@@ -67,14 +76,7 @@ const int imm2     = 16'hFFFF    ;
 const int imm3     = 16'h7654    ;
 const int imm4     = 16'h5555    ;
 
-logic [31:0] program_memory[$];
 logic [31:0] register_memory[$];
-
-logic [31:0] testcase_memory_1[$] = { `include "testcase1.sv" };
-logic [31:0] testcase_memory_2[$] = { `include "testcase2.sv" };
-logic [31:0] testcase_memory_3[$] = { `include "testcase3.sv" };
-logic [31:0] testcase_memory_4[$] = { `include "testcase4.sv" };
-logic [31:0] testcase_memory_5[$] = { `include "testcase5.sv" };
 
 logic [31:0] testcase_registers_1[$] = {
     reg_var1           ,
@@ -162,43 +164,29 @@ logic [31:0] testcase_registers_5[$] = {
     reg_var7 + 8*reg_var6
 };
 
-int test_no = 1;
 
 //Testing procedure
 initial
 begin
     void'($value$plusargs("test=%d", test_no));
     case (test_no)
-
-        1: begin
-            program_memory  = testcase_memory_1   ;
-            register_memory = testcase_registers_1;
-        end
-
-        2: begin
-            program_memory  = testcase_memory_2   ;
-            register_memory = testcase_registers_2;
-        end
-
-        3: begin
-            program_memory  = testcase_memory_3   ;
-            register_memory = testcase_registers_3;
-        end
-
-        4: begin
-            program_memory  = testcase_memory_4   ;
-            register_memory = testcase_registers_4;
-        end
-
-        5: begin
-            program_memory  = testcase_memory_5   ;
-            register_memory = testcase_registers_5;
-        end
+        1: register_memory = testcase_registers_1;
+        2: register_memory = testcase_registers_2;
+        3: register_memory = testcase_registers_3;
+        4: register_memory = testcase_registers_4;
+        5: register_memory = testcase_registers_5;
         default:
             assert (0)
             else
                 $fatal(1, "FATAL: Testcase %0d does not exist.", test_no);
     endcase
+
+    set_compile_script("../sw/compile2int");
+    compile_asm($sformatf("../sw/testcase%0d", test_no));
+    inst_count = get_instruction_count();
+    for (int i = 0; i < inst_count; ++i)
+        $display("%08X", get_instruction(i));
+
     $display("\nINFO: Testcase %0d selected.", test_no);
     $display("\nINFO: Starting Test...\n");
     // De-assert reset after non-integer amount of clock cycles.
@@ -216,9 +204,9 @@ end
 
 // Control test depending on program counter.
 always @ (posedge Clock)
-    if(instrAddr/4 < program_memory.size())
-        instrData <= #20 program_memory[instrAddr/4];
-    else if(instrAddr/4 == program_memory.size())
+    if(instrAddr/4 < inst_count)
+        instrData <= #20 get_instruction(instrAddr/4);
+    else if(instrAddr/4 == inst_count)
         finish_test();
     else
         instrData <= #20 0;

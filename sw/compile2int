@@ -1,0 +1,22 @@
+#!/bin/bash
+#-------------------------------------------------------------------------------
+# File          : compile2sv
+# Description   : Script that compiles mips asm to a systemverilog array data.
+# Primary Author: Lewis Russell
+#-------------------------------------------------------------------------------
+
+user=`whoami`
+out="${1%.s}.int"
+
+rm -rf $out
+mips-elf-gcc -Wa,-adhln -c -O -mips32 -o /dev/null $1 > $out
+
+# Remove all lines that are labels
+#sed -i '/:/d' $out
+sed -i -r '/.*([0-9a-fA-F]{8})\s*([a-z]+)/!d' $out
+
+# Format to int array, e.g:
+# 21 0010 34215678 	    ori     $1,  $1, 0x5678
+# to...
+# 34215678
+sed -i -r 's/.*[0-9a-fA-F]{4}\s([0-9a-fA-F]{8}).*/\1/g' $out
