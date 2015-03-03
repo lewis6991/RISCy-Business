@@ -14,7 +14,7 @@ module FU(
                         RsAddrE,
                         RtAddrE,
                         RsAddr,
-	                RtAddr,
+						RtAddr,
     output logic        ForwardSrcA,
                         ForwardSrcB,
     output logic [ 1:0] ForwardA,
@@ -38,19 +38,13 @@ always_comb
        else if((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddrE))
             ForwardB = 2'b10;
 
-       if((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddr) & (
-         ((RegWriteM) & (RAddrM != 0) & (RAddrM == RsAddrE)) | 
-         ((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddrE)) | 
-         ((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddrE)) | 
-         ((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddrE))))
-            ForwardSrcA = 1;
-
-       if((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddr) & (
-         ((RegWriteM) & (RAddrM != 0) & (RAddrM == RsAddrE)) | 
-         ((RegWriteM) & (RAddrM != 0) & (RAddrM == RtAddrE)) | 
-         ((RegWriteW) & (RAddrW != 0) & (RAddrW == RsAddrE)) | 
-         ((RegWriteW) & (RAddrW != 0) & (RAddrW == RtAddrE))))
-            ForwardSrcB = 1;
+       if((RegWriteW) & (RAddrW != 0) & (((RAddrM != 0) & 
+	     ((RAddrM == RsAddrE) | (RAddrM == RtAddrE))) | 
+          (RAddrW == RsAddrE) | (RAddrW == RtAddrE)))
+            begin
+                ForwardSrcA = (RAddrW == RsAddr);
+                ForwardSrcB = (RAddrW == RtAddr);
+            end
     end
 
 endmodule
