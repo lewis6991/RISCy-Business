@@ -242,11 +242,14 @@ module decoder(
                 MemtoReg = 1'b1;
                 RegWrite = 1'b1;
             end
-            `SB:;
-            `SH:;
-            `SW:;
-            `SWL:;
-            `SWR:;
+			
+            `SB , `SH, `SW, `SWL , `SWR:
+			begin
+				Func     = `ADD;
+				ALUSrc   = 1'b1;
+				MemWrite = 1'b1;
+			end
+			
             `LL:;
             `SC:;
             default:;
