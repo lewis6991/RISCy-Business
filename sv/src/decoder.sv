@@ -209,7 +209,7 @@ module decoder(
                     begin
                         RegDst = 2'b1 ;
                         Func   = `MFHI;
-                        ALUOp  = 1'b1 ; 
+                        ALUOp  = 1'b1 ;
                         RegWrite = 1'b1 ;
                     end
 
@@ -286,7 +286,7 @@ module decoder(
 
                     default:;
                 endcase
-                
+
             `MULL:
                 case(FuncCode)
                     `CLO:
@@ -345,7 +345,7 @@ module decoder(
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
-               
+
             end
 
             `ADDIU:
@@ -416,28 +416,28 @@ module decoder(
                 Branch   = 1'b1;
                 ALUSrc   = 1'b1;
             end
-            
+
             `BGTZ:
             begin
                 Func     = `BGTZ;
                 Branch   = 1'b1;
                 ALUSrc   = 1'b1;
             end
-            
+
             `BLEZ:
             begin
                 Func     = `BLEZ;
                 Branch   = 1'b1;
                 ALUSrc   = 1'b1;
             end
-            
+
             `BNE:
             begin
                 Func     = `BNE ;
                 Branch   = 1'b1;
                 ALUSrc   = 1'b1;
             end
-            
+
             `J:
             begin
                 Func     = `J   ;
@@ -445,7 +445,7 @@ module decoder(
                 ALUSrc   = 1'b1;
                 ImmSize  = 1'b1;
             end
-            
+
             `JAL:
             begin
                 RegDst   = 2'b10;
@@ -454,10 +454,10 @@ module decoder(
                 ALUSrc   = 1'b1;
                 ImmSize  = 1'b1;
             end
-            
+
             `LB:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -465,7 +465,7 @@ module decoder(
             end
             `LBU:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -473,7 +473,7 @@ module decoder(
             end
             `LH:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -481,7 +481,7 @@ module decoder(
             end
             `LHU:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -489,7 +489,7 @@ module decoder(
             end
             `LW:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -497,7 +497,7 @@ module decoder(
             end
             `LWL:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
@@ -505,7 +505,7 @@ module decoder(
             end
             `LWR:
             begin
-                Func     = 'ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemRead  = 1'b1;
                 MemtoReg = 1'b1;
