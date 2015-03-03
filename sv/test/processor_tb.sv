@@ -184,8 +184,6 @@ begin
     set_compile_script("../sw/compile2int");
     compile_asm($sformatf("../sw/testcase%0d", test_no));
     inst_count = get_instruction_count();
-    for (int i = 0; i < inst_count; ++i)
-        $display("%08X", get_instruction(i));
 
     $display("\nINFO: Testcase %0d selected.", test_no);
     $display("\nINFO: Starting Test...\n");
