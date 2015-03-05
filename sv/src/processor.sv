@@ -122,21 +122,23 @@ wire [31:0] A            ;
 wire [31:0] B            ;
 
 wire [31:0] BranchAddr   ;
+wire        Stall        ;
 
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
+	.Stall      (Stall       ),
     .BranchTaken(BranchTaken ),
     .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
     .InstrOut   (InstructionF),
-    .PCAddrInc  (PCAddrInc   )
+    .PCAddrInc  (PCAddrIncF  )
 );
 
 PIPE #(.n(64)) pipe0(
     .Clock (Clock                           ),
-    .nReset(nReset                          ),
+    .nReset(nReset | Stall                  ),
     .In    ({InstructionF, 16'b0, InstrAddr}),
     .Out   ({InstructionD, InstrAddrDin    })
 );
@@ -360,7 +362,16 @@ mux m3(
     .Sel(ForwardSrcB),
     .A  (RtData     ),
     .B  (RDataW     ),
-    .Y  (RtDataD    )
+    .Y  (RtDataD    )	
+);
+
+HDU hdu0(
+    .MemReadE(MemReadEin),
+	.Clock   (Clock     ),
+	.RtAddrE (RtAddrE   ),
+	.RsAddrD (RsAddrD   ),
+	.RtAddrD (RtAddrD   ),
+	.Stall   (Stall     )
 );
 
 endmodule
