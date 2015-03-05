@@ -32,6 +32,7 @@ analyze -library WORK -format sverilog {
 ../../src/PIPE.sv 
 ../../src/MEM.sv 
 ../../src/IF.sv
+../../src/HDU.sv
 ../../src/FU.sv 
 ../../src/EX.sv 
 ../../src/DEC.sv
@@ -41,9 +42,10 @@ elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
 create_clock Clock -name Clock -period 50
+#set_clock_uncertainty 0.1 Clock
 #compile_ultra
 set_fix_hold Clock
-compile -map_effort low
+compile
 report_area > synth_area.rpt
 report_power > synth_power.rpt
 report_timing > synth_timing.rpt
