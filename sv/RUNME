@@ -5,11 +5,19 @@
 # Description: Bash script for automated testing
 # Primary Author: Jack Barnes
 # Other Contributors: Dominic Murphy
-# Notes:
+# Notes: Must be run on Hind to allow GCC cross compiler to be used.
 #----------------------------------------
 
 main()
 {
+    if [ $host != $hind ]
+    then
+        echo "Error: This script requires hind CAD server. Exiting..."
+    exit 1
+    fi
+
+    export PATH=/opt/esdcad/cross/bin:$PATH
+
     if [ ${#} = "0" ]
     then
         RUN_PROC=1
@@ -258,6 +266,8 @@ summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
 NC_ARGS="+nc64bit +ncaccess+r -sv -w -q +nctimescale+1ns/10ps -sv_lib complib.so"
+host=`hostname`
+hind="hind.ecs.soton.ac.uk"
 main "$@"
 
 

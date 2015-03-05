@@ -318,8 +318,10 @@ WB wb0(
     .RegWriteW(RegWriteW  ),
     .RAddrM   (RAddrMin   ),
     .RAddrW   (RAddrW     ),
-    .RsAddr   (RsAddrE    ),
-    .RtAddr   (RtAddrE    ),
+    .RsAddrE  (RsAddrE    ),
+    .RtAddrE  (RtAddrE    ),
+	.RsAddr   (RsAddrD    ),
+	.RtAddr   (RtAddrD    ),
     .ForwardA (ForwardA   ),
     .ForwardB (ForwardB   )
 );

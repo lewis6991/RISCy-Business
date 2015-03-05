@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
-# File              : syn_script.tcl
-# Description       : Synthesis script
+# File              : syn_script_opt.tcl
+# Description       : Synthesis script to run fully optimised synthesis
 # Primary Author    : Dominic Murphy
 # Other Contributors:
 #------------------------------------------------------------------------------
@@ -40,7 +40,8 @@ analyze -library WORK -format sverilog {
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
-create_clock Clock -name Clock -period 50
+create_clock Clock -name Clock -period 1
+set_fix_hold Clock
 compile_ultra
 #compile -map_effort high -incremental_mapping
 report_area > synth_area.rpt
