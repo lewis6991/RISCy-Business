@@ -11,13 +11,13 @@ module DEC(
                              RegWriteIn  ,
         input        [31:0]  Instruction ,
                              RData       ,
-                             PCAddrIncIn ,
+                             InstrAddrIn ,
         input        [4:0]   RAddrIn     ,
                              RegAddr     ,
         output logic [31:0]  ImmData     ,
                              RsData      ,
                              RtData      ,
-                             PCAddrIncOut,
+                             InstrAddrOut,
                              RegData     ,
         output logic [4:0]   RAddrOut    ,
                              RsAddr      ,
@@ -44,27 +44,28 @@ wire [1:0]  regdst;
 wire [4:0]  raddrinstr;
 
 assign Shamt        = Instruction[10:6] ;
-assign PCAddrIncOut = PCAddrIncIn       ;
+assign InstrAddrOut = InstrAddrIn       ;
 assign RsAddr       = Instruction[25:21];
 assign RtAddr       = Instruction[20:16];
 
 decoder dec0 (
-    .RegDst  (regdst            ),
-    .Branch  (Branch            ),
-    .Jump    (Jump              ),
-    .MemRead (MemRead           ),
-    .MemtoReg(MemtoReg          ),
-    .ALUOp   (ALUOp             ),
-    .MULOp   (MULOp             ),
-    .MemWrite(MemWrite          ),
-    .ALUSrc  (ALUSrc            ),
-    .RegWrite(RegWriteOut       ),
-    .ShiftSel(shiftsel          ),
-    .ImmSize (immsize           ),
-    .Unsgnsel(unsgnsel          ),
-    .Func    (ALUfunc           ),
-    .OpCode  (Instruction[31:26]),
-    .FuncCode(Instruction[5:0]  )
+    .RegDst  (regdst                    ),
+    .Branch  (Branch                    ),
+    .Jump    (Jump                      ),
+    .MemRead (MemRead                   ),
+    .MemtoReg(MemtoReg                  ),
+    .ALUOp   (ALUOp                     ),
+    .MULOp   (MULOp                     ),
+    .MemWrite(MemWrite                  ),
+    .ALUSrc  (ALUSrc                    ),
+    .RegWrite(RegWriteOut               ),
+    .ShiftSel(shiftsel                  ),
+    .ImmSize (immsize                   ),
+    .Unsgnsel(unsgnsel                  ),
+    .Func    (ALUfunc                   ),
+    .OpCode  (Instruction[31:26]        ),
+    .FuncCode(Instruction[5:0]          ),
+    .BraCode ({1'b0, Instruction[20:16]})
 );
 
 registers reg0(

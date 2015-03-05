@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # File              : syn_script.tcl
-# Description       : Synthesis script
+# Description       : Synthesis script to run basic synthesis.
 # Primary Author    : Dominic Murphy
 # Other Contributors:
 #------------------------------------------------------------------------------
@@ -40,9 +40,10 @@ analyze -library WORK -format sverilog {
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
-create_clock Clock -name Clock -period 1000
+create_clock Clock -name Clock -period 50
 #compile_ultra
-compile
+set_fix_hold Clock
+compile -map_effort low
 report_area > synth_area.rpt
 report_power > synth_power.rpt
 report_timing > synth_timing.rpt
