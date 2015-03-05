@@ -5,6 +5,6 @@ set target_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELI
 set link_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELIB.db}
 set symbol_library {/opt/esdcad/designkits/ams/v370/synopsys/c35_3.3V/c35_CORELIB.sdb}
 set allow_newer_db_files "true"
-set designer "Basel HALAK"
+set designer "RISCy Business"
 
 #end of setup
