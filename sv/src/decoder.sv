@@ -26,7 +26,8 @@ module decoder(
                        Unsgnsel,
     output logic [5:0] Func    ,
     input        [5:0] OpCode  ,
-                       FuncCode
+                       FuncCode,
+                       BraCode
 );
 
     always_comb
@@ -85,11 +86,11 @@ module decoder(
                 endcase
 
             `BRANCH:
-                case(FuncCode)
+                case(BraCode)
                     `BGEZ,
                     `BLTZ:
                     begin
-                        Func     = FuncCode;
+                        Func     = BraCode;
                         Branch   = 1'b1    ;
                         ALUSrc   = 1'b1    ;
                     end
@@ -97,7 +98,7 @@ module decoder(
                     `BGEZAL, `BLTZAL:
                     begin
                         RegDst   = 2'b10   ;
-                        Func     = FuncCode;
+                        Func     = BraCode;
                         ALUSrc   = 1'b1    ;
                         Branch   = 1'b1    ;
                         RegWrite = 1'b1    ;

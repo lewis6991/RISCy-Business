@@ -255,6 +255,13 @@ padding()
     done <<< "$summarytext"
 }
 
+# Check if mips cross-compiler is avaiable. If not then adjust PATH variable.
+if [[ ! $PATH =~ .*/opt/esdcad/cross/bin.* ]]; then
+    export PATH=/opt/esdcad/cross/bin:$PATH
+fi
+
+# complib.so is needed for DPI functions called in the testbench. This library will compile asm files
+# and provide an interface to fetch instructions.
 if [ ! -f ./complib.so ]; then
     echo "Warning: complib.so library file not found, will compile it from source."
     gcc ../sw/complib.c -fPIC -shared -o complib.so -I /opt/cad/soft/cadence/ius/tools/inca/include

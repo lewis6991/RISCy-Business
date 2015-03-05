@@ -18,6 +18,7 @@
 module IF(
     input               Clock,
                         nReset,
+						Stall,
                         BranchTaken,
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
@@ -31,10 +32,10 @@ module IF(
                 progaddrinc ;
 
     pc pc0(
-        .Clock      (Clock       ),
-        .nReset     (nReset      ),
-        .ProgAddrIn (progaddrnext),
-        .ProgAddrOut(progaddrout )
+        .Clock      (Clock & Stall),
+        .nReset     (nReset       ),
+        .ProgAddrIn (progaddrnext ),
+        .ProgAddrOut(progaddrout  )
     );
 
     pcinc pcinc0(
@@ -44,7 +45,7 @@ module IF(
 
     mux mux0(
         .Sel(BranchTaken ),
-        .A  (progaddrinc ),
+        .A  (progaddrinc),
         .B  (BranchAddr  ),
         .Y  (progaddrnext)
     );
