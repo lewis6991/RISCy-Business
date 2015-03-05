@@ -127,7 +127,7 @@ wire        Stall        ;
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
-	.Stall      (Stall       ),
+    .Stall      (Stall       ),
     .BranchTaken(BranchTaken ),
     .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
@@ -367,11 +367,11 @@ mux m3(
 
 HDU hdu0(
     .MemReadE(MemReadEin),
-	.Clock   (Clock     ),
-	.RtAddrE (RtAddrE   ),
-	.RsAddrD (RsAddrD   ),
-	.RtAddrD (RtAddrD   ),
-	.Stall   (Stall     )
+    .Clock   (Clock     ),
+    .RtAddrE (RtAddrE   ),
+    .RsAddrD (RsAddrD   ),
+    .RtAddrD (RtAddrD   ),
+    .Stall   (Stall     )
 );
 
 endmodule
