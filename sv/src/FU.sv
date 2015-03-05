@@ -13,20 +13,13 @@ module FU(
                         RAddrW,
                         RsAddrE,
                         RtAddrE,
-                        RsAddr,
-						RtAddr,
+                        RsAddrD,
+			RtAddrD,
     output logic        ForwardSrcA,
                         ForwardSrcB,
     output logic [ 1:0] ForwardA,
                         ForwardB 
 );
-
-logic DataCheckM   = RegWriteM && RAddrM != 0;
-logic DataCheckW   = RegWriteW && RAddrW != 0;
-logic AddrCheckMRs = RAddrM == RsAddrE;
-logic AddrCheckMRt = RAddrM == RtAddrE;
-logic AddrCheckWRs = RAddrW == RsAddrE;
-logic AddrCheckWRt = RAddrW == RtAddrE;
 
 always_comb
     begin
@@ -35,22 +28,22 @@ always_comb
        ForwardSrcA = 0;
        ForwardSrcB = 0;
 
-       if(DataCheckM && AddrCheckMRs)
+       if(RegWriteM && (RAddrM != 0) && (RAddrM == RsAddrE))
             ForwardA = 2'b01;
-       else if(DataCheckW && AddrCheckWRs)
+       else if(RegWriteW && (RAddrW != 0) && (RAddrW == RsAddrE))
             ForwardA = 2'b10;	
 		   
-       if(DataCheckM && AddrCheckMRt)
+       if(RegWriteM && (RAddrM != 0) && (RAddrM == RtAddrE))
             ForwardB = 2'b01; 
-       else if(DataCheckW && AddrCheckWRt)
+       else if(RegWriteW && (RAddrW != 0) && (RAddrW == RtAddrE))
             ForwardB = 2'b10;
 
-       if(DataCheckW && ((RAddrM != 0 && 
-	     (AddrCheckMRs || AddrCheckMRt)) || 
-          AddrCheckWRs || AddrCheckWRt))
+       if(RegWriteW && (RAddrW != 0) && ((RAddrM != 0 && 
+	     ((RAddrM == RsAddrE) || (RAddrM == RtAddrE))) || 
+          (RAddrW == RsAddrE) || (RAddrW == RtAddrE)))
             begin
-                ForwardSrcA = (RAddrW == RsAddr);
-                ForwardSrcB = (RAddrW == RtAddr);
+                ForwardSrcA = (RAddrW == RsAddrD);
+                ForwardSrcB = (RAddrW == RtAddrD);
             end
     end
 
