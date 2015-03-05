@@ -109,12 +109,11 @@ main()
         proc
     fi
 
-
-
-
     padding
     echo -e "\n$newtext" >> run.log
-    echo -e "\n$newtext"
+    coltext=${newtext//PASS/\\e[92mPASS\\e[30m}
+    coltext=${newtext//FAIL/\\e[91mFAIL\\e[30m}
+    echo -e "\n$coltext"
 
     exit 0
 }
@@ -254,6 +253,8 @@ padding()
        fi
     done <<< "$summarytext"
 }
+
+cat db.txt
 
 # Check if mips cross-compiler is avaiable. If not then adjust PATH variable.
 if [[ ! $PATH =~ .*/opt/esdcad/cross/bin.* ]]; then
