@@ -11,14 +11,16 @@ input              MemReadE,
                    Clock   ,
 input        [4:0] RtAddrE ,
                    RsAddrD ,
-			       RtAddrD ,
-output logic       Stall   			
+                   RtAddrD ,
+output logic       Stall            
 );
 
 always_ff @(posedge Clock)
     begin
         if(MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
             Stall <= 1'b0;
-	end
+        else
+            Stall <= 1'b1;
+    end
 
 endmodule
