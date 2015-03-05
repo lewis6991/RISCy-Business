@@ -22,16 +22,46 @@
     ori     $3,  $3, 0x7777
     beq     $1,  $2, fail
     nop
-    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $1,  $2, fail
     nop
-    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     li      $4,      0x0011
     beq     $2,  $3, level1
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 fail:
     li      $1,      0xFFFF0000
@@ -42,13 +72,38 @@ fail:
     ori     $2,  $2, 0xFFFF
     beq     $0,  $0, finish
     nop
-    beq     $0,  $0, finish
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, finish
     nop
-    beq     $0,  $0, finish
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, finish
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, finish
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, finish
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 #level7:
 #    add    $13, $12, $1
@@ -67,213 +122,703 @@ level6:
     add    $11, $10, $1
     blez    $2,      fail
     nop
-    blez    $2,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     blez    $2,      fail
     nop
-    blez    $2,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     blez    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    blez    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    blez    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     blez    $0,      level6b
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level6b:
     add    $12, $11, $1
     blez    $1,      finish
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level5:
     add    $10,  $9, $1
     bltz    $0,      fail
     nop
-    bltz    $0,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bltz    $0,      fail
     nop
-    bltz    $0,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bltz    $0,      fail
     nop
-    bltz    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    bltz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bltz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bltz    $2,      fail
     nop
-    bltz    $2,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bltz    $2,      fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     bltz    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bltz    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bltz    $2,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bltz    $1,      level6
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level4:
     add     $8,  $7, $1
     bgez    $1,      fail
     nop
-    bgez    $1,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bgez    $1,      fail
     nop
-    bgez    $1,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bgez    $1,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgez    $1,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgez    $1,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bgez    $0,      level4b
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level4b:
     add     $9,  $8, $1
     bgez    $2,      level5
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level3:
     add     $7,  $6, $1
     bgtz    $1,      fail
     nop
-    bgtz    $1,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bgtz    $1,      fail
     nop
-    bgtz    $1,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bgtz    $1,      fail
     nop
-    bgtz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgtz    $1,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgtz    $1,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bgtz    $0,      fail
     nop
-    bgtz    $0,      fail
+    nop
+    nop
+    nop
+    nop
     nop
     bgtz    $0,      fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     bgtz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgtz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bgtz    $0,      fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bgtz    $2,      level4
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level2:
     add     $6,  $5, $1
     bne     $2,  $3, fail
     nop
-    bne     $2,  $3, fail
+    nop
+    nop
+    nop
+    nop
     nop
     bne     $2,  $3, fail
     nop
-    bne     $2,  $3, fail
+    nop
+    nop
+    nop
+    nop
     nop
     bne     $2,  $3, fail
     nop
-    bne     $3,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    bne     $2,  $3, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bne     $2,  $3, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bne     $3,  $2, fail
     nop
-    bne     $3,  $2, fail
+    nop
+    nop
+    nop
+    nop
     nop
     bne     $3,  $2, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     bne     $3,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bne     $3,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    bne     $3,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     bne     $1,  $2, level3
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 level1:
     add     $5,  $4, $1
     beq     $1,  $2, fail
     nop
-    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $1,  $2, fail
     nop
-    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $1,  $2, fail
     nop
-    beq     $2,  $1, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $1,  $2, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $2,  $1, fail
     nop
-    beq     $2,  $1, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $2,  $1, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $2,  $1, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $2,  $1, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $2,  $1, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $2,  $3, level2
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
-    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
     nop
     beq     $0,  $0, fail
     nop
+    nop
+    nop
+    nop
+    nop
+    nop
     beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    beq     $0,  $0, fail
+    nop
+    nop
+    nop
+    nop
+    nop
     nop
 finish:
     nop
