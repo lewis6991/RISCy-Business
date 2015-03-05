@@ -86,7 +86,7 @@ wire [31:0] RsData       ;
 wire [31:0] RsDataD      ;
 wire [31:0] RsDataE      ;
 
-wire [31:0] RtData       ;     
+wire [31:0] RtData       ;
 wire [31:0] RtDataD      ;
 wire [31:0] RtDataEin    ;
 wire [31:0] RtDataEout   ;
@@ -98,10 +98,11 @@ wire [5:0]  ALUfuncE     ;
 wire [4:0]  ShamtD       ;
 wire [4:0]  ShamtE       ;
 
-wire [31:0] PCAddrIncF   ;
-wire [31:0] PCAddrIncDin ;
-wire [31:0] PCAddrIncDout;
-wire [31:0] PCAddrIncE   ;
+wire [31:0] PCAddrInc    ;
+
+wire [31:0] InstrAddrDin ;
+wire [31:0] InstrAddrDout;
+wire [31:0] InstrAddrE   ;
 
 wire [31:0] ALUDataE     ;
 wire [31:0] ALUDataMin   ;
@@ -130,14 +131,14 @@ IF if0(
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
     .InstrOut   (InstructionF),
-    .PCAddrInc  (PCAddrIncF  )
+    .PCAddrInc  (PCAddrInc   )
 );
 
 PIPE #(.n(64)) pipe0(
-    .Clock (Clock                       ),
-    .nReset(nReset                      ),
-    .In    ({InstructionF, PCAddrIncF}  ),
-    .Out   ({InstructionD, PCAddrIncDin})
+    .Clock (Clock                           ),
+    .nReset(nReset                          ),
+    .In    ({InstructionF, 16'b0, InstrAddr}),
+    .Out   ({InstructionD, InstrAddrDin    })
 );
 
 DEC de0(
@@ -146,7 +147,7 @@ DEC de0(
     .RegWriteIn  (RegWriteW    ),
     .Instruction (InstructionD ),
     .RData       (RDataW       ),
-    .PCAddrIncIn (PCAddrIncDin ),
+    .InstrAddrIn (InstrAddrDin ),
     .RAddrIn     (RAddrW       ),
     .RegAddr     (RegAddr      ),
     .ImmData     (ImmDataD     ),
@@ -154,7 +155,7 @@ DEC de0(
     .RtAddr      (RtAddrD      ),
     .RsData      (RsData       ),
     .RtData      (RtData       ),
-    .PCAddrIncOut(PCAddrIncDout),
+    .InstrAddrOut(InstrAddrDout),
     .RegData     (RegData      ),
     .RAddrOut    (RAddrD       ),
     .Branch      (BranchD      ),
@@ -179,7 +180,7 @@ PIPE #(.n(163)) pipe1(
         RtAddrD      ,
         RsDataD      ,
         RtDataD      ,
-        PCAddrIncDout,
+        InstrAddrDout,
         RAddrD       ,
         BranchD      ,
         JumpD        ,
@@ -198,7 +199,7 @@ PIPE #(.n(163)) pipe1(
         RtAddrE    ,
         RsDataE    ,
         RtDataEin  ,
-        PCAddrIncE ,
+        InstrAddrE ,
         RAddrEin   ,
         BranchE    ,
         JumpE      ,
@@ -221,7 +222,7 @@ EX ex(
     .MULOp      (MULOpE      ),
     .Jump       (JumpE       ),
     .Branch     (BranchE     ),
-    .PCin       (PCAddrIncE  ),
+    .PCin       (InstrAddrE  ),
     .RegWriteIn (RegWriteEin ),
     .MemReadIn  (MemReadEin  ),
     .MemtoRegIn (MemtoRegEin ),
@@ -352,14 +353,14 @@ mux m2(
     .Sel(ForwardSrcA),
     .A  (RsData     ),
     .B  (RDataW     ),
-    .Y  (RsDataD    )           
+    .Y  (RsDataD    )
 );
 
 mux m3(
     .Sel(ForwardSrcB),
     .A  (RtData     ),
     .B  (RDataW     ),
-    .Y  (RtDataD    )           
+    .Y  (RtDataD    )
 );
 
 endmodule

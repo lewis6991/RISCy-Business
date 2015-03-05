@@ -49,19 +49,19 @@ module branch(
                         
                 `BGEZ,
                 `BGEZAL:
-                    if (A >= 0)
+                    if (signed'(A) >= 0)
                         begin
                             PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                 `BGTZ:
-                    if (A > 0)
+                    if (signed'(A) > 0)
                         begin
                             PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
                         end
                 `BLEZ:
-                    if (A <= 0)
+                    if (signed'(A) <= 0)
                         begin
                             PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
@@ -69,7 +69,7 @@ module branch(
                         
                 `BLTZ,
                 `BLTZAL:
-                    if (A < 0)
+                    if (signed'(A) < 0)
                         begin
                             PCout = PCIn + {Address[29:0], 2'b00};
                             Taken = 1;
