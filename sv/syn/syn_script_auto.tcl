@@ -1,8 +1,9 @@
 #------------------------------------------------------------------------------
-# File              : syn_script_opt.tcl
-# Description       : Synthesis script to run fully optimised synthesis
+# File              : syn_script.tcl
+# Description       : Synthesis script used to run automated synthesis (from higher script)
 # Primary Author    : Dominic Murphy
 # Other Contributors:
+# Notes             : Relies on CLK_PERIOD and TYPE being defined and passed in. Fatal otherwise.
 #------------------------------------------------------------------------------
 
 source ../library_Setup
@@ -41,14 +42,16 @@ analyze -library WORK -format sverilog {
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_timing
-create_clock Clock -name Clock -period 1
+create_clock Clock -name Clock -period $CLK_PERIOD
 set_fix_hold Clock
-compile_ultra
-#compile -map_effort high -incremental_mapping
-report_area > synth_area.rpt
-report_power > synth_power.rpt
-report_timing > synth_timing.rpt
-report_qor > synth_summary.rpt
+
+if ("$TYPE"=="OPT") {compile_ultra}
+if ("$TYPE"=="BASIC") {compile}
+
+report_area > synth_area_${TYPE}_${CLK_PERIOD}ns.rpt
+report_power > synth_power_${TYPE}_${CLK_PERIOD}ns.rpt
+report_timing > synth_timing_${TYPE}_${CLK_PERIOD}ns.rpt
+report_qor > synth_summary_${TYPE}_${CLK_PERIOD}ns.rpt
 change_names -rules verilog -hierarchy -verbose
 
 write -f verilog -hierarchy -output "../processor_synth.v"
