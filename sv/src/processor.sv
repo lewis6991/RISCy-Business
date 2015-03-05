@@ -133,7 +133,7 @@ IF if0(
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
     .InstrOut   (InstructionF),
-    .PCAddrInc  (PCAddrIncF  )
+    .PCAddrInc  (PCAddrInc   )
 );
 
 PIPE #(.n(64)) pipe0(
