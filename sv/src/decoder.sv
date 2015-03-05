@@ -55,7 +55,7 @@ module decoder(
                     `OR , `XOR , `MOVN, `MOVZ,
                     `SLT, `SLTU, `MFHI, `MFLO:
                     begin
-                        RegDst   = 2'b1    ;
+                        RegDst   = 2'b01    ;
                         Func     = FuncCode;
                         ALUOp    = 1'b1    ;
                         RegWrite = 1'b1    ;
@@ -69,7 +69,7 @@ module decoder(
 
                     `JALR:
                     begin
-                        RegDst   = 2'b1;
+                        RegDst   = 2'b01;
                         Func     = `JAL;
                         Jump     = 1'b1;
                         RegWrite = 1'b1;
@@ -113,13 +113,13 @@ module decoder(
                 case(FuncCode)
                     `CLO:
                     begin
-                        RegDst   = 2'b1    ;
+                        RegDst   = 2'b01    ;
                         Func     = `ALU_CLO;
                         RegWrite = 1'b1    ;
                     end
                     `CLZ:
                     begin
-                        RegDst   = 2'b1    ;
+                        RegDst   = 2'b01    ;
                         Func     = `ALU_CLZ;
                         RegWrite = 1'b1    ;
                     end
@@ -129,7 +129,7 @@ module decoder(
 
                     `MUL:
                     begin
-                        RegDst   = 2'b1;
+                        RegDst   = 2'b01;
                         Func     = `MUL;
                         RegWrite = 1'b1;
                     end
