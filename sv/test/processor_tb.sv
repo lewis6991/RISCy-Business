@@ -13,20 +13,18 @@ module processor_tb;
 
 timeunit 10ns; timeprecision 100ps;
 
+// These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
 import "DPI-C" function void compile_asm(string arg);
 import "DPI-C" function int  get_instruction_count();
 import "DPI-C" function int  get_instruction(int index);
 
 parameter clk        = 100 ;
-
 logic     Clock      = 1'b0,
           nReset     = 1'b0;
-
 int       cycles     = 0   ;
-
-int       test_no    = 1   ;
-int       inst_count       ;
+int       test_no    = 1   ,
+          inst_count = 0   ;
 
 logic [31:0] instrData ;
 logic [ 4:0] regAddr   ;
@@ -181,8 +179,17 @@ begin
                 $fatal(1, "FATAL: Testcase %0d does not exist.", test_no);
     endcase
 
+    // This is function is only needed to specify where the compile script
+    // resides. Implementing this function allows us to rename and move the
+    // script if we ever need.
     set_compile_script("../sw/compile2int");
+
+    // Compile the asm file so we can fetch instructions using
+    // get_instruction().
     compile_asm($sformatf("../sw/testcase%0d", test_no));
+
+    // Get the amount of instructions in the testcase so we can set a finish
+    // point.
     inst_count = get_instruction_count();
 
     $display("\nINFO: Testcase %0d selected.", test_no);
@@ -194,6 +201,8 @@ end
 //Clock implementation
 always begin
     #(clk/2) Clock = ~Clock;
+
+    // Timeout mechanism.
     ++cycles;
     assert (cycles < 10000)
     else
@@ -202,9 +211,9 @@ end
 
 // Control test depending on program counter.
 always @ (posedge Clock)
-    if(instrAddr/4 < inst_count)
-        instrData <= #20 get_instruction(instrAddr/4);
-    else if(instrAddr/4 == inst_count)
+    if(instrAddr[15:2] < inst_count)
+        instrData <= #20 get_instruction(instrAddr[15:2]);
+    else if(instrAddr[15:2] == inst_count)
         finish_test();
     else
         instrData <= #20 0;
@@ -214,7 +223,7 @@ task read_registers();
     begin
         regAddr = i;
         @ (posedge Clock);
-        #(clk/2) registers[i] = regData;
+        #20 registers[i] = regData;
     end
 endtask
 
@@ -233,6 +242,7 @@ endfunction
 task finish_test();
     $display("INFO: Checking register values...");
 
+    // Fetch all the register values for checking.
     read_registers();
 
     foreach (register_memory[i])
