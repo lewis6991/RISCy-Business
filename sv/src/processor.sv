@@ -222,8 +222,8 @@ EX ex(
     .MemtoRegIn (MemtoRegEin ),
     .MemWriteIn (MemWriteEin ),
     .ALUSrc     (ALUSrcE     ),
-    .A          (RsDataE     ),//(A           ),
-    .B          (RtDataEin   ),//(B           ),
+    .A          (A           ),//(RsDataE     ),//(A           ),
+    .B          (B           ),//(RtDataEin   ),//(B           ),
     .Immediate  (ImmDataE    ),
     .Shamt      (ShamtE      ),
     .RAddrIn    (RAddrEin    ),
@@ -317,8 +317,10 @@ WB wb0(
     .RegWriteW(RegWriteW  ),
     .RAddrM   (RAddrMin   ),
     .RAddrW   (RAddrW     ),
-    .RsAddr   (RsAddrE    ),
-    .RtAddr   (RtAddrE    ),
+    .RsAddrE  (RsAddrE    ),
+    .RtAddrE  (RtAddrE    ),
+	.RsAddr   (RsAddrD    ),
+	.RtAddr   (RtAddrD    ),
     .ForwardA (ForwardA   ),
     .ForwardB (ForwardB   )
 );
