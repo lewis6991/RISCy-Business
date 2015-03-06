@@ -168,7 +168,7 @@ proc()
             fi
         fi
     else
-        for test in {1..4}
+        for test in {1..5}
         do
             ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC >> run.log
             if [ "$?" = "0" ]
