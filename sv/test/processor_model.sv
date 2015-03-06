@@ -2,7 +2,7 @@
 // File              : processor_model.sv
 // Description       : Processor model used to automate register checking.
 // Primary Author    : Lewis Russell
-// Other Contributo`rs:
+// Other Contributors:
 // Notes             :
 //------------------------------------------------------------------------------
 `include "op_definition.sv"
@@ -21,7 +21,7 @@ module processor_model(
 );
 
 
-clocking delay @ (posedge Clock);
+default clocking delay @ (posedge Clock);
     output pc;
 endclocking
 
