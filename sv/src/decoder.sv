@@ -9,6 +9,7 @@
 `include "op_definition.sv"
 `include "alu_definition.sv"
 `include "mul_definition.sv"
+`include "branch_definitions.sv"
 
 module decoder(
     output logic [1:0] RegDst  ,
@@ -27,7 +28,7 @@ module decoder(
     output logic [5:0] Func    ,
     input        [5:0] OpCode  ,
                        FuncCode,
-                       BraCode
+    input        [4:0] BraCode
 );
 
     always_comb
@@ -90,7 +91,7 @@ module decoder(
                     `BGEZ,
                     `BLTZ:
                     begin
-                        Func     = BraCode;
+                        Func     = BraCode ;
                         Branch   = 1'b1    ;
                         ALUSrc   = 1'b1    ;
                     end
@@ -98,7 +99,7 @@ module decoder(
                     `BGEZAL, `BLTZAL:
                     begin
                         RegDst   = 2'b10   ;
-                        Func     = BraCode;
+                        Func     = BraCode ;
                         ALUSrc   = 1'b1    ;
                         Branch   = 1'b1    ;
                         RegWrite = 1'b1    ;
@@ -245,11 +246,11 @@ module decoder(
             end
 			
             `SB , `SH, `SW, `SWL , `SWR:
-			begin
-				Func     = `ADD;
-				ALUSrc   = 1'b1;
-				MemWrite = 1'b1;
-			end
+            begin
+		Func     = `ADD;
+                ALUSrc   = 1'b1;
+                MemWrite = 1'b1;
+            end
 			
             `LL:;
             `SC:;
