@@ -9,7 +9,7 @@
 `include "op_definition.sv"
 `include "alu_definition.sv"
 `include "mul_definition.sv"
-`include "branch_definitions.sv"
+`include "branch_definition.sv"
 
 module decoder(
     output logic [1:0] RegDst  ,
@@ -244,14 +244,14 @@ module decoder(
                 MemtoReg = 1'b1;
                 RegWrite = 1'b1;
             end
-			
+
             `SB , `SH, `SW, `SWL , `SWR:
             begin
 		Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemWrite = 1'b1;
             end
-			
+
             `LL:;
             `SC:;
             default:;
