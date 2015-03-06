@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 `include "memory.sv"
+`include "processor_model.sv"
 
 module processor_tb;
 
@@ -29,14 +30,26 @@ int       test_no    = 1   ,
 logic [31:0] instrData ;
 logic [ 4:0] regAddr   ;
 wire  [15:0] instrAddr ,
+             instrAddrM,
              memAddr   ;
 wire  [31:0] memRData  ,
              memWData  ,
-             regData   ;
+             regData   ,
+             regDataM  ;
 wire         memReadEn ,
              memWriteEn;
 
 logic [31:0] registers[1:31];
+logic [31:0] model_registers[1:31];
+
+processor_model pmodel0(
+    .Clock      (Clock     ),
+    .nReset     (nReset    ),
+    .Instruction(instrData ),
+    .rData      (regDataM  ),
+    .rAddr      (regAddr   ),
+    .InstAddr   (instrAddrM)
+);
 
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
@@ -62,122 +75,10 @@ memory memory0 (
     .WriteData(memWData  )
 );
 
-const int reg_var1 = 32'h12345678;
-const int reg_var2 = 32'h55557777;
-const int reg_var3 = 32'h01234567;
-const int reg_var4 = 32'h80050000;
-const int reg_var5 = 32'h00000004;
-const int reg_var6 = 32'h82345678;
-const int reg_var7 = 32'h00000011;
-const int imm1     = 16'h5500    ;
-const int imm2     = 16'hFFFF    ;
-const int imm3     = 16'h7654    ;
-const int imm4     = 16'h5555    ;
-
-logic [31:0] register_memory[$];
-
-logic [31:0] testcase_registers_1[$] = {
-    reg_var1           ,
-    reg_var2           ,
-    reg_var1 + reg_var2
-};
-
-logic [31:0] testcase_registers_2[$] = {
-    reg_var1              ,
-    reg_var3              ,
-    reg_var1 + reg_var3   ,
-    reg_var1 - reg_var3   ,
-    reg_var3 + imm1       ,
-    reg_var1 & reg_var3   ,
-    reg_var1 & imm3       ,
-    reg_var1 | reg_var3   ,
-    reg_var1 ^ reg_var3   ,
-    ~(reg_var1 | reg_var3),
-    reg_var1 ^ imm4       ,
-    reg_var1 & imm2       ,
-    32'h00000011          ,
-    -(reg_var1 & imm2    ),
-    32'h00000011          ,
-    reg_var1 + reg_var3   ,
-    reg_var1 - reg_var3   ,
-    reg_var3 + imm1
-};
-
-const longint reg_prd1 = reg_var1*reg_var3           ;
-const longint reg_prd2 = reg_prd1 + reg_var1*reg_var3;
-const longint reg_prd3 = reg_prd2 - reg_var3*reg_var3;
-const longint reg_prd4 = reg_prd3 + reg_var3*reg_var3;
-const longint reg_prd5 = reg_prd4 - reg_var3*reg_var3;
-
-logic [31:0] testcase_registers_3[$] = {
-    reg_var1       ,
-    reg_var3       ,
-    reg_prd1[31: 0],
-    reg_prd1[63:32],
-    reg_prd1[31: 0],
-    reg_prd2[63:32],
-    reg_prd2[31: 0],
-    reg_prd3[63:32],
-    reg_prd3[31: 0],
-    reg_prd4[63:32],
-    reg_prd4[31: 0],
-    reg_prd5[63:32],
-    reg_prd5[31: 0],
-    reg_prd1[63:32],
-    reg_prd1[31: 0],
-    reg_var1       ,
-    reg_var3
-};
-
-logic [31:0] testcase_registers_4[$] = {
-    reg_var4             ,
-    reg_var5             ,
-    reg_var4 >>> 5       ,
-    reg_var4 >>> reg_var5,
-    reg_var4 <<  5       ,
-    reg_var4 >>  5       ,
-    reg_var4 <<  reg_var5,
-    reg_var4 >>  reg_var5,
-    (reg_var4 >>  reg_var5 != 0) ? reg_var4 : 32'b0,
-    reg_var4 >> 5,
-    1            ,
-    1            ,
-    32'h88000000 ,
-    1            ,
-    1
-};
-
-logic [31:0] testcase_registers_5[$] = {
-    reg_var6             ,
-    reg_var2             ,
-    reg_var2             ,
-    reg_var7             ,
-    reg_var7 +   reg_var6,
-    reg_var7 + 2*reg_var6,
-    reg_var7 + 3*reg_var6,
-    reg_var7 + 4*reg_var6,
-    reg_var7 + 5*reg_var6,
-    reg_var7 + 6*reg_var6,
-    reg_var7 + 7*reg_var6,
-    reg_var7 + 8*reg_var6
-};
-
-
 //Testing procedure
 initial
 begin
     void'($value$plusargs("test=%d", test_no));
-    case (test_no)
-        1: register_memory = testcase_registers_1;
-        2: register_memory = testcase_registers_2;
-        3: register_memory = testcase_registers_3;
-        4: register_memory = testcase_registers_4;
-        5: register_memory = testcase_registers_5;
-        default:
-            assert (0)
-            else
-                $fatal(1, "FATAL: Testcase %0d does not exist.", test_no);
-    endcase
 
     // This is function is only needed to specify where the compile script
     // resides. Implementing this function allows us to rename and move the
@@ -211,12 +112,18 @@ end
 
 // Control test depending on program counter.
 always @ (posedge Clock)
+begin
+    PC_ASSERT: assert (instrAddr == instrAddrM)
+    else
+        $error("ERROR: program counter mismatch.");
+
     if(instrAddr[15:2] < inst_count)
         instrData <= #20 get_instruction(instrAddr[15:2]);
     else if(instrAddr[15:2] == inst_count)
         finish_test();
     else
         instrData <= #20 0;
+end
 
 task read_registers();
     foreach(registers[i])
@@ -224,10 +131,11 @@ task read_registers();
         regAddr = i;
         @ (posedge Clock);
         #20 registers[i] = regData;
+        model_registers[i] = regDataM;
     end
 endtask
 
-function void check_register(int reg_no, int reg_val);
+function check_register(int reg_no, int reg_val);
     int act_reg_val;
     // Assignment needs to go on seperate line to work.
     act_reg_val = int'(registers[reg_no]);
@@ -245,8 +153,8 @@ task finish_test();
     // Fetch all the register values for checking.
     read_registers();
 
-    foreach (register_memory[i])
-        check_register(i + 1, register_memory[i]);
+    foreach (model_registers[i])
+        check_register(i, model_registers[i]);
 
     $display("\nINFO: Test Finished.\n");
     $finish;

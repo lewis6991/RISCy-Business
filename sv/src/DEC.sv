@@ -65,7 +65,7 @@ decoder dec0 (
     .Func    (ALUfunc                   ),
     .OpCode  (Instruction[31:26]        ),
     .FuncCode(Instruction[5:0]          ),
-    .BraCode ({1'b0, Instruction[20:16]})
+    .BraCode (Instruction[20:16]        )
 );
 
 registers reg0(

@@ -115,9 +115,9 @@ main()
 
     padding
     echo -e "\n$newtext" >> run.log
-    coltext=${newtext//PASS/\\e[92mPASS\\e[30m}
-    coltext=${newtext//FAIL/\\e[91mFAIL\\e[30m}
-    echo -e "\n$coltext"
+    coltext=${newtext//PASS/\\e[92mPASS\\e[39m}
+    newtext=${coltext//FAIL/\\e[1;4;91mFAIL\\e[21;24;39m}
+    echo -e "\n$newtext"
 
     exit 0
 }
@@ -172,7 +172,7 @@ proc()
             fi
         fi
     else
-        for test in {1..4}
+        for test in {1..5}
         do
             ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC >> run.log
             if [ "$?" = "0" ]
