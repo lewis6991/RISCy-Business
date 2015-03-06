@@ -10,7 +10,7 @@ source ../library_Setup
 
 #analyze -format sverilog {../../src/processor.sv}
 
-analyze -library WORK -format sverilog {
+analyze -format sverilog {
 ../../src/signextend.sv
 ../../src/registers.sv 
 ../../src/processor.sv 
@@ -48,10 +48,10 @@ set_fix_hold Clock
 if ("$TYPE"=="OPT") {compile_ultra}
 if ("$TYPE"=="BASIC") {compile}
 
-report_area > synth_area_${TYPE}_${CLK_PERIOD}ns.rpt
-report_power > synth_power_${TYPE}_${CLK_PERIOD}ns.rpt
-report_timing > synth_timing_${TYPE}_${CLK_PERIOD}ns.rpt
-report_qor > synth_summary_${TYPE}_${CLK_PERIOD}ns.rpt
+report_area > ../logs/synth_area_${TYPE}_${CLK_PERIOD}ns.rpt
+report_power > ../logs/synth_power_${TYPE}_${CLK_PERIOD}ns.rpt
+report_timing > ../logs/synth_timing_${TYPE}_${CLK_PERIOD}ns.rpt
+report_qor > ../logs/synth_summary_${TYPE}_${CLK_PERIOD}ns.rpt
 change_names -rules verilog -hierarchy -verbose
 
 write -f verilog -hierarchy -output "../processor_synth.v"

@@ -9,7 +9,7 @@ source ../library_Setup
 
 #analyze -format sverilog {../../src/processor.sv}
 
-analyze -library WORK -format sverilog {
+analyze -format sverilog {
 ../../src/signextend.sv
 ../../src/registers.sv 
 ../../src/processor.sv 
