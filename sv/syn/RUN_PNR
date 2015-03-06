@@ -8,22 +8,19 @@
 #------------------------------------------------------------------------------
 
 if ($1 == clean) then
-    ls work *.log >&/dev/null
-    if ($? != 0) then
-        echo "Already clean!"
-    else
-        rm ./*.log
-        rm -rf ./work
-        echo "Cleaned!"
-    endif
+    rm -rf ./work >&/dev/null
+    rm ./*.log >&/dev/null
+    rm ./encounter* >&/dev/null
+    echo "Cleaned!"
     exit
 endif
 
 source SOC_Setup.sh
 
+mkdir -p logs
 mkdir -p work
 cd work >&/dev/null
 
-velocity -init ../pnr_script.tcl > ../pnr.log
-echo "Complete. Results written to pnr.log"
+velocity -init ../pnr_script.tcl > ../logs/pnr.log
+echo "PNR Complete. Results written to logs/pnr.log"
 exit

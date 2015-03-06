@@ -11,44 +11,46 @@ set host=`hostname`
 set hind="hind.ecs.soton.ac.uk"
 set hart="hart.ecs.soton.ac.uk"
 
-if ($host != $hind && $host != $hart]) then
+if ($host != $hind && $host != $hart) then
     echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
     exit
 endif
 
 if ($1 == clean) then
-    ls work *.log >&/dev/null
-    if ($? != 0) then
-        echo "Already clean!"
-    else
-        rm ./*.log
-        rm -rf ./work
-        echo "Cleaned!"
-    endif
+    rm -rf ./work >&/dev/null
+    rm ./*.log >&/dev/null
+    echo "Cleaned!"
     exit
 endif
 
+mkdir -p logs
 mkdir -p work
 cd work >&/dev/null
 source ../DC_Setup.sh
 
 if($1 == check) then
-    dc_shell -f "../syn_check.tcl" > ../check_syn.log
-    echo "Complete. Results written to check_syn.log"
+    dc_shell -f "../syn_check.tcl" > ../logs/check_syn.log
+    echo "Complete. Results written to logs/check_syn.log"
     exit
 endif
 
 if($1 == opt) then
-    dc_shell -f "../syn_script_opt.tcl" > ../opt_syn.log
-    echo "Complete. Results written to opt_syn.log"
+    dc_shell -f "../syn_script_opt.tcl" > ../logs/opt_syn.log
+    echo "Complete. Results written to logs/opt_syn.log"
     exit
 endif
 
 if($1 == basic) then
-    dc_shell -f "../syn_script_basic.tcl" > ../basic_syn.log
-    echo "Complete. Results written to basic_syn.log"
+    dc_shell -f "../syn_script_basic.tcl" > ../logs/basic_syn.log
+    echo "SYN Complete. Results written to logs/basic_syn.log"
     exit
 endif
+
+if($1 == auto) then
+    #echo "Automated synthesis beginning with type $2, Clock Period of ${3}ns."
+    dc_shell -x "set TYPE $2; set CLK_PERIOD $3;" -f "../syn_script_auto.tcl" > ../logs/auto_syn.log
+    echo "SYN Complete. Results written to logs/basic_syn.log"
+    exit
 
 echo "Error: No/Unrecognised argument provided."
 exit 1
