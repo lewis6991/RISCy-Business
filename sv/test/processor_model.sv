@@ -8,6 +8,7 @@
 `include "op_definition.sv"
 `include "alu_definition.sv"
 `include "mul_definition.sv"
+`include "branch_definitions.sv"
 module processor_model(
     input               Clock      ,
     input               nReset     ,
