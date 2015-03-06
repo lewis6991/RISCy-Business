@@ -112,8 +112,8 @@ main()
     padding
     echo -e "\n$newtext" >> run.log
     coltext=${newtext//PASS/\\e[92mPASS\\e[30m}
-    coltext=${newtext//FAIL/\\e[91mFAIL\\e[30m}
-    echo -e "\n$coltext"
+    newtext=${coltext//FAIL/\\e[91mFAIL\\e[30m}
+    echo -e "\n$newtext"
 
     exit 0
 }
