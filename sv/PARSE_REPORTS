@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#----------------------------------------
+# File: PARSE_RPTS
+# Description: Bash script to parse reports and extract synthesis, place and route details
+# Primary Author: Dominic Murphy
+# Other Contributors:
+#----------------------------------------
+
+cd syn/logs >& /dev/null
+if [ $? -ne 0 ]
+then
+    echo "Error: Unable to locate the log file directory at syn/logs."
+    exit 1
+fi
+
+rm data_* >& /dev/null
+
+FREQS=( $(grep -o "^  Critical Path Clk Period: *[0-9]*" ./*summary*.rpt | awk '{print $6}') )
+for i in ${FREQS[@]};
+do
+  echo "Clock Period: ${i}" > data_${i}ns.log
+  grep "^  .*: *[0-9]*\.[0-9]*" ./*summary_*_${i}ns.rpt >> data_${i}ns.log
+  sed -ie 's/^  //g' data_${i}ns.log
+  sed -ie 's/: */,/g' data_${i}ns.log
+done
+
