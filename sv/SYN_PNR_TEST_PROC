@@ -1,0 +1,144 @@
+#!/bin/bash
+
+#----------------------------------------
+# File: SYN_PNR_TEST_PROC
+# Description: Crude script to perform a clean, synthesis (basic), pnr and then test.
+# Primary Author: Dominic Murphy
+# Other Contributors:
+# Notes:
+#----------------------------------------
+
+main()
+{
+if [ $host != $hind ] #&& [ $host != $hart ] 
+then
+    echo "Error: Synthesis and Testing requires hind CAD server. Exiting..." #or hart CAD server for tools. Exiting..."
+    exit 1
+fi
+
+if [ $(echo $DISPLAY) = "" ]
+then
+    echo "Error: Display connection not mapped (Necessary for Place & Route tool.
+          Run ssh with -X argument. Exiting..."
+    exit 1
+fi
+
+echo "
+This script will perform the following:
+1. Clean out any existing synthesis and/or place & route files.
+2. Synthesise, then place & route the processor as it stands.
+3. Run the testing script, executing the test cases and printing the results.
+
+Depending on the design, optimisation settings and server usage, this could take a long time.
+"
+
+while true; do
+    read -p "Do you wish to continue? " yn
+    case $yn in
+        [Yy]* ) init $1 $2;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+}
+
+init()
+{
+if [ "$1" = "iter" ]
+then
+    iter_warn $2
+else
+    run $1
+    echo $RESULTS
+    exit
+fi
+}
+
+run()
+{
+SCRIPT=$1
+TYPE=$2
+CLK_PERIOD=$3
+
+cd syn
+./RUN_SYN clean > /dev/null
+./RUN_PNR clean > /dev/null
+echo "Workspace cleaned"
+echo "Beginning synthesis..."
+./RUN_SYN $SCRIPT $TYPE $CLK_PERIOD
+echo "Synthesis complete"
+
+echo "Beginning place & route..."
+./RUN_PNR
+echo "Place & route complete"
+echo "Running tests..."
+cd ../
+RESULTS=$(./RUNME -pnr)
+echo "Tests complete."
+}
+
+iter_warn()
+{
+echo "
+WARNING: iter has been specified. This will begin a very long sequence of tests to find the clock
+period of which the processor passes all tests.
+This will take a VERY long time - you have been warned.
+"
+
+while true; do
+    read -p "Do you wish to continue? " yn
+    case $yn in
+        [Yy]* ) iter $1;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+}
+
+iter()
+{
+rm -rf logs >&/dev/null
+
+declare -i CLK_PERIOD
+declare -i CLK_PERIOD_MODIFIER
+
+CLK_PERIOD=1000
+CLK_PERIOD_MODIFIER=${CLK_PERIOD}/2
+SCRIPT=auto
+TYPE=$1
+
+while true
+do
+    echo ""
+    echo "Testing clock period of ${CLK_PERIOD}ns"
+    run $SCRIPT $TYPE $CLK_PERIOD
+    grep "processor testcase" run.log
+    TOTAL=$(grep "processor testcase" run.log | wc -l) >/dev/null
+    PASSES=$(echo "$RESULTS" | tr ' ' '\n' | grep PASS | wc -l) >/dev/null
+    echo "Tests conducted: $TOTAL"
+    echo "Tests passed: $PASSES"
+    if [ "$TOTAL" == "$PASSES" ]
+    then
+        CLK_PERIOD=${CLK_PERIOD}-${CLK_PERIOD_MODIFIER}
+        CLK_PERIOD_MODIFIER=${CLK_PERIOD_MODIFIER}/2
+    else
+        CLK_PERIOD=${CLK_PERIOD}+${CLK_PERIOD_MODIFIER}
+        CLK_PERIOD_MODIFIER=${CLK_PERIOD_MODIFIER}/2
+    fi
+    if [ $CLK_PERIOD_MODIFIER -eq 1 ]
+    then
+        echo ""
+        echo "Clock period has converged to $CLK_PERIODns"
+        if [ "$TOTAL" == "$PASSES" ]
+        then
+            echo "ERROR: Most recent test failed! Do not trust this clock period! Look at previous values"
+        fi
+        exit
+    fi
+done
+}
+
+host=`hostname`
+hind="hind.ecs.soton.ac.uk"
+hart="hart.ecs.soton.ac.uk"
+main "$@"
