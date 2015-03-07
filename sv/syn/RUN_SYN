@@ -49,7 +49,7 @@ endif
 if($1 == auto) then
     #echo "Automated synthesis beginning with type $2, Clock Period of ${3}ns."
     dc_shell -x "set TYPE $2; set CLK_PERIOD $3;" -f "../syn_script_auto.tcl" > ../logs/auto_syn.log
-    echo "SYN Complete. Results written to logs/basic_syn.log"
+    echo "SYN Complete. Results written to logs/iter_syn.log"
     exit
 
 echo "Error: No/Unrecognised argument provided."
