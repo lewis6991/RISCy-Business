@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 // File              : processor_model.sv
-// Description       : Processor model used to automate register checking.
+// Description       : Processor model used to automate register checking and
+//                     program counter tracking.
 // Primary Author    : Lewis Russell
 // Other Contributors:
 // Notes             :
@@ -9,34 +10,32 @@
 `include "alu_definition.sv"
 `include "mul_definition.sv"
 `include "branch_definition.sv"
-module processor_model(
+program processor_model(
     input               Clock      ,
-    input               nReset     ,
-    input        [31:0] wData      ,
-                        Instruction,
+                        nReset     ,
+    input        [31:0] Instruction,
     output logic [31:0] rData      ,
     output       [15:0] InstAddr   ,
-    input        [ 4:0] rAddr,
-    output logic [15:0] pc
+    input        [ 4:0] rAddr
 );
 
+int register[0:31];
+
+logic [63:0] acc        ;
+logic [ 5:0] opcode     ,
+             func       ;
+logic [ 4:0] rs_addr    ,
+             rt_addr    ,
+             rd_addr    ,
+             shamt      ;
+logic [15:0] imm        ,
+             offset     ,
+             pc      = 0;
+logic [25:0] address    ;
 
 default clocking delay @ (posedge Clock);
     output pc;
 endclocking
-
-int register[0:31];
-
-logic [63:0] acc    ;
-logic [ 5:0] opcode ,
-             func   ;
-logic [ 4:0] rs_addr,
-             rt_addr,
-             rd_addr,
-             shamt  ;
-logic [15:0] imm    ,
-             offset ;
-logic [25:0] address;
 
 assign opcode  = Instruction[31:26];
 assign rs_addr = Instruction[25:21];
@@ -55,8 +54,9 @@ assign InstAddr = pc;
 `define rd register[rd_addr]
 `define ra register[31]
 
-// Register driver block
-always_ff @ (posedge Clock, negedge nReset)
+initial while(1)
+begin
+    @ (posedge Clock, negedge nReset)
     if (~nReset) begin
         pc <= 0;
         foreach(register[i])
@@ -103,11 +103,11 @@ always_ff @ (posedge Clock, negedge nReset)
             begin
                 case (func)
                     `SLL    : `rd <= `rt <<  shamt;
-                    `SLLV   : `rd <= `rt <<  `rs   ;
+                    `SLLV   : `rd <= `rt <<  `rs  ;
                     `SRA    : `rd <= `rt >>> shamt;
-                    `SRAV   : `rd <= `rt >>> `rs   ;
+                    `SRAV   : `rd <= `rt >>> `rs  ;
                     `SRL    : `rd <= `rt >>  shamt;
-                    `SRLV   : `rd <= `rt >>  `rs   ;
+                    `SRLV   : `rd <= `rt >>  `rs  ;
                     `JALR   :; //TODO
                     `MOVZ   : if (`rt == 0) `rd <= `rs;
                     `MOVN   : if (`rt != 0) `rd <= `rs;
@@ -135,7 +135,7 @@ always_ff @ (posedge Clock, negedge nReset)
                     end
                     0:;//NOP
                     default:
-                        assert(0)
+                        ALU_INST_ERROR: assert(0)
                         else
                             $error("ERROR: This ALU instruction is not supported (func: 6'b%6b). ", func);
                 endcase
@@ -159,7 +159,7 @@ always_ff @ (posedge Clock, negedge nReset)
                         `ra <= pc + 8;
                     end
                     default:
-                        assert(0)
+                        BRANCH_INST_ERROR: assert(0)
                         else
                             $error("ERROR: This branch instruction is not supported(variant: 5'b%5b).", rt_addr);
                 endcase
@@ -175,17 +175,18 @@ always_ff @ (posedge Clock, negedge nReset)
                     `CLO   : `rd <= count_leading_digit(`rs, 1);
                     `CLZ   : `rd <= count_leading_digit(`rs, 0);
                     default:
-                        assert(0)
+                        MULL_INST_ERROR: assert(0)
                         else
-                            $error("ERROR: This MULL insturction is not supported(func: 6'b%6b).", func);
+                            $error("ERROR: This MULL instruction is not supported(func: 6'b%6b).", func);
                 endcase
             end
             default:
-                assert(0)
+                OP_INST_ERROR: assert(0)
                 else
-                    $error("ERROR: Thisop code is not supported(opcode: 6'b%6b).", opcode);
+                    $error("ERROR: This opcode is not supported(opcode: 6'b%6b).", opcode);
         endcase
     end
+end
 
 function int count_leading_digit(logic [31:0] operand, bit arg);
     int i;
@@ -194,10 +195,10 @@ function int count_leading_digit(logic [31:0] operand, bit arg);
         if (operand[31-i] != arg)
             break;
 
-    assert (i <= 32)
+    COUNT_LEADING_DIGIT_ASSERT : assert (i <= 32)
         return i;
     else
         $error("Error: Function returned value greater than 32. Is model broken?");
 endfunction
 
-endmodule
+endprogram
