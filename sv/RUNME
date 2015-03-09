@@ -277,7 +277,7 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
-NC_ARGS="+nc64bit +ncaccess+r -sv -w -q +nctimescale+1ns/10ps -sv_lib complib.so"
+NC_ARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+1ns/10ps -sv_lib complib.so"
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 main "$@"
