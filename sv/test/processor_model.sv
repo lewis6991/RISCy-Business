@@ -54,6 +54,15 @@ assign InstAddr = pc;
 `define rd register[rd_addr]
 `define ra register[31]
 
+property reg0_data;
+    @ (posedge Clock)
+    register[0] == 0;
+endproperty
+
+REG0_DATA_ASSERT: assert property (reg0_data)
+else
+    $error("ERROR: Reg $0 contains a non-zero value.");
+
 initial while(1)
 begin
     @ (posedge Clock, negedge nReset)
