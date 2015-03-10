@@ -16,9 +16,8 @@
 //------------------------------------------------------------------------------
 
 module IF(
-    input               Clock,
-                        nReset,
-						Stall,
+    input               Clock      ,
+                        nReset     ,
                         BranchTaken,
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
@@ -32,7 +31,7 @@ module IF(
                 progaddrinc ;
 
     pc pc0(
-        .Clock      (Clock & Stall),
+        .Clock      (Clock        ),
         .nReset     (nReset       ),
         .ProgAddrIn (progaddrnext ),
         .ProgAddrOut(progaddrout  )
