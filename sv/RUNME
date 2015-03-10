@@ -258,8 +258,6 @@ padding()
     done <<< "$summarytext"
 }
 
-cat db.txt
-
 # Check if mips cross-compiler is avaiable. If not then adjust PATH variable.
 if [[ ! $PATH =~ .*/opt/esdcad/cross/bin.* ]]; then
     export PATH=/opt/esdcad/cross/bin:$PATH
