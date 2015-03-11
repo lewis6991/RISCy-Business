@@ -141,7 +141,7 @@ begin
 
     if(rtlPC[15:2] < inst_count)
         instrData <= #20 get_instruction(rtlPC[15:2]);
-    else if(rtlPC[15:2] == inst_count)
+    else if(rtlPC[15:2] == inst_count + 10)
         finish_test();
     else
         instrData <= #20 0;
