@@ -21,6 +21,7 @@ mkdir -p logs
 mkdir -p work
 cd work >&/dev/null
 
-velocity -init ../pnr_script.tcl > ../logs/pnr.log
-echo "PNR Complete. Results written to logs/pnr.log"
+velocity -init ../pnr_script.tcl > ../logs/pnr_${1}.log
+echo "PNR Complete. Results written to logs/pnr_${1}.log"
+
 exit
