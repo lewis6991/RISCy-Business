@@ -10,6 +10,10 @@ module ex_mult (
     input        [31:0] A   ,
                         B   ,
     input               SelB, // Enable B input, else multiply by 1
+    output logic        C   ,
+                        Z   ,
+                        O   ,
+                        N   ,
     output logic [63:0] Out
 );
 
@@ -20,6 +24,11 @@ module ex_mult (
             Out   = A * B;
         else
             Out   = A;
+        
+        C = Out[32];
+        Z = (Out[31:0] == 0);
+        O = Out[32];
+        N = Out[31];
         
     end
 
