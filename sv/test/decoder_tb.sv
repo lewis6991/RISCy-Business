@@ -9,6 +9,7 @@
 `include "op_definition.sv"
 `include "alu_definition.sv"
 `include "mul_definition.sv"
+`include "branch_definition.sv"
 
 module decoder_tb;
 
@@ -16,13 +17,14 @@ timeunit 10ns; timeprecision 100ps;
 const int clk = 100;
 
 logic [5:0] OpCode, FuncCode;
+logic [4:0] BraCode;
 wire  [5:0] Func;
 wire  [1:0] RegDst;
 wire Branch, Jump, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel, ImmSize, Unsgnsel;
 
-parameter num = 60; //Minus 1 from total number of elements
+parameter num = 64; //Minus 1 from total number of elements
 
-//RegDst, _ , Branch, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel, _ , Jump, ImmSize, Unsgnsel, _ , Func
+//RegDst, _ , Branch, MemRead, MemtoReg, ALUOp, MULOp, MemWrite, ALUSrc, RegWrite, ShiftSel, _ , Jump, ImmSize, Unsgnsel, _ , (Func)
 logic [19:0] testcases [num:0] = '{20'b01_000100010_000_100000, ////////// ADD
                                    20'b01_000100010_000_100001, //      // ADDU
                                    20'b01_000100010_000_100010, //      // SUB
@@ -51,50 +53,58 @@ logic [19:0] testcases [num:0] = '{20'b01_000100010_000_100000, ////////// ADD
                                    20'b00_000100000_000_010011, //      // MTLO
                                    20'b01_000000010_100_000011, //      // JALR
                                    20'b00_000000000_100_000010, ////////// JR
+                                   20'b00_100000100_000_000001, ////////// BGEZ
+                                   20'b00_100000100_000_000000, // BRANCH  BLTZ
+                                   20'b10_100000110_000_010001, //         BGEZAL
+                                   20'b10_100000110_000_010000, ////////// BLTZAL
+
                                    20'b01_000010010_000_110001, ////////// CLO
                                    20'b01_000010010_000_110000, //      // CLZ
                                    20'b00_000010000_000_000000, //      // MADD
                                    20'b00_000010000_000_000001, // MULL // MADDU
-
                                    20'b00_000010000_000_000100, //      // MSUB
                                    20'b00_000010000_000_000101, //      // MSUBU
                                    20'b01_000010010_000_000010, ////////// MUL
                                    20'b00_000100110_000_100000, // ADDI
                                    20'b00_000100110_001_100001, // ADDIU
                                    20'b00_000100111_000_100000, // LUI
+
                                    20'b00_000100110_001_100100, // ANDI
                                    20'b00_000100110_001_100101, // ORI
                                    20'b00_000100110_001_100110, // XORI
                                    20'b00_000100110_000_101010, // SLTI
-
                                    20'b00_000100110_001_101011, // SLTIU
                                    20'b00_100000100_000_000100, // BEQ
                                    20'b00_100000100_000_000111, // BGTZ
                                    20'b00_100000100_000_000110, // BLEZ
                                    20'b00_100000100_000_000101, // BNE
                                    20'b00_000000100_110_000010, // J
+
                                    20'b10_000000100_110_000011, // JAL
                                    20'b00_011000110_000_100000, // LB
                                    20'b00_011000110_000_100000, // LBU
                                    20'b00_011000110_000_100000, // LH
-
                                    20'b00_011000110_000_100000, // LHU
                                    20'b00_011000110_000_100000, // LW
                                    20'b00_011000110_000_100000, // LWL
                                    20'b00_011000110_000_100000, // LWR
                                    20'b00_000001100_000_100000, // SB
                                    20'b00_000001100_000_100000, // SH
+
                                    20'b00_000001100_000_100000, // SW
                                    20'b00_000001100_000_100000, // SWL
                                    20'b00_000001100_000_100000, // SWR
                                    20'b00_000000000_000_000000, // LL
-
                                    20'b00_000000000_000_000000};// SC
 
 logic [5:0] testALU  [0:25] = '{
     `ADD,  `ADDU, `SUB,  `SUBU, `SLL,  `SLLV, `SRA, `SRAV, `SRL,  `SRLV,
     `AND,  `NOR,  `OR,   `XOR,  `MOVN, `MOVZ, `SLT, `SLTU, `MULT, `MULTU,
     `MFHI, `MFLO, `MTHI, `MTLO, `JALR, `JR
+};
+
+logic [5:0] testBRANCH [0:3] = '{
+    `BGEZ, `BLTZ, `BGEZAL, `BLTZAL
 };
 
 logic [5:0] testMULL [0:6] = '{
@@ -126,7 +136,8 @@ decoder decoder0 (
     .Unsgnsel (Unsgnsel),
     .Func     (Func    ),
     .OpCode   (OpCode  ),
-    .FuncCode (FuncCode)
+    .FuncCode (FuncCode),
+    .BraCode  (BraCode )
 );
 
 //Initial conditions
@@ -153,6 +164,16 @@ begin
     //FuncCode = `ALU_CLZ;
     //FuncCode = `ALU_CLO;
 
+    OpCode = `BRANCH;
+    for (int i = 0 ; i < 4; i++) 
+    begin
+        BraCode = testBRANCH[i];
+	FuncCode = {1'b0, BraCode};
+        #clk
+        checkassert;
+        count++;
+    end
+
     OpCode = `MULL;
     for (int i = 0 ; i < 7; i++) 
     begin
@@ -178,27 +199,6 @@ begin
 
 $finish;
 
-    //Still to be added and then tested
-    //OpCode = `BEQ;
-    //OpCode = `BGTZ;
-    //OpCode = `BLEZ;
-    //OpCode = `BNE;
-    //OpCode = `J;
-    //OpCode = `JAL;
-    //OpCode = `LB;
-    //OpCode = `LBU;
-    //OpCode = `LH;
-    //OpCode = `LHU;
-    //OpCode = `LW;
-    //OpCode = `LWL;
-    //OpCode = `LWR;
-    //OpCode = `SB;
-    //OpCode = `SH;
-    //OpCode = `SW;
-    //OpCode = `SWL;
-    //OpCode = `SWR;
-    //OpCode = `LL;
-    //OpCode = `SC;
 end
 
 
@@ -210,9 +210,9 @@ task checkassert;
     else
     begin
         $display("ERROR: testcase no. %d", (count+1));
-        $display("       Opcode   = %d", OpCode);
-        $display("       Funccode = %d", FuncCode);
-        $display("         Output  Expected\n");
+        $display("       Opcode        = %d", OpCode);
+        $display("       Func/Bra code = %d", FuncCode);
+        $display("         Output  Expected");
         $display("RegDst   %b      %b" , RegDst,   testcases[num-count][19:18]);
         $display("Branch   %b       %b", Branch,   testcases[num-count][17]);
         $display("MemRead  %b       %b", MemRead,  testcases[num-count][16]);
