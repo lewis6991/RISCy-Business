@@ -46,9 +46,9 @@ if($1 == basic) then
     exit
 endif
 
-if($1 == auto) then
+if($1 == iter) then
     #echo "Automated synthesis beginning with type $2, Clock Period of ${3}ns."
-    dc_shell -x "set TYPE $2; set CLK_PERIOD $3;" -f "../syn_script_auto.tcl" > ../logs/auto_syn.log
+    dc_shell -x "set TYPE $2; set CLK_PERIOD $3;" -f "../syn_script_iter.tcl" > ../logs/iter_syn.log
     echo "SYN Complete. Results written to logs/iter_syn.log"
     exit
 
