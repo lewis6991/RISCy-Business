@@ -11,7 +11,7 @@
 
 module processor_tb;
 
-timeunit 10ns; timeprecision 100ps;
+timeunit 1ns; timeprecision 10ps;
 
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
