@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
-// File              : EX.sv
-// Description       : Execute stage logic
+// File              : EX1.sv
+// Description       : First stage of Execute stage logic
 // Primary Author    : Ethan Bishop
 // Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             :
 //------------------------------------------------------------------------------
 
-module EX(
+module EX1(
     input               Clock      ,
                         nReset     ,
                         ALUOp      ,
@@ -25,8 +25,8 @@ module EX(
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
-    output logic [31:0] Out        ,
-                        RtDataOut  ,
+    output logic [63:0] Out        ,
+    output logic [31:0] RtDataOut  ,
                         PCout      ,  // Program counter output.
     output logic [ 4:0] RAddrOut   ,
     output logic        C          , // Carry out flag.
@@ -37,25 +37,23 @@ module EX(
                         MemReadOut ,
                         MemtoRegOut,
                         MemWriteOut,
-                        BranchTaken
+                        BranchTaken,
+                        ACCEn
 );
 
-    wire [31:0] ALUout ;
-    wire [31:0] ACCout ;
-    wire [63:0] MULout ;
-    wire [31:0] BRAret ;
     wire [31:0] Y      ;
+    wire [63:0] Out1   ;
 
-    wire ALUO;
-    wire ALUZ;
-    wire ALUN;
-    wire ALUC;
-    wire ACCO;
-    wire ACCZ;
-    wire ACCN;
-    wire ACCC;
+    wire [ 1:0] OutSel;
 
-    wire ACCEn;
+    wire [31:0] ALUout;
+    wire [63:0] MULout;
+    wire [31:0] BRAret;
+
+    wire ALUC, ALUZ, ALUO, ALUN;
+    wire MULC, MULZ, MULO, MULN;
+    wire C1  , Z1  , O1  , N1;
+    
     wire MULSelB;
     wire ALUEn;
     wire BRAEn;
@@ -74,19 +72,6 @@ module EX(
         .N       (ALUN   )
     );
 
-    acc_control acc_control0 (
-        .Clock   (Clock ),
-        .nReset  (nReset),
-        .ACCEn   (ACCEn ),
-        .MULfunc (Func  ),
-        .In      (MULout),
-        .Out     (ACCout),
-        .C       (ACCC  ), // Carry flag.
-        .Z       (ACCZ  ), // Zero flag.
-        .O       (ACCO  ), // Overflow flag.
-        .N       (ACCN  )  // Negative flag.
-    );
-
     branch branch0 (
         .Enable (BRAEn    ), // Enable branch module
         .PCIn   (PCin     ), // Program counter input.
@@ -103,6 +88,10 @@ module EX(
         .A   (A      ),
         .B   (Y      ),
         .SelB(MULSelB), // MUL module select
+        .C   (MULC   ),
+        .Z   (MULZ   ),
+        .O   (MULO   ),
+        .N   (MULN   ),
         .Out (MULout )
     );
 
@@ -119,34 +108,47 @@ module EX(
         .Jump        (Jump       ),
         .Branch      (Branch     ),
         .RegWriteIn  (RegWriteIn ),
-        .ALUO        (ALUO       ), // ALU Flag outputs
-        .ALUZ        (ALUZ       ),
-        .ALUN        (ALUN       ),
-        .ALUC        (ALUC       ),
-        .ALUEn       (ALUEn      ),
-        .ACCO        (ACCO       ), // ACC Flag outputs
-        .ACCZ        (ACCZ       ),
-        .ACCN        (ACCN       ),
-        .ACCC        (ACCC       ),
-        .ACCEn       (ACCEn      ),
         .BRAtaken    (BRAtaken   ),
-        .ALUout      (ALUout     ), // ALU Module output
-        .ACCout      (ACCout     ), // ACC Module output
-        .BRAret      (BRAret     ), // BRANCH return address
-        .MULout      (MULout     ), // MUL Module output
+        .ALUEn       (ALUEn      ),
         .Func        (Func       ),
-        .Out         (Out        ),
-        .C           (C          ), // Carry out flag.
-        .Z           (Z          ), // Output zero flag.
-        .O           (O          ), // Overflow flag.
-        .N           (N          ), // Output negative flag.
+        .ACCEn       (ACCEn      ),
         .MULSelB     (MULSelB    ), // MUL module select
         .RegWriteOut (RegWriteOut),
         .BRAEn       (BRAEn      ),
-        .BranchTaken (BranchTaken)
+        .BranchTaken (BranchTaken),
+        .OutSel      (OutSel     )  // OutSel = 00: ALU
+                                    //          01: BRA
+                                    //          10: MUL
     );
 
+    mux mux4(
+        .A  ({16'b0, ALUout}),
+        .B  ({16'b0, BRAret}),
+        .Y  (Out1           ),
+        .Sel(OutSel[1]      )
+    );
 
+    mux mux5(
+        .A  (Out1     ),
+        .B  (MULout   ),
+        .Y  (Out      ),
+        .Sel(OutSel[0])
+    );
+    
+    mux #(.n(4)) mux6(
+        .A  ({ALUC, ALUZ, ALUO, ALUN}),
+        .B  (4'b0                    ),
+        .Y  ({C1  , Z1  , O1  , N1  }),
+        .Sel(OutSel[1])
+    );
+    
+    mux #(.n(4)) mux7(
+        .A  ({C1  , Z1  , O1  , N1  }),
+        .B  ({MULC, MULZ, MULO, MULN}),
+        .Y  ({C   , Z   , O   , N   }),
+        .Sel(OutSel[0])
+    );
+    
     assign MemReadOut  = MemReadIn;
     assign MemtoRegOut = MemtoRegIn;
     assign MemWriteOut = MemWriteIn;
