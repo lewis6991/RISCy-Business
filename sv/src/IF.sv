@@ -18,6 +18,7 @@
 module IF(
     input               Clock      ,
                         nReset     ,
+                        nStall     ,
                         BranchTaken,
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
@@ -28,7 +29,8 @@ module IF(
 
     wire [31:0] progaddrout ,
                 progaddrnext,
-                progaddrinc ;
+                progaddrinc ,
+                progaddrmout;
 
     pc pc0(
         .Clock      (Clock        ),
@@ -42,15 +44,22 @@ module IF(
         .Out(progaddrinc)
     );
 
+    mux muxStall(
+        .Sel(nStall      ),
+        .A  (progaddrout ),
+        .B  (progaddrinc ),
+        .Y  (progaddrmout)
+    );
+
     mux mux0(
         .Sel(BranchTaken ),
-        .A  (progaddrinc),
+        .A  (progaddrmout),
         .B  (BranchAddr  ),
         .Y  (progaddrnext)
     );
 
-    assign InstrAddr = progaddrout;
-    assign InstrOut  = InstrMem   ;
-    assign PCAddrInc = progaddrinc;
+    assign InstrAddr = (progaddrout & {32{nStall}});
+    assign InstrOut  = (InstrMem    & {32{nStall}});
+    assign PCAddrInc = progaddrmout;
 
 endmodule

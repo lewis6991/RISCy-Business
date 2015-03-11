@@ -38,13 +38,16 @@ wire  [31:0] memRData  ,
 wire         memReadEn ,
              memWriteEn;
 
+bit signed [0:31][31:0] register;
+wire [4:0] cAddr;
+
 processor_model pmodel0(
     .Clock      (Clock     ),
     .nReset     (nReset    ),
     .Instruction(instrData ),
-    .rData      (regDataM  ),
-    .rAddr      (regAddr   ),
-    .InstAddr   (instrAddrM)
+    .InstAddr   (instrAddrM),
+    .Register   (register  ),
+    .cAddr      (cAddr     )
 );
 
 PROCESSOR prcsr0 (
@@ -71,6 +74,30 @@ memory memory0 (
     .WriteData(memWData  )
 );
 
+property reg0_data;
+    @ (posedge Clock)
+    register[0] == 0;
+endproperty
+
+REG0_DATA_ASSERT: assert property (reg0_data)
+else
+    $error("ERROR: Reg $0 contains a non-zero value(%8h).", register[0]);
+
+// Always block to verify every register change.
+always @ (register)
+begin
+    $display("DEBUG: register %d changed to %8h", cAddr, register[cAddr]);
+    regAddr = cAddr;
+
+    @ (posedge Clock)
+    @ (posedge Clock)
+
+    REG_DATA_ASSERT: assert (regData == register[regAddr])
+        $display("INFO: Register check (%8h != %8h).", regData, register[regAddr]);
+    else
+        $error("ERROR: Register mismatch (%8h != %8h).", regData, register[regAddr]);
+end
+
 //Testing procedure
 initial
 begin
@@ -92,7 +119,7 @@ begin
     $display("\nINFO: Starting Test...\n");
 
     // De-assert reset after non-integer amount of clock cycles.
-    #(5.5*clk) nReset = 1;
+    #(5.2*clk) nReset = 1;
 end
 
 //Clock implementation
@@ -121,26 +148,7 @@ begin
         instrData <= #20 0;
 end
 
-task compare_registers();
-    for (int i = 1; i < 32; ++i)
-    begin
-        regAddr = i;
-        @ (posedge Clock);
-        #20
-        CHECK_REGISTER: assert (regData == regDataM)
-            $display("INFO: \$%-2d == 32'h%x", i, regData);
-        else
-            $error("ERROR: \$%0d != 32'h%H, value is 32'h%H",
-                i, regDataM, regData);
-    end
-endtask
-
 task finish_test();
-    $display("INFO: Checking register values...");
-
-    // Compare registers with model.
-    compare_registers();
-
     $display("\nINFO: Test Finished.\n");
     $finish;
 endtask

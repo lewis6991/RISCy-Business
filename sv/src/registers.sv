@@ -28,7 +28,7 @@ always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         RegData <= 32'd0;
     else
-        RegData <= data[RegAddr];
+        RegData <= #20 data[RegAddr];
 
 // Synchronous write
 always_ff @ (posedge Clock, negedge nReset)

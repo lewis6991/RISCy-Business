@@ -128,9 +128,12 @@ wire [31:0] B            ;
 
 wire [31:0] BranchAddr   ;
 
+wire        nStall       ;
+
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
+    .nStall     (nStall      ),
     .BranchTaken(BranchTaken ),
     .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
@@ -377,13 +380,13 @@ mux m3(
     .Y  (RtDataD    )
 );
 
-/*HDU hdu0(
+HDU hdu0(
     .MemReadE(MemReadEin),
     .Clock   (Clock     ),
     .RtAddrE (RtAddrE   ),
     .RsAddrD (RsAddrD   ),
     .RtAddrD (RtAddrD   ),
-    .Stall   (Stall     )
-);*/
+    .nStall  (nStall    )
+);
 
 endmodule
