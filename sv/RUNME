@@ -16,8 +16,6 @@ main()
     exit 1
     fi
 
-    export PATH=/opt/esdcad/cross/bin:$PATH
-
     if [ ${#} = "0" ]
     then
         RUN_PROC=1
