@@ -7,20 +7,20 @@
 //-----------------------------------------------------------------------------------------------
 
 module HDU(
-input              MemReadE,
-                   Clock   ,
-input        [4:0] RtAddrE ,
-                   RsAddrD ,
-                   RtAddrD ,
-output logic       Stall            
+input        MemReadE,
+             Clock   ,
+input [4:0]  RtAddrE ,
+             RsAddrD ,
+             RtAddrD ,
+output logic nStall            
 );
 
-always_ff @(posedge Clock)
+always_comb
     begin
-        if(MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
-            Stall <= 1'b0;
+        if(MemReadE && ((RtAddrE == RsAddrD) || (RtAddrE == RtAddrD)))
+            nStall <= 1'b0;
         else
-            Stall <= 1'b1;
+            nStall <= 1'b1;
     end
 
 endmodule
