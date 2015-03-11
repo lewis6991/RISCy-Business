@@ -69,7 +69,7 @@ echo "Beginning synthesis..."
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
-./RUN_PNR
+./RUN_PNR $CLK_PERIOD
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
@@ -102,9 +102,9 @@ rm -rf logs >&/dev/null
 declare -i CLK_PERIOD
 declare -i CLK_PERIOD_MODIFIER
 
-CLK_PERIOD=1000
+CLK_PERIOD=10
 CLK_PERIOD_MODIFIER=${CLK_PERIOD}/2
-SCRIPT=auto
+SCRIPT=iter
 TYPE=$1
 
 while true
@@ -119,17 +119,19 @@ do
     echo "Tests passed: $PASSES"
     if [ "$TOTAL" == "$PASSES" ]
     then
+        echo ""
         CLK_PERIOD=${CLK_PERIOD}-${CLK_PERIOD_MODIFIER}
         CLK_PERIOD_MODIFIER=${CLK_PERIOD_MODIFIER}/2
     else
+        echo ""
         CLK_PERIOD=${CLK_PERIOD}+${CLK_PERIOD_MODIFIER}
         CLK_PERIOD_MODIFIER=${CLK_PERIOD_MODIFIER}/2
     fi
-    if [ $CLK_PERIOD_MODIFIER -eq 1 ]
+    if [ $CLK_PERIOD_MODIFIER -eq 0 ]
     then
         echo ""
-        echo "Clock period has converged to $CLK_PERIODns"
-        if [ "$TOTAL" == "$PASSES" ]
+        echo "Clock period has converged to ${CLK_PERIOD}ns"
+        if [ "$TOTAL" != "$PASSES" ]
         then
             echo "ERROR: Most recent test failed! Do not trust this clock period! Look at previous values"
         fi
