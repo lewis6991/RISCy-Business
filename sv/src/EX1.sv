@@ -26,9 +26,11 @@ module EX1(
     input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
     output logic [63:0] Out        ,
-    output logic [31:0] RtDataOut  ,
+    input        [ 2:0] MemfuncIn  ,
+                        RtDataOut  ,
                         PCout      ,  // Program counter output.
     output logic [ 4:0] RAddrOut   ,
+    output logic [ 2:0] MemfuncOut ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
@@ -95,11 +97,11 @@ module EX1(
         .Out (MULout )
     );
 
-    mux mux3(
-        .A  (B),
+    mux mux3 (
+        .A  (B        ),
         .B  (Immediate),
-        .Y  (Y),
-        .Sel(ALUSrc)
+        .Y  (Y        ),
+        .Sel(ALUSrc   )
     );
 
     ex_control ex_control0 (
@@ -152,7 +154,8 @@ module EX1(
     assign MemReadOut  = MemReadIn;
     assign MemtoRegOut = MemtoRegIn;
     assign MemWriteOut = MemWriteIn;
-    assign RAddrOut    = RAddrIn;
-    assign RtDataOut   = B;
+    assign RAddrOut    = RAddrIn   ;
+    assign RtDataOut   = B         ;
+    assign MemfuncOut  = MemfuncIn ;
 
 endmodule

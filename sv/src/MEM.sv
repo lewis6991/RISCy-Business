@@ -10,12 +10,16 @@
 //                       ignored.
 //                     - Assumed asynchronous for the time being.
 //------------------------------------------------------------------------------
+
+`include "mem_func.sv"
+
 module MEM(
     input               RegWriteIn,
 			MemtoRegIn,
                         MemReadIn,
                         MemWriteIn,
     input        [ 4:0] RAddrIn,
+    input        [ 2:0] Memfunc,
     input        [31:0] RtData,
                         ALUDataIn,
                         MemDataIn,
@@ -29,7 +33,31 @@ module MEM(
                         MemDataOut,
                         ALUDataOut
 );
+    
+always_comb
+    begin
+        case(Memfunc)
+            `BS    : MemDataOut = {{24{MemDataIn[ 7]}},MemDataIn[ 7:0]};
+            `BU    : MemDataOut = {         {24{1'b0}},MemDataIn[ 7:0]};
+            `HS    : MemDataOut = {{16{MemDataIn[15]}},MemDataIn[15:0]};
+            `HU    : MemDataOut = {         {16{1'b0}},MemDataIn[15:0]};
+            `WD    : MemDataOut = MemDataIn                            ;
+            `WL    : MemDataOut = {      MemDataIn[31:16],RtData[15:0]};
+            `WR    : MemDataOut = {      RtData[31:16],MemDataIn[15:0]};
+            default: MemDataOut = MemDataIn                            ; 
+        endcase
+    end
 
+always_comb
+    begin
+        case(Memfunc)
+            `BS    : MemWriteData = {{24{RtData[ 7]}},RtData[ 7:0]};
+            `HS    : MemWriteData = {{16{RtData[15]}},RtData[15:0]};
+            `WD    : MemWriteData = RtData                         ;
+            default: MemWriteData = RtData                         ;
+        endcase
+    end
+    
     
     assign RegWriteOut  = RegWriteIn;
     assign MemtoRegOut  = MemtoRegIn;
@@ -37,8 +65,6 @@ module MEM(
     assign MemRead      = MemReadIn;
     assign RAddrOut     = RAddrIn;
     assign MemAddr      = ALUDataIn;
-    assign MemWriteData = RtData;
-    assign MemDataOut   = MemDataIn;
     assign ALUDataOut   = ALUDataIn;
 
 endmodule

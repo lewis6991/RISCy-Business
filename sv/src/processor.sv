@@ -119,6 +119,13 @@ wire [5:0]  ALUfuncD     ;
 wire [5:0]  ALUfuncE1    ;
 wire [5:0]  ALUfuncE2    ;
 
+wire [2:0]  MemfuncD     ;
+wire [2:0]  MemfuncE1in  ;
+wire [2:0]  MemfuncE1out ;
+wire [2:0]  MemfuncE2in  ;
+wire [2:0]  MemfuncE2out ;
+wire [2:0]  MemfuncM     ;
+
 wire [4:0]  ShamtD       ;
 wire [4:0]  ShamtE1      ;
 
@@ -148,12 +155,13 @@ wire [31:0] A            ;
 wire [31:0] B            ;
 
 wire [31:0] BranchAddr   ;
-//wire        Stall        ;
+
+wire        nStall       ;
 
 IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
-//  .Stall      (Stall       ),
+    .nStall     (nStall      ),
     .BranchTaken(BranchTaken ),
     .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
@@ -196,10 +204,11 @@ DEC de0(
     .ALUSrc      (ALUSrcD      ),
     .RegWriteOut (RegWriteD    ),
     .ALUfunc     (ALUfuncD     ),
+    .Memfunc     (MemfuncD     ),
     .Shamt       (ShamtD       )
 );
 
-PIPE #(.n(163)) pipe1(
+PIPE #(.n(166)) pipe1(
     .Clock(Clock),
     .nReset(nReset),
     .In ({
@@ -220,7 +229,9 @@ PIPE #(.n(163)) pipe1(
         ALUSrcD      ,
         RegWriteD    ,
         ALUfuncD     ,
-    ShamtD})         ,
+        MemfuncD     ,
+        ShamtD
+    })               ,
     .Out({
         ImmDataE1   ,
         RsAddrE1    ,
@@ -239,6 +250,7 @@ PIPE #(.n(163)) pipe1(
         ALUSrcE1    ,
         RegWriteE1in,
         ALUfuncE1   ,
+        MemfuncE1in ,
         ShamtE1
     })
 );
@@ -263,9 +275,11 @@ EX1 ex1(
     .RAddrIn    (RAddrE1in    ),
     .Func       (ALUfuncE1    ),
     .Out        (ALUDataE1    ),
+    .MemfuncIn  (MemfuncE1in  ),
     .RtDataOut  (RtDataE1out  ),
     .PCout      (BranchAddr   ),
     .RAddrOut   (RAddrE1out   ),
+    .MemfuncOut (MemfuncE1out ),
     .C          (ALUCE1       ),
     .Z          (ALUZE1       ),
     .O          (ALUOE1       ),
@@ -278,7 +292,7 @@ EX1 ex1(
     .ACCEn      (ACCEnE1      )
 );
 
-PIPE #(.n(124)) pipe2(
+PIPE #(.n(127)) pipe2(
     .Clock(Clock),
     .nReset(nReset),
     .In({
@@ -286,6 +300,7 @@ PIPE #(.n(124)) pipe2(
         MemReadE1out ,
         MemtoRegE1out,
         MemWriteE1out,
+        MemFuncE1out ,
         ALUCE1       ,
         ALUZE1       ,
         ALUOE1       ,
@@ -301,6 +316,7 @@ PIPE #(.n(124)) pipe2(
         MemReadE2in ,
         MemtoRegE2in,
         MemWriteE2in,
+        MemFuncE2in ,
         ALUCE2      ,
         ALUZE2      ,
         ALUOE2      ,
@@ -325,10 +341,12 @@ EX2 ex2(
     .ALUO       (ALUOE2       ),
     .ALUN       (ALUNE2       ),
     .ACCEn      (ACCEnE2      ),
+    .MemfuncIn  (MemfuncE2in  ),
     .RtDataIn   (RtDataE2in   ),
     .In         (ALUDataE2in  ),
     .RAddrIn    (RAddrE2in    ),
     .Func       (ALUfuncE2    ),
+    .MemfuncOut (MemfuncE2out ),
     .Out        (ALUDataE2out ),
     .RtDataOut  (RtDataE2out  ),
     .RAddrOut   (RAddrE2out   ),
@@ -342,13 +360,14 @@ EX2 ex2(
     .MemWriteOut(MemWriteE2out)
 );
 
-PIPE #(.n(73)) pipe3(
+PIPE #(.n(78)) pipe3(
     .Clock(Clock),
     .nReset(nReset),
     .In({
         ALUDataE2out ,
         RtDataE2out  ,
         RAddrE2out   ,
+        MemfuncE2out ,
         RegWriteE2out,
         MemReadE2out ,
         MemtoRegE2out,
@@ -358,6 +377,7 @@ PIPE #(.n(73)) pipe3(
         ALUDataMin ,
         RtDataM    ,
         RAddrMin   ,
+        MemfuncM   ,
         RegWriteMin,
         MemReadM   ,
         MemtoRegMin,
@@ -371,6 +391,7 @@ MEM mem0(
     .MemReadIn   (MemReadM    ),
     .MemWriteIn  (MemWriteM   ),
     .RAddrIn     (RAddrMin    ),
+    .Memfunc     (MemfuncM    ),
     .RtData      (RtDataM     ),
     .ALUDataIn   (ALUDataMin  ),
     .MemDataIn   (MemData     ),
@@ -456,13 +477,13 @@ mux m3(
     .Y  (RtDataD    )
 );
 
-/*HDU hdu0(
+HDU hdu0(
     .MemReadE(MemReadEin),
     .Clock   (Clock     ),
     .RtAddrE (RtAddrE1  ),
     .RsAddrD (RsAddrD   ),
     .RtAddrD (RtAddrD   ),
-    .Stall   (Stall     )
-);*/
+    .nStall  (nStall    )
+);
 
 endmodule

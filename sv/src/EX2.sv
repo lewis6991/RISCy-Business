@@ -18,10 +18,12 @@ module EX2(
                         ALUO       ,
                         ALUN       ,
                         ACCEn      ,
+    input        [ 2:0] MemfuncIn  ,
     input        [31:0] RtDataIn   ,
     input        [63:0] In         , // ACC input
     input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
+    output logic [ 2:0] MemfuncOut ,
     output logic [31:0] Out        ,
                         RtDataOut  ,
     output logic [ 4:0] RAddrOut   ,
@@ -73,6 +75,7 @@ module EX2(
     assign MemReadOut  = MemReadIn;
     assign MemtoRegOut = MemtoRegIn;
     assign MemWriteOut = MemWriteIn;
+    assign MemfuncOut  = MemfuncIn;
     assign RAddrOut    = RAddrIn;
     assign RtDataOut   = RtDataIn;
 
