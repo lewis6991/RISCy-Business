@@ -19,7 +19,7 @@ import "DPI-C" function void compile_asm(string arg);
 import "DPI-C" function int  get_instruction_count();
 import "DPI-C" function int  get_instruction(int index);
 
-parameter clk_p      = 100 ;
+int       clk_p      = 100 ;
 logic     Clock      = 1'b0,
           nReset     = 1'b0;
 int       cycles     = 0   ,
@@ -101,6 +101,7 @@ end
 initial
 begin
     void'($value$plusargs("test=%d", test_no));
+    void'($value$plusargs("clk_p=%d", clk_p));
 
     // This is function is only needed to specify where the compile script
     // resides. Implementing this function allows us to rename and move the
