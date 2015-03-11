@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
-# File              : syn_script.tcl
-# Description       : Synthesis script used to run automated synthesis (from higher script)
+# File              : syn_script_iter.tcl
+# Description       : Synthesis script used to run iterative synthesis (from higher script)
 # Primary Author    : Dominic Murphy
 # Other Contributors:
 # Notes             : Relies on CLK_PERIOD and TYPE being defined and passed in. Fatal otherwise.
