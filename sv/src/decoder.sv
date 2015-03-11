@@ -26,6 +26,7 @@ module decoder(
                        ImmSize ,
                        Unsgnsel,
     output logic [5:0] Func    ,
+    output logic [2:0] MemFunc ,
     input        [5:0] OpCode  ,
                        FuncCode,
     input        [4:0] BraCode
@@ -47,6 +48,7 @@ module decoder(
         ImmSize  = 1'b0;
         Unsgnsel = 1'b0;
         Func     = 6'd0;
+        MemFunc  = 3'd0;
 
         case(OpCode)
             `ALU:
@@ -238,11 +240,12 @@ module decoder(
             `LB , `LBU, `LH, `LHU, `LW,
             `LWL, `LWR:
             begin
-                Func     = `ADD;
-                ALUSrc   = 1'b1;
-                MemRead  = 1'b1;
-                MemtoReg = 1'b1;
-                RegWrite = 1'b1;
+                Func     = `ADD         ;
+                MemFunc  = OpCode[28:26];
+                ALUSrc   = 1'b1         ;
+                MemRead  = 1'b1         ;
+                MemtoReg = 1'b1         ;
+                RegWrite = 1'b1         ;
             end
 
             `SB , `SH, `SW, `SWL , `SWR:

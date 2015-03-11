@@ -21,7 +21,7 @@ module registers(
                         RegData
 );
 
-logic [31:0] data[31:1]; // 31 registers of 32 bit width (respectively).
+logic [31:0] data[1:31]; // 31 registers of 32 bit width (respectively).
 
 // Debug functionality to allow access to registers post-synthesis and post-pnr
 always_ff @ (posedge Clock, negedge nReset)

@@ -25,10 +25,12 @@ module EX(
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
+    input        [ 2:0] MemfuncIn  ,
     output logic [31:0] Out        ,
                         RtDataOut  ,
                         PCout      ,  // Program counter output.
     output logic [ 4:0] RAddrOut   ,
+    output logic [ 2:0] MemfuncOut ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
@@ -106,11 +108,11 @@ module EX(
         .Out (MULout )
     );
 
-    mux mux3(
-        .A  (B),
+    mux mux3 (
+        .A  (B        ),
         .B  (Immediate),
-        .Y  (Y),
-        .Sel(ALUSrc)
+        .Y  (Y        ),
+        .Sel(ALUSrc   )
     );
 
     ex_control ex_control0 (
@@ -147,10 +149,11 @@ module EX(
     );
 
 
-    assign MemReadOut  = MemReadIn;
+    assign MemReadOut  = MemReadIn ;
     assign MemtoRegOut = MemtoRegIn;
     assign MemWriteOut = MemWriteIn;
-    assign RAddrOut    = RAddrIn;
-    assign RtDataOut   = B;
+    assign RAddrOut    = RAddrIn   ;
+    assign RtDataOut   = B         ;
+    assign MemfuncOut  = MemfuncIn ;
 
 endmodule

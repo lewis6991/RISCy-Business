@@ -32,6 +32,7 @@ module DEC(
                              ALUSrc      ,
                              RegWriteOut ,
         output logic [5:0]   ALUfunc     ,
+        output logic [2:0]   Memfunc     ,
         output logic [4:0]   Shamt
 );
 
@@ -63,6 +64,7 @@ decoder dec0 (
     .ImmSize (immsize                   ),
     .Unsgnsel(unsgnsel                  ),
     .Func    (ALUfunc                   ),
+    .MemFunc (Memfunc                   ),
     .OpCode  (Instruction[31:26]        ),
     .FuncCode(Instruction[5:0]          ),
     .BraCode (Instruction[20:16]        )
@@ -83,9 +85,9 @@ registers reg0(
 );
 
 signextend se0(
-    .In (Instruction[15:0]),
-    .Unsgnsel(unsgnsel    ),
-    .Out(instrse          )
+    .In      (Instruction[15:0]),
+    .Unsgnsel(unsgnsel         ),
+    .Out     (instrse          )
 );
 
 mux #(.n(32)) mux1(
