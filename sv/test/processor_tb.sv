@@ -19,17 +19,17 @@ import "DPI-C" function void compile_asm(string arg);
 import "DPI-C" function int  get_instruction_count();
 import "DPI-C" function int  get_instruction(int index);
 
-parameter clk        = 100 ;
+parameter clk_p      = 100 ;
 logic     Clock      = 1'b0,
           nReset     = 1'b0;
-int       cycles     = 0   ;
-int       test_no    = 1   ,
+int       cycles     = 0   ,
+          test_no    = 1   ,
           inst_count = 0   ;
 
 logic [31:0] instrData ;
 logic [ 4:0] regAddr   ;
-wire  [15:0] instrAddr ,
-             instrAddrM,
+wire  [15:0] rtlPC ,
+             modelPC,
              memAddr   ;
 wire  [31:0] memRData  ,
              memWData  ,
@@ -45,7 +45,7 @@ processor_model pmodel0(
     .Clock      (Clock     ),
     .nReset     (nReset    ),
     .Instruction(instrData ),
-    .InstAddr   (instrAddrM),
+    .InstAddr   (modelPC),
     .Register   (register  ),
     .cAddr      (cAddr     )
 );
@@ -54,7 +54,7 @@ PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
     .InstrMem (instrData ),
-    .InstrAddr(instrAddr ),
+    .InstrAddr(rtlPC ),
     .MemData  (memRData  ),
     .WriteData(memWData  ),
     .MemAddr  (memAddr   ),
@@ -86,7 +86,6 @@ else
 // Always block to verify every register change.
 always @ (register)
 begin
-    $display("DEBUG: register %d changed to %8h", cAddr, register[cAddr]);
     regAddr = cAddr;
 
     @ (posedge Clock)
@@ -119,12 +118,12 @@ begin
     $display("\nINFO: Starting Test...\n");
 
     // De-assert reset after non-integer amount of clock cycles.
-    #(5.2*clk) nReset = 1;
+    #(5.2*clk_p) nReset = 1;
 end
 
 //Clock implementation
 always begin
-    #(clk/2) Clock = ~Clock;
+    #(clk_p/2) Clock = ~Clock;
 
     // Timeout mechanism.
     ++cycles;
@@ -136,13 +135,13 @@ end
 // Control test depending on program counter.
 always @ (posedge Clock)
 begin
-    PC_ASSERT: assert (instrAddr == instrAddrM)
+    PC_ASSERT: assert (rtlPC == modelPC)
     else
-        $error("ERROR: program counter mismatch.");
+        $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d", rtlPC, modelPC);
 
-    if(instrAddr[15:2] < inst_count)
-        instrData <= #20 get_instruction(instrAddr[15:2]);
-    else if(instrAddr[15:2] == inst_count)
+    if(rtlPC[15:2] < inst_count)
+        instrData <= #20 get_instruction(rtlPC[15:2]);
+    else if(rtlPC[15:2] == inst_count)
         finish_test();
     else
         instrData <= #20 0;

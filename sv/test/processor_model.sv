@@ -12,7 +12,7 @@
 `include "branch_definition.sv"
 program processor_model(
     input                   Clock      ,
-                            nReset     ,
+    nReset     ,
     input            [31:0] Instruction,
     output           [15:0] InstAddr   ,
     output bit       [ 4:0] cAddr      ,
@@ -78,156 +78,149 @@ begin
     end
     else
     begin
-        pc <= pc + 4;
-
-        if (opcode inside {
-                `ADDI, `ADDIU, `LUI , `ANDI ,
-                `ORI , `XORI , `SLTI, `SLTIU})
-            caddr = rt_addr;
-        else if (opcode == `JAL)
-            caddr = 31;
-        else if (opcode inside {`ALU, `MULL})
-            caddr = rd_addr;
-        else if (opcode == `BRANCH && func inside {`BGEZAL, `BLTZAL})
-            caddr = 31;
-
-        case (opcode)
-            `ADDI  ,
-            `ADDIU : `rt = `rs + imm ;
-            `LUI   : `rt = imm << 16;
-            `ANDI  : `rt = `rs & imm ;
-            `ORI   : `rt = `rs | imm ;
-            `XORI  : `rt = `rs ^ imm ;
-            `SLTI  ,
-            `SLTIU : `rt = `rs < imm ? 32'b1 : 32'b0;
-            `BEQ   : if (`rs == `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-            `BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
-            `BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
-            `BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-            `J     : delay.pc <= ##(br_d) {pc[31:28], 28'b0} + address;
-            `JAL   :
-            begin
-                delay.pc <= ##(br_d) {pc[31:28], 28'b0} + address;
-                `ra =  pc + 8;
-            end
-            `LB    :; //TODO
-            `LBU   :; //TODO
-            `LH    :; //TODO
-            `LHU   :; //TODO
-            `LW    :; //TODO
-            `LWL   :; //TODO
-            `LWR   :; //TODO
-            `SB    :; //TODO
-            `SH    :; //TODO
-            `SW    :; //TODO
-            `SWL   :; //TODO
-            `SWR   :; //TODO
-            `LL    :; //TODO
-            `SC    :; //TODO
-            `ALU   :
-            begin
-                case (func)
-                    `SLL    : `rd = `rt <<  shamt;
-                    `SLLV   : `rd = `rt <<  `rs  ;
-                    `SRA    : `rd = `rt >>> shamt;
-                    `SRAV   : `rd = `rt >>> `rs  ;
-                    `SRL    : `rd = `rt >>  shamt;
-                    `SRLV   : `rd = `rt >>  `rs  ;
-                    `JALR   :; //TODO
-                    `MOVZ   : if (`rt == 0) `rd =  `rs;
-                    `MOVN   : if (`rt != 0) `rd =  `rs;
-                    `MFHI   : `rd = acc[63:32];
-                    `MFLO   : `rd = acc[31: 0];
-                    `MTHI   : acc[63:32] = `rs;
-                    `MTLO   : acc[31: 0] = `rs;
-                    `MULT   ,
-                    `MULTU  : acc = `rs*`rt;
-                    `ADD    : `rd = `rs + `rt;
-                    `ADDU   : `rd = `rs + `rt;
-                    `SUB    : `rd = `rs - `rt;
-                    `SUBU   : `rd = `rs - `rt;
-                    `AND    : `rd = `rs & `rt;
-                    `NOR    : `rd = ~(`rs | `rt);
-                    `OR     : `rd = `rs | `rt;
-                    `XOR    : `rd = `rs ^ `rt;
-                    `SLT    : `rd = `rs < `rt ? 32'b1 : 32'b0;
-                    `SLTU   : `rd = `rs < `rt ? 32'b1 : 32'b0;
-                    `JR     : delay.pc <= ##(br_d) `rs;
-                    `JALR   :
-                    begin
-                        `rd =  pc + 8;
-                        delay.pc <= ##(br_d) `rs;
-                    end
-                    0:;//NOP
-                    default:
-                        ALU_INST_ERROR: assert(0)
-                        else
-                            $error("ERROR: This ALU instruction is not supported (func: 6'b%6b). ", func);
-                endcase
-            end
-
-            `BRANCH:
-            begin
-                case (rt_addr)
-                    `BGEZ  : if (`rs >= 0) delay.pc <= ##(br_d) pc + (offset << 2);
-                    `BGEZAL:
-                    if (`rs >= 0)
-                    begin
-                        delay.pc <= ##(br_d) pc + (offset << 2);
-                        `ra =  pc + 8;
-                    end
-                    `BLTZ  : if (`rs < 0) delay.pc <= ##(br_d) pc + (offset << 2);
-                    `BLTZAL:
-                    if (`rs < 0)
-                    begin
-                        delay.pc <= ##(br_d) pc + (offset << 2);
-                        `ra =  pc + 8;
-                    end
-                    default:
-                        BRANCH_INST_ERROR: assert(0)
-                        else
-                            $error("ERROR: This branch instruction is not supported(variant: 5'b%5b).", rt_addr);
-                endcase
-            end
-            `MULL  :
-            begin
-                case (func)
-                    `MADD  ,
-                    `MADDU : acc = acc + `rs*`rt;
-                    `MSUB  ,
-                    `MSUBU : acc = acc - `rs*`rt;
-                    `MUL   : `rd = `rs*`rt;
-                    `CLO   : `rd = count_leading_digit(`rs, 1);
-                    `CLZ   : `rd = count_leading_digit(`rs, 0);
-                    default:
-                        MULL_INST_ERROR: assert(0)
-                        else
-                            $error("ERROR: This MULL instruction is not supported(func: 6'b%6b).", func);
-                endcase
-            end
-            default:
-                OP_INST_ERROR: assert(0)
-                else
-                    $error("ERROR: This opcode is not supported(opcode: 6'b%6b).", opcode);
-        endcase
+        update_caddr();
+        update_acc();
+        update_pc();
+        update_registers();
+        update_memory();
     end
+end
 
+task update_caddr();
+    if (opcode inside {
+            `ADDI, `ADDIU, `LUI , `ANDI , `ORI , `XORI , `SLTI, `SLTIU})
+        delay.cAddr <= ##(reg_d) rt_addr;
+    else if (opcode == `JAL)
+        delay.cAddr <= ##(reg_d) 31;
+    else if (opcode inside {`ALU, `MULL})
+        delay.cAddr <= ##(reg_d) rd_addr;
+    else if (opcode == `BRANCH && func inside {`BGEZAL, `BLTZAL})
+        delay.cAddr <= ##(reg_d) 31;
+endtask
+
+task update_registers();
+    case (opcode)
+        `ADDI  ,
+        `ADDIU : `rt = `rs + imm;
+        `LUI   : `rt = imm << 16;
+        `ANDI  : `rt = `rs & imm;
+        `ORI   : `rt = `rs | imm;
+        `XORI  : `rt = `rs ^ imm;
+        `SLTI  ,
+        `SLTIU : `rt = `rs < imm ? 32'b1 : 32'b0;
+        `JAL   : `ra =  pc + 8;
+        `LB    :; //TODO
+        `LBU   :; //TODO
+        `LH    :; //TODO
+        `LHU   :; //TODO
+        `LW    :; //TODO
+        `LWL   :; //TODO
+        `LWR   :; //TODO
+        `LL    :; //TODO
+        `SC    :; //TODO
+        `ALU   :
+        case (func)
+            `SLL    : `rd = `rt <<  shamt;
+            `SLLV   : `rd = `rt <<  `rs  ;
+            `SRA    : `rd = `rt >>> shamt;
+            `SRAV   : `rd = `rt >>> `rs  ;
+            `SRL    : `rd = `rt >>  shamt;
+            `SRLV   : `rd = `rt >>  `rs  ;
+            `JALR   :; //TODO
+            `MOVZ   : if (`rt == 0) `rd =  `rs;
+            `MOVN   : if (`rt != 0) `rd =  `rs;
+            `MFHI   : `rd = acc[63:32];
+            `MFLO   : `rd = acc[31: 0];
+            `ADD    : `rd = `rs + `rt;
+            `ADDU   : `rd = `rs + `rt;
+            `SUB    : `rd = `rs - `rt;
+            `SUBU   : `rd = `rs - `rt;
+            `AND    : `rd = `rs & `rt;
+            `NOR    : `rd = ~(`rs | `rt);
+            `OR     : `rd = `rs | `rt;
+            `XOR    : `rd = `rs ^ `rt;
+            `SLT    : `rd = `rs < `rt ? 32'b1 : 32'b0;
+            `SLTU   : `rd = `rs < `rt ? 32'b1 : 32'b0;
+            `JALR   : `rd = pc + 8;
+            0:;//NOP
+        endcase
+        `BRANCH:
+        case (rt_addr)
+            `BGEZAL: if (`rs >= 0) `ra = pc + 8;
+            `BLTZAL: if (`rs <  0) `ra = pc + 8;
+        endcase
+        `MULL  :
+        case (func)
+            `MUL: `rd = `rs*`rt;
+            `CLO: `rd = count_leading_digit(`rs, 1);
+            `CLZ: `rd = count_leading_digit(`rs, 0);
+        endcase
+    endcase
+
+    // Move registers to packed array.
     foreach(register[i])
         register_packed[i] = register[i];
 
-    delay.cAddr    <= ##(reg_d) caddr          ;
     delay.Register <= ##(reg_d) register_packed;
-end
+endtask
+
+task update_memory();
+    case (opcode)
+        `SB    :; //TODO
+        `SH    :; //TODO
+        `SW    :; //TODO
+        `SWL   :; //TODO
+        `SWR   :; //TODO
+    endcase
+endtask
+
+task update_acc();
+    case (opcode)
+        `ALU   :
+        case (func)
+            `MTHI : acc[63:32] = `rs;
+            `MTLO : acc[31: 0] = `rs;
+            `MULT ,
+            `MULTU: acc = `rs*`rt;
+        endcase
+        `MULL  :
+        case (func)
+            `MADD, `MADDU : acc = acc + `rs*`rt;
+            `MSUB, `MSUBU : acc = acc - `rs*`rt;
+        endcase
+    endcase
+endtask
+
+task update_pc();
+    pc <= pc + 4;
+
+    case (opcode)
+        `BEQ   : if (`rs == `rt) delay.pc <= ##(br_d) pc + (offset << 2);
+        `BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
+        `BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
+        `BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
+        `J, `JAL: delay.pc <= ##(br_d) {pc[31:28], 28'b0} + address;
+        `ALU   :
+        case (func)
+            `JR, `JALR: delay.pc <= ##(br_d) `rs;
+        endcase
+        `BRANCH:
+        case (rt_addr)
+            `BGEZ, `BGEZAL: if (`rs >= 0) delay.pc <= ##(br_d) pc + (offset << 2);
+            `BLTZ, `BLTZAL: if (`rs <  0) delay.pc <= ##(br_d) pc + (offset << 2);
+        endcase
+    endcase
+endtask
 
 function int count_leading_digit(logic [31:0] operand, bit arg);
     int i;
 
     for (i = 0; i < 32; ++i)
-        if (operand[31-i] != arg)
-            break;
+    if (operand[31-i] != arg)
+        break;
 
     COUNT_LEADING_DIGIT_ASSERT : assert (i <= 32)
-        return i;
+    return i;
     else
         $error("Error: Function returned value greater than 32. Is model broken?");
 endfunction
