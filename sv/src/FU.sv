@@ -7,26 +7,26 @@
 //------------------------------------------------------------------------------
 
 module FU(
-    input               RegWriteM,
-                        RegWriteW,
-    input        [ 4:0] RAddrM,
-                        RAddrW,
-                        RsAddrE,
-                        RtAddrE,
-                        RsAddrD,
-			RtAddrD,
+    input               RegWriteM  ,
+                        RegWriteW  ,
+    input        [ 4:0] RAddrM     ,
+                        RAddrW     ,
+                        RsAddrE    ,
+                        RtAddrE    ,
+                        RsAddrD    ,
+			RtAddrD    ,
     output logic        ForwardSrcA,
                         ForwardSrcB,
-    output logic [ 1:0] ForwardA,
+    output logic [ 1:0] ForwardA   ,
                         ForwardB 
 );
 
 always_comb
     begin
-       ForwardA = 2'b00;
-       ForwardB = 2'b00;
-       ForwardSrcA = 0;
-       ForwardSrcB = 0;
+       ForwardA    = 2'b00;
+       ForwardB    = 2'b00;
+       ForwardSrcA =     0;
+       ForwardSrcB =     0;
 
        if(RegWriteM && (RAddrM != 0) && (RAddrM == RsAddrE))
             ForwardA = 2'b01;
