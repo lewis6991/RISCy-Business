@@ -34,23 +34,9 @@ if($1 == check) then
     exit
 endif
 
-if($1 == opt) then
-    dc_shell -f "../syn_script_opt.tcl" > ../logs/opt_syn.log
-    echo "Complete. Results written to logs/opt_syn.log"
-    exit
-endif
-
-if($1 == basic) then
-    dc_shell -f "../syn_script_basic.tcl" > ../logs/basic_syn.log
-    echo "SYN Complete. Results written to logs/basic_syn.log"
-    exit
-endif
-
-if($1 == iter) then
-    #echo "Automated synthesis beginning with type $2, Clock Period of ${3}ns."
-    dc_shell -x "set TYPE $2; set CLK_PERIOD $3;" -f "../syn_script_iter.tcl" > ../logs/iter_syn.log
-    echo "SYN Complete. Results written to logs/iter_syn.log"
-    exit
+dc_shell -x "set TYPE $1; set CLK_PERIOD $2;" -f "../syn_script.tcl" > ../logs/syn.log
+echo "SYN Complete. Results written to logs/iter_syn.log"
+exit
 
 echo "Error: No/Unrecognised argument provided."
 exit 1
