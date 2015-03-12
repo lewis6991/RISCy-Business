@@ -94,7 +94,7 @@ module EX(
         .PCIn   (PCin     ), // Program counter input.
         .A      (A        ), // ALU input A
         .B      (B        ), // ALU input B
-        .Address(Immediate), // Address input
+        .Address(Y        ), // Address input
         .Func   (Func     ), 
         .PCout  (PCout    ), // Program counter
         .Ret    (BRAret   ), // Return address
