@@ -38,9 +38,9 @@ always_comb
        else if(RegWriteW && (RAddrW != 0) && (RAddrW == RtAddrE))
             ForwardB = 2'b10;
 
-       if(RegWriteW && (RAddrW != 0) && ((RAddrM != 0 && 
+       if(RegWriteW && (RAddrW != 0)) /*&& ((RAddrM != 0 && 
 	 ((RAddrM == RsAddrE) || (RAddrM == RtAddrE))) || 
-          (RAddrW == RsAddrE) || (RAddrW == RtAddrE)))
+          (RAddrW == RsAddrE) || (RAddrW == RtAddrE)))*/
             begin
                 ForwardSrcA = (RAddrW == RsAddrD);
                 ForwardSrcB = (RAddrW == RtAddrD);
