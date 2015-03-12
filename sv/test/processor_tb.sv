@@ -94,7 +94,7 @@ begin
     REG_DATA_ASSERT: assert (regData == register[regAddr])
         $display("INFO: Register check (%8h != %8h).", regData, register[regAddr]);
     else
-        $error("ERROR: Register mismatch (%8h != %8h).", regData, register[regAddr]);
+        $error("ERROR: Register mismatch $%2d (model: %8h != actual: %8h).", regAddr, regData, register[regAddr]);
 end
 
 //Testing procedure
