@@ -52,9 +52,9 @@
     swl     $2,  16($3)
     lw      $16, 16($3) # Should load 0x89ab5678
     
-    sw      $1,  16($3)
-    swr     $2,  16($3)
-    lw      $16, 16($3) # Should load 0x1234cdef
+    sw      $1,  20($3)
+    swr     $2,  20($3)
+    lw      $16, 20($3) # Should load 0x1234cdef
     
     # These haven't been implemented yet
     sw      $2,  24($3)

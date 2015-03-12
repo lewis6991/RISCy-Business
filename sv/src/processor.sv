@@ -245,7 +245,7 @@ EX ex(
     .MemtoRegIn (MemtoRegEin ),
     .MemWriteIn (MemWriteEin ),
     .ALUSrc     (ALUSrcE     ),
-    .BRASrc     (BRASrcE      ),
+    .BRASrc     (BRASrcE     ),
     .A          (A           ),//(RsDataE     ),//(A           ),
     .B          (B           ),//(RtDataEin   ),//(B           ),
     .Immediate  (ImmDataE    ),

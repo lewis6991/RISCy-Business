@@ -15,7 +15,7 @@
 
 module MEM(
     input               RegWriteIn,
-			MemtoRegIn,
+                        MemtoRegIn,
                         MemReadIn,
                         MemWriteIn,
     input        [ 4:0] RAddrIn,
