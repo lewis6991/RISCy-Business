@@ -254,6 +254,7 @@ module decoder(
             `SB , `SH, `SW, `SWL , `SWR:
             begin
                 Func     = `ADD;
+                MemFunc  = OpCode[2:0];
                 ALUSrc   = 1'b1;
                 MemWrite = 1'b1;
             end

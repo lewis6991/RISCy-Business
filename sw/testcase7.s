@@ -57,7 +57,7 @@
     lw      $16, 16($3) # Should load 0x1234cdef
     
     # These haven't been implemented yet
-    /*sw      $2,  24($3)
+    sw      $2,  24($3)
     ll      $17, 24($3)
     addi    $17, $17, 0x4445
     sc      $17, 24($3) # Should succeed, $17 = 1
@@ -71,5 +71,5 @@
     sc      $19, 32($3) # Should succeed, $19 = 1
     lw      $19, 32($3) # Should load 0x89ab1234
     sc      $20, 32($3) # Should fail, $20 = 0
-    lw      $20, 32($3) # Should load 0x89ab1234*/
+    lw      $20, 32($3) # Should load 0x89ab1234
     
