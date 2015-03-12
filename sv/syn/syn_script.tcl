@@ -42,21 +42,21 @@ analyze -format sverilog {
 
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
+if ("$SCAN"=="-scan") {set_scan_configuration -style multiplexed_flip_flop}
+
 check_timing
 create_clock Clock -name Clock -period $CLK_PERIOD
 set_fix_hold Clock
 
-if ("$SCAN"=="-scan")
-{
-    set_scan_configuration -style multiplexe_flip_flop
-    set_dft_signal -type ScanClock -port Clock -view exist -timing {45 55}
-    set_sft_signal -view existing_dft -port nReset -type Reset -active 0
-    set_dft_configuration -fix_set enable fix_reset enable
-    set_df_signal view spec -port nReset -type TestData
-    set_autofix_configuration -type reet -test_data nReset
-    create_test_protocol 
-    insert_dft
-}
+if ("$SCAN"=="-scan") {
+set_dft_signal -type ScanClock -port Clock -view exist -timing {45 55}
+set_dft_signal -view existing_dft -port nReset -type Reset -active 0
+set_dft_configuration -fix_set enable -fix_reset enable
+set_dft_signal  -view spec -port nReset -type TestData
+set_autofix_configuration -type reset -test_data nReset
+create_test_protocol 
+dft_drc
+insert_dft }
 
 if ("$TYPE"=="opt") {compile_ultra ${SCAN}}
 if ("$TYPE"=="basic") {compile ${SCAN}}
