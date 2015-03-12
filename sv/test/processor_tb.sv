@@ -99,15 +99,13 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    $display("DEBUG1: addr = %d", reg_addr);
     #(2*clk_p)
-    $display("DEBUG2: addr = %d", reg_addr);
 
     REG_DATA_ASSERT: assert (regData == reg_val)
         $display("INFO: Register check (%8h != %8h).", regData, reg_val);
     else
         $error("ERROR: Register mismatch $%2d (model: %8h != actual: %8h).", regAddr, regData, register[regAddr]);
-        
+
     -> reg_check_end;
 endtask
 
