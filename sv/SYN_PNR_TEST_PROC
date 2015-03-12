@@ -13,7 +13,7 @@ main()
 if [ $host != $hind ] #&& [ $host != $hart ] 
 then
     echo "Error: Synthesis and Testing requires hind CAD server. Exiting..." #or hart CAD server for tools. Exiting..."
-    exit 1
+    #exit 1
 fi
 
 
@@ -48,6 +48,9 @@ init()
 if [ "$3" = "iter" ]
 then
     iter_warn $1 $2
+elif [ "$3" = "lin" ]
+then
+    lin_warn $1 $2
 else
     run $1 $2
     echo $RESULTS
@@ -61,7 +64,7 @@ usage()
     -h,--help       Displays this message
     
     This script should be called in the following fashion:
-    ./SYN_PNR_TEST_PROC TYPE CLK_PERIOD ITER
+    ./SYN_PNR_TEST_PROC TYPE CLK_PERIOD MODE
 
     TYPE       : [opt basic]
         opt    : Optimised Synthesis (Slow, but best results)
@@ -70,10 +73,11 @@ usage()
     CLK_PERIOD : []
                  Any integer can be specified here to define the clock period (ns).
     
-    ITER       : [iter]
+    MODE       : [iter lin]
         iter   : Specify 'iter' here to perform iteration. This will 
                  sequentially synthesise, place & route
                  and test for the best possible clock period.
+        lin   : **Write Help Here**
 "
     exit
 }
@@ -96,8 +100,54 @@ echo "Beginning place & route..."
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
-RESULTS=$(./RUNME -pnr -plusargs="+clk_p=$2")
+RESULTS=$(./RUNME -pnr -plusargs="+clk_p=${2}")
 echo "Tests complete."
+}
+
+lin_warn()
+{
+echo "
+WARNING: lin has been specified. This will iterate the SYN, P&R and tests until 
+a clock epriod of 1ns has been completed. Use with caution!
+"
+
+while true; do
+    read -p "Do you wish to continue? " yn
+    case $yn in
+        [Yy]* ) lin $1 $2;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n.";;
+    esac
+done
+}
+
+lin()
+{
+rm -rf logs >&/dev/null
+
+declare -i CLK_PERIOD
+
+CLK_PERIOD=$2
+TYPE=$1
+
+while true
+do
+    echo ""
+    echo "Testing clock period of ${CLK_PERIOD}ns"
+    run $TYPE $CLK_PERIOD
+    grep "processor testcase" run.log
+    TOTAL=$(grep "processor testcase" run.log | wc -l) >/dev/null
+    PASSES=$(echo "$RESULTS" | tr ' ' '\n' | grep PASS | wc -l) >/dev/null
+    echo "Tests conducted: $TOTAL"
+    echo "Tests passed: $PASSES"
+    CLK_PERIOD=$CLK_PERIOD-1
+    if [ $CLK_PERIOD -eq 0 ]
+    then
+        echo ""
+        echo "Clock period has reached 1ns. Check log files for details."
+        exit
+    fi
+done
 }
 
 iter_warn()
