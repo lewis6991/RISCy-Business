@@ -106,8 +106,8 @@ mux #(.n(32)) mux2(
     .Sel(immsize                  )
 );
 
-mux #(.n(5))mux3(             // regdst = 00, RAddrOut = rd
-    .A  (Instruction[20:16]), // regdst = 01, RAddrOut = rt
+mux #(.n(5))mux3(             // regdst = 00, RAddrOut = rt
+    .A  (Instruction[20:16]), // regdst = 01, RAddrOut = rd
     .B  (Instruction[15:11]),
     .Y  (raddrinstr        ),
     .Sel(regdst[0]         )
