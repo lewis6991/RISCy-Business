@@ -7,6 +7,15 @@
 # Other Contributors:
 #------------------------------------------------------------------------------
 
+set host=`hostname`
+set hind="hind.ecs.soton.ac.uk"
+set hart="hart.ecs.soton.ac.uk"
+
+if ($host != $hind && $host != $hart) then
+    echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
+    exit
+endif
+
 if ($1 == clean) then
     rm -rf ./work >&/dev/null
     rm ./*.log >&/dev/null
