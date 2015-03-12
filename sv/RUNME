@@ -59,7 +59,7 @@ main()
     fi
     if [ -n "$RUN_IF" ]
     then
-        MODULES=(pcinc pc IF)
+        MODULES=(pcinc pc)
         stages "IF"
     fi
     if [ -n "$RUN_ID" ]
@@ -69,17 +69,17 @@ main()
     fi
     if [ -n "$RUN_EX" ]
     then
-        MODULES=(alu acc_control ex_mult ex_control EX)
+        MODULES=(alu acc_control ex_mult ex_control)
         stages "EX"
     fi
     if [ -n "$RUN_MEM" ]
     then
-        MODULES=(MEM)
+        MODULES=()
         stages "MEM"
     fi
     if [ -n "$RUN_WB" ]
     then
-        MODULES=(mux)
+        MODULES=(mux muxthree)
         stages "WB"
     fi
     if [ -n "$RUN_FU" ]
@@ -159,7 +159,7 @@ proc()
         ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC >> run.log
         if [ "$?" = "0" ]
         then
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. PASS
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS//[!0-9]/} .. PASS
 "
         else
             summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. FAIL
