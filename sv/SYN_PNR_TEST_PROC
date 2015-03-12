@@ -16,9 +16,10 @@ then
     exit 1
 fi
 
+
 if [ $(echo $DISPLAY) = "" ]
 then
-    echo "Error: Display connection not mapped (Necessary for Place & Route tool.
+    echo "Error: Display connection not mapped (Necessary for Place & Route tool).
           Run ssh with -X argument. Exiting..."
     exit 1
 fi
@@ -35,7 +36,7 @@ Depending on the design, optimisation settings and server usage, this could take
 while true; do
     read -p "Do you wish to continue? " yn
     case $yn in
-        [Yy]* ) init $1 $2;;
+        [Yy]* ) init $1 $2 $3;;
         [Nn]* ) exit;;
         * ) echo "Please answer y or n.";;
     esac
@@ -44,28 +45,50 @@ done
 
 init()
 {
-if [ "$1" = "iter" ]
+if [ "$3" = "iter" ]
 then
-    iter_warn $2
+    iter_warn $1 $2
 else
-    run $1
+    run $1 $2
     echo $RESULTS
     exit
 fi
 }
 
+usage()
+{
+    echo "
+    -h,--help       Displays this message
+    
+    This script should be called in the following fashion:
+    ./SYN_PNR_TEST_PROC TYPE CLK_PERIOD ITER
+
+    TYPE       : [opt basic]
+        opt    : Optimised Synthesis (Slow, but best results)
+        basic  : Unoptimised Synthesis (Fast, but not optimal results)
+    
+    CLK_PERIOD : []
+                 Any integer can be specified here to define the clock period (ns).
+    
+    ITER       : [iter]
+        iter   : Specify 'iter' here to perform iteration. This will 
+                 sequentially synthesise, place & route
+                 and test for the best possible clock period.
+"
+    exit
+}
+
 run()
 {
-SCRIPT=$1
-TYPE=$2
-CLK_PERIOD=$3
+TYPE=$1
+CLK_PERIOD=$2
 
 cd syn
 ./RUN_SYN clean > /dev/null
 ./RUN_PNR clean > /dev/null
 echo "Workspace cleaned"
 echo "Beginning synthesis..."
-./RUN_SYN $SCRIPT $TYPE $CLK_PERIOD
+./RUN_SYN $TYPE $CLK_PERIOD
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
@@ -73,7 +96,7 @@ echo "Beginning place & route..."
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
-RESULTS=$(./RUNME -pnr)
+RESULTS=$(./RUNME -pnr -plusargs="+clk_p=$2")
 echo "Tests complete."
 }
 
@@ -88,7 +111,7 @@ This will take a VERY long time - you have been warned.
 while true; do
     read -p "Do you wish to continue? " yn
     case $yn in
-        [Yy]* ) iter $1;;
+        [Yy]* ) iter $1 $2;;
         [Nn]* ) exit;;
         * ) echo "Please answer y or n.";;
     esac
@@ -102,16 +125,15 @@ rm -rf logs >&/dev/null
 declare -i CLK_PERIOD
 declare -i CLK_PERIOD_MODIFIER
 
-CLK_PERIOD=10
+CLK_PERIOD=$2
 CLK_PERIOD_MODIFIER=${CLK_PERIOD}/2
-SCRIPT=iter
 TYPE=$1
 
 while true
 do
     echo ""
     echo "Testing clock period of ${CLK_PERIOD}ns"
-    run $SCRIPT $TYPE $CLK_PERIOD
+    run $TYPE $CLK_PERIOD
     grep "processor testcase" run.log
     TOTAL=$(grep "processor testcase" run.log | wc -l) >/dev/null
     PASSES=$(echo "$RESULTS" | tr ' ' '\n' | grep PASS | wc -l) >/dev/null
@@ -143,4 +165,17 @@ done
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 hart="hart.ecs.soton.ac.uk"
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+    usage
+fi
+
 main "$@"
+
+
+
+
+
+
+
