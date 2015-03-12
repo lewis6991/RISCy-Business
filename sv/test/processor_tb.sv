@@ -41,6 +41,9 @@ wire         memReadEn ,
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
 
+event reg_check_start;
+event reg_check_end  ;
+
 processor_model pmodel0(
     .Clock      (Clock     ),
     .nReset     (nReset    ),
@@ -86,16 +89,27 @@ else
 // Always block to verify every register change.
 always @ (register)
 begin
+    -> reg_check_start;
+
     regAddr = cAddr;
 
-    @ (posedge Clock)
-    @ (posedge Clock)
-
-    REG_DATA_ASSERT: assert (regData == register[regAddr])
-        $display("INFO: Register check (%8h != %8h).", regData, register[regAddr]);
-    else
-        $error("ERROR: Register mismatch (%8h != %8h).", regData, register[regAddr]);
+    fork
+        check_register(regAddr, register[regAddr]);
+    join_none
 end
+
+task automatic check_register(int reg_addr, int reg_val);
+    $display("DEBUG1: addr = %d", reg_addr);
+    #(2*clk_p)
+    $display("DEBUG2: addr = %d", reg_addr);
+
+    REG_DATA_ASSERT: assert (regData == reg_val)
+        $display("INFO: Register check (%8h != %8h).", regData, reg_val);
+    else
+        $error("ERROR: Register mismatch (%8h != %8h).", regData, reg_val);
+
+    -> reg_check_end;
+endtask
 
 //Testing procedure
 initial
