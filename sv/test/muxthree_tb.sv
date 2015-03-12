@@ -15,7 +15,7 @@ logic [1:0] Sel;
 logic [n-1:0] A, B, C;
 wire  [n-1:0] Y;
 
-mux mux0 ( 
+muxthree muxthree0 ( 
     .Sel (Sel),
     .A   (A  ),
     .B   (B  ),
