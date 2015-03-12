@@ -8,7 +8,7 @@
 //                      www.doulos.com/knowhow/verilog_designers_guide/models/simple_ram_model
 //------------------------------------------------------------------------------
 module memory #(
-    parameter AddressSize = 16,
+    parameter AddressSize = 13,
     parameter WordSize    = 32
 )
 (
