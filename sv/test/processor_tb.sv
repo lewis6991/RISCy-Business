@@ -106,8 +106,8 @@ task automatic check_register(int reg_addr, int reg_val);
     REG_DATA_ASSERT: assert (regData == reg_val)
         $display("INFO: Register check (%8h != %8h).", regData, reg_val);
     else
-        $error("ERROR: Register mismatch (%8h != %8h).", regData, reg_val);
-
+        $error("ERROR: Register mismatch $%2d (model: %8h != actual: %8h).", regAddr, regData, register[regAddr]);
+        
     -> reg_check_end;
 endtask
 

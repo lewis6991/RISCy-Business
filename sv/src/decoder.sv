@@ -240,12 +240,12 @@ module decoder(
             `LB , `LBU, `LH, `LHU, `LW,
             `LWL, `LWR:
             begin
-                Func     = `ADD         ;
-                MemFunc  = OpCode[28:26];
-                ALUSrc   = 1'b1         ;
-                MemRead  = 1'b1         ;
-                MemtoReg = 1'b1         ;
-                RegWrite = 1'b1         ;
+                Func     = `ADD       ;
+                MemFunc  = OpCode[2:0];
+                ALUSrc   = 1'b1       ;
+                MemRead  = 1'b1       ;
+                MemtoReg = 1'b1       ;
+                RegWrite = 1'b1       ;
             end
 
             `SB , `SH, `SW, `SWL , `SWR:
