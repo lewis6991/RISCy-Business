@@ -27,6 +27,8 @@ logic [31:0] data[1:31]; // 31 registers of 32 bit width (respectively).
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         RegData <= 32'd0;
+    else if (RegAddr == 0)
+        RegData <= #20 0;
     else
         RegData <= #20 data[RegAddr];
 
