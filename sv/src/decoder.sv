@@ -21,6 +21,7 @@ module decoder(
                        MULOp   ,
                        MemWrite,
                        ALUSrc  ,
+                       BRASrc  ,
                        RegWrite,
                        ShiftSel,
                        ImmSize ,
@@ -49,6 +50,7 @@ module decoder(
         Unsgnsel = 1'b0;
         Func     = 6'd0;
         MemFunc  = 3'd0;
+        BRASrc   = 1'b0;
 
         case(OpCode)
             `ALU:
@@ -74,14 +76,14 @@ module decoder(
                     `JALR:
                     begin
                         RegDst   = 2'b01;
-                        Func     = `JAL;
+                        Func     = `JALR;
                         Jump     = 1'b1;
                         RegWrite = 1'b1;
                     end
 
                     `JR:
                     begin
-                        Func     = `J  ;
+                        Func     = `JR  ;
                         Jump     = 1'b1;
                     end
 
@@ -95,14 +97,14 @@ module decoder(
                     begin
                         Func     = BraCode ;
                         Branch   = 1'b1    ;
-                        ALUSrc   = 1'b1    ;
+                        BRASrc   = 1'b1    ;
                     end
 
                     `BGEZAL, `BLTZAL:
                     begin
                         RegDst   = 2'b10   ;
                         Func     = BraCode ;
-                        ALUSrc   = 1'b1    ;
+                        BRASrc   = 1'b1    ;
                         Branch   = 1'b1    ;
                         RegWrite = 1'b1    ;
                     end
@@ -217,14 +219,14 @@ module decoder(
             begin
                 Func     = OpCode;
                 Branch   = 1'b1  ;
-                ALUSrc   = 1'b1  ;
+                BRASrc   = 1'b1  ;
             end
 
             `J:
             begin
                 Func     = `J  ;
                 Jump     = 1'b1;
-                ALUSrc   = 1'b1;
+                BRASrc   = 1'b1;
                 ImmSize  = 1'b1;
             end
 
@@ -233,8 +235,9 @@ module decoder(
                 RegDst   = 2'b10;
                 Func     = `JAL ;
                 Jump     = 1'b1 ;
-                ALUSrc   = 1'b1 ;
+                BRASrc   = 1'b1 ;
                 ImmSize  = 1'b1 ;
+                RegWrite = 1'b1 ;
             end
 
             `LB , `LBU, `LH, `LHU, `LW,
@@ -250,7 +253,7 @@ module decoder(
 
             `SB , `SH, `SW, `SWL , `SWR:
             begin
-		Func     = `ADD;
+                Func     = `ADD;
                 ALUSrc   = 1'b1;
                 MemWrite = 1'b1;
             end

@@ -46,6 +46,9 @@ wire MemWriteM   ;
 wire ALUSrcD     ;
 wire ALUSrcE     ;
 
+wire BRASrcD     ;
+wire BRASrcE     ;
+
 wire RegWriteD   ;
 wire RegWriteEin ;
 wire RegWriteEout;
@@ -173,13 +176,14 @@ DEC de0(
     .MULOp       (MULOpD       ),
     .MemWrite    (MemWriteD    ),
     .ALUSrc      (ALUSrcD      ),
+    .BRASrc      (BRASrcD      ),
     .RegWriteOut (RegWriteD    ),
     .ALUfunc     (ALUfuncD     ),
     .Memfunc     (MemfuncD     ),
     .Shamt       (ShamtD       )
 );
 
-PIPE #(.n(166)) pipe1(
+PIPE #(.n(167)) pipe1(
     .Clock(Clock),
     .nReset(nReset),
     .In ({
@@ -198,6 +202,7 @@ PIPE #(.n(166)) pipe1(
         MULOpD       ,
         MemWriteD    ,
         ALUSrcD      ,
+        BRASrcD      ,
         RegWriteD    ,
         ALUfuncD     ,
         MemfuncD     ,
@@ -219,6 +224,7 @@ PIPE #(.n(166)) pipe1(
         MULOpE       ,
         MemWriteEin  ,
         ALUSrcE      ,
+        BRASrcE      ,
         RegWriteEin  ,
         ALUfuncE     ,
         MemfuncEin   ,
@@ -239,6 +245,7 @@ EX ex(
     .MemtoRegIn (MemtoRegEin ),
     .MemWriteIn (MemWriteEin ),
     .ALUSrc     (ALUSrcE     ),
+    .BRASrc     (BRASrcE      ),
     .A          (A           ),//(RsDataE     ),//(A           ),
     .B          (B           ),//(RtDataEin   ),//(B           ),
     .Immediate  (ImmDataE    ),

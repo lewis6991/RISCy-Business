@@ -7,6 +7,7 @@
 //------------------------------------------------------------------------------
 
 `include "op_definition.sv"
+`include "alu_definition.sv"
 
 module branch(
     input               Enable , // Enable branch module
@@ -31,6 +32,13 @@ module branch(
                 `JAL:
                     begin
                         PCout = {PCIn[31:28], Address[25:0], 2'b00};
+                        Taken = 1;
+                    end
+                
+                `JR,
+                `JALR:
+                    begin
+                        PCout = Address;
                         Taken = 1;
                     end
                     

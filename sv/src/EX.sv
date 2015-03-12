@@ -18,6 +18,7 @@ module EX(
                         MemtoRegIn ,
                         MemWriteIn ,
                         ALUSrc     ,
+                        BRASrc     ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
                         Immediate  , // Immediate from Decode stage.
@@ -45,6 +46,7 @@ module EX(
     wire [31:0] ALUout ;
     wire [31:0] ACCout ;
     wire [63:0] MULout ;
+    wire [31:0] BRAAddr;
     wire [31:0] BRAret ;
     wire [31:0] Y      ;
 
@@ -94,7 +96,7 @@ module EX(
         .PCIn   (PCin     ), // Program counter input.
         .A      (A        ), // ALU input A
         .B      (B        ), // ALU input B
-        .Address(Y        ), // Address input
+        .Address(BRAAddr  ), // Address input
         .Func   (Func     ), 
         .PCout  (PCout    ), // Program counter
         .Ret    (BRAret   ), // Return address
@@ -109,6 +111,13 @@ module EX(
     );
 
     mux mux3 (
+        .A  (A        ),
+        .B  (Immediate),
+        .Y  (BRAAddr  ),
+        .Sel(BRASrc   )
+    );
+
+    mux mux4 (
         .A  (B        ),
         .B  (Immediate),
         .Y  (Y        ),
