@@ -263,7 +263,7 @@ EX ex(
     .BranchTaken(BranchTaken )
 );
 
-PIPE #(.n(78)) pipe2(
+PIPE #(.n(76)) pipe2(
     .Clock(Clock),
     .nReset(nReset),
     .In({

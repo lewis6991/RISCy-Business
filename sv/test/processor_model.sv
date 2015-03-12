@@ -126,7 +126,7 @@ task update_registers();
             `SRAV   : `rd = `rt >>> `rs  ;
             `SRL    : `rd = `rt >>  shamt;
             `SRLV   : `rd = `rt >>  `rs  ;
-            `JALR   :; //TODO
+            `JALR   : `rd =  pc + 8;
             `MOVZ   : if (`rt == 0) `rd =  `rs;
             `MOVN   : if (`rt != 0) `rd =  `rs;
             `MFHI   : `rd = acc[63:32];
@@ -199,7 +199,7 @@ task update_pc();
         `BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         `BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         `BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-        `J, `JAL: delay.pc <= ##(br_d) {pc[31:28], 28'b0} + address;
+        `J, `JAL: delay.pc <= ##(br_d) {pc[31:28], 28'b0} + (address << 2);
         `ALU   :
         case (func)
             `JR, `JALR: delay.pc <= ##(br_d) `rs;
