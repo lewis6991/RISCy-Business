@@ -178,11 +178,11 @@ task automatic update_memory();
     bit write = 1;
 
     case (opcode)
-        `SB : memory[`rs + offset]        = {24'b0, `rt[7:0]} ;
-        `SH : memory[`rs + offset]        = {16'b0, `rt[15:0]};
-        `SW : memory[`rs + offset]        = `rt               ;
-        `SWL: memory[`rs + offset][15: 0] = `rt[31:16]        ;
-        `SWR: memory[`rs + offset][31:16] = `rt[15: 0]        ;
+        `SB : memory[(`rs + offset) >> 2]        = {24'b0, `rt[7:0]} ;
+        `SH : memory[(`rs + offset) >> 2]        = {16'b0, `rt[15:0]};
+        `SW : memory[(`rs + offset) >> 2]        = `rt               ;
+        `SWL: memory[(`rs + offset) >> 2][15: 0] = `rt[31:16]        ;
+        `SWR: memory[(`rs + offset) >> 2][31:16] = `rt[15: 0]        ;
         default: write = 0;
     endcase
     case (opcode)
@@ -194,19 +194,19 @@ task automatic update_memory();
         default: delay.MemWData <= ##(mem_d) 32'b0;
     endcase
     case (opcode)
-        `LB , `LBU: `rt = memory[`rs + offset][7:0];
-        `LH , `LHU: `rt = memory[`rs + offset][15:0];
-        `LL , `LW : `rt = memory[`rs + offset];
-        `LWL      : `rt = {memory[`rs + offset][31:16], `rt[15:0]};
-        `LWR      : `rt = {`rt[31:16], memory[`rs + offset][15:0]};
-        `SC       : `rt = (memory[`rs + offset] == `rt) ? 32'b1 : 32'b0;
+        `LB , `LBU: `rt = memory[(`rs + offset) >> 2][7:0];
+        `LH , `LHU: `rt = memory[(`rs + offset) >> 2][15:0];
+        `LL , `LW : `rt = memory[(`rs + offset) >> 2];
+        `LWL      : `rt = {memory[(`rs + offset) >> 2][31:16], `rt[15:0]};
+        `LWR      : `rt = {`rt[31:16], memory[(`rs + offset) >> 2][15:0]};
+        `SC       : `rt = (memory[(`rs + offset) >> 2] == `rt) ? 32'b1 : 32'b0;
         default: read = 0;
     endcase
 
     delay.MemRead  <= ##(mem_d) read;
     delay.MemWrite <= ##(mem_d) write;
     delay.MemAddr  <= ##(mem_d) `rs + offset;
-    delay.MemRData <= ##(mem_d+1) read ? memory[`rs + offset] : 32'b0;
+    delay.MemRData <= ##(mem_d+1) read ? memory[(`rs + offset) >> 2] : 32'b0;
 endtask
 
 task update_acc();

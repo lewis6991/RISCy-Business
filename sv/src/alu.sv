@@ -70,14 +70,14 @@ module alu(
             `MOVN:
             begin
                 Out = A;
-                if (B != 0)
+                if (B == 0)
                     En = 0;
             end
             
             `MOVZ:
             begin
                 Out = A;
-                if (B == 0)
+                if (B != 0)
                     En = 0;
             end
 

@@ -92,7 +92,9 @@ wire [31:0] RtData       ;
 wire [31:0] RtDataD      ;
 wire [31:0] RtDataEin    ;
 wire [31:0] RtDataEout   ;
-wire [31:0] RtDataM      ;
+wire [31:0] RtDataMin    ;
+wire [31:0] RtDataMout   ;
+wire [31:0] RtDataW      ;
 
 wire [5:0]  ALUfuncD     ;
 wire [5:0]  ALUfuncE     ;
@@ -100,7 +102,9 @@ wire [5:0]  ALUfuncE     ;
 wire [2:0]  MemfuncD     ;
 wire [2:0]  MemfuncEin   ;
 wire [2:0]  MemfuncEout  ;
-wire [2:0]  MemfuncM     ;
+wire [2:0]  MemfuncMin   ;
+wire [2:0]  MemfuncMout  ;
+wire [2:0]  MemfuncW     ;
 
 wire [4:0]  ShamtD       ;
 wire [4:0]  ShamtE       ;
@@ -116,8 +120,7 @@ wire [31:0] ALUDataMin   ;
 wire [31:0] ALUDataMout  ;
 wire [31:0] ALUDataW     ;
 
-wire [31:0] MemDataM     ;
-wire [31:0] MemDataW     ;
+wire [31:0] MemData      ;
 
 wire [ 1:0] ForwardA     ;
 wire [ 1:0] ForwardB     ;
@@ -284,9 +287,9 @@ PIPE #(.n(76)) pipe2(
     }),
     .Out({
         ALUDataMin ,
-        RtDataM    ,
+        RtDataMin  ,
         RAddrMin   ,
-        MemfuncM   ,
+        MemfuncMin ,
         RegWriteMin,
         MemReadM   ,
         MemtoRegMin,
@@ -300,44 +303,49 @@ MEM mem0(
     .MemReadIn   (MemReadM    ),
     .MemWriteIn  (MemWriteM   ),
     .RAddrIn     (RAddrMin    ),
-    .Memfunc     (MemfuncM    ),
-    .RtData      (RtDataM     ),
+    .MemfuncIn   (MemfuncMin  ),
+    .RtDataIn    (RtDataMin   ),
     .ALUDataIn   (ALUDataMin  ),
     .MemDataIn   (MemData     ),
     .RegWriteOut (RegWriteMout),
     .MemtoRegOut (MemtoRegMout),
     .MemWrite    (MemWrite    ),
     .MemRead     (MemRead     ),
+    .MemfuncOut  (MemfuncMout ),
     .RAddrOut    (RAddrMout   ),
     .MemAddr     (MemAddr     ),
     .MemWriteData(WriteData   ),
-    .MemDataOut  (MemDataM    ),
-    .ALUDataOut  (ALUDataMout )
+    .ALUDataOut  (ALUDataMout ),
+    .RtDataOut   (RtDataMout  )
 );
 
-PIPE #(.n(71)) pipe3(
+PIPE #(.n(74)) pipe3(
     .Clock(Clock),
     .nReset(nReset),
     .In({
         RegWriteMout,
         MemtoRegMout,
+        MemfuncMout ,
         RAddrMout   ,
-        MemDataM    ,
-        ALUDataMout
+        ALUDataMout ,
+        RtDataMout
     }),
     .Out({
         RegWriteW,
         MemtoRegW,
+        MemfuncW ,
         RAddrW   ,
-        MemDataW ,
-        ALUDataW
+        ALUDataW ,
+        RtDataW
     })
 );
 
 WB wb0(
     .MemtoReg(MemtoRegW),
     .ALUData (ALUDataW ),
-    .MemData (MemDataW ),
+    .RtData  (RtDataW  ),
+    .MemData (MemData  ),
+    .Memfunc (MemfuncW ),
     .WBData  (RDataW   )
 );
 
