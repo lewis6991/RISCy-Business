@@ -41,7 +41,7 @@ fail:
     ori     $1,  $1,  0xFFFF
     li      $2,       0xFFFF0000
     ori     $2,  $2,  0xFFFF
-    b       finish
+    jr      $0
     nop
     nop
     nop
@@ -98,7 +98,7 @@ level2c:
     nop
 level2:
     add     $10, $9,  $1
-    li      $11, 0x8234
+    li      $11, 0x82340000
     ori     $11, $11, 0x5678
     bgezal  $11, fail
     nop
@@ -159,13 +159,16 @@ level2:
 level1a:
     add     $6,  $5,  $1
     la      $7,  level1b
-    jalr    $7, $8
+    ori     $7,  $7,  level1b
+    move    $8, $31
+    jalr    $7
     nop
     nop
     nop
     nop
     nop
     nop
+    move    $31, $8
     jr      $31
     nop
     nop
@@ -182,7 +185,7 @@ level1a:
     nop
 level1b:
     add     $9,  $6,  $1
-    jr      $8
+    jr      $31
     nop
     nop
     nop
