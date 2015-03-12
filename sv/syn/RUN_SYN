@@ -34,8 +34,8 @@ if($1 == check) then
     exit
 endif
 
-dc_shell -x "set TYPE $1; set CLK_PERIOD $2;" -f "../syn_script.tcl" > ../logs/syn.log
-echo "SYN Complete. Results written to logs/iter_syn.log"
+dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $3;" -f "../syn_script.tcl" > ../logs/syn_$2.log
+echo "SYN Complete. Results written to logs/iter_syn_$2.log"
 exit
 
 echo "Error: No/Unrecognised argument provided."
