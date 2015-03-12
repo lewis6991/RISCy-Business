@@ -34,6 +34,12 @@ if($1 == check) then
     exit
 endif
 
+if($3 == scan)then
+    SCAN=1
+else
+    SCAN=0
+endif
+
 dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $3;" -f "../syn_script.tcl" > ../logs/syn_$2.log
 echo "SYN Complete. Results written to logs/iter_syn_$2.log"
 exit

@@ -159,11 +159,13 @@ proc()
         ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC >> run.log
         if [ "$?" = "0" ]
         then
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS//[!0-9]/} .. PASS
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/} .. PASS
 "
+            summarytext=${summarytext/+clk_p=*[0-9]/}
         else
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS//"+test="/} .. FAIL
+            summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/} ..  FAIL
 "
+            summarytext=${summarytext/+clk_p=*[0-9]/}
             if [ -z "$QUIET" ]
             then
                 ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
