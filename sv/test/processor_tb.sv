@@ -91,7 +91,7 @@ always @ (register)
 begin
     -> reg_check_start;
 
-    regAddr = cAddr;
+       regAddr = #10 cAddr;
 
     fork
         check_register(regAddr, register[regAddr]);
@@ -99,12 +99,12 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    #(2*clk_p)
+    #(1*clk_p)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
         $display("INFO: Register check (%8h != %8h).", regData, reg_val);
     else
-        $error("ERROR: Register mismatch $%2d (model: %8h != actual: %8h).", regAddr, regData, register[regAddr]);
+        $error("ERROR: Register mismatch $%2d (actual: %8h != model: %8h).", regAddr, regData, reg_val);
 
     -> reg_check_end;
 endtask
@@ -153,11 +153,11 @@ begin
         $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d", rtlPC, modelPC);
 
     if(rtlPC[15:2] < inst_count)
-        instrData <= #20 get_instruction(rtlPC[15:2]);
+        instrData <= #20  get_instruction(rtlPC[15:2]); // was here!
     else if(rtlPC[15:2] == inst_count + 10)
         finish_test();
-    else
-        instrData <= #20 0;
+    else // was here!
+        instrData <=#20   0;
 end
 
 task finish_test();
