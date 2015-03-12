@@ -26,17 +26,21 @@ int       cycles     = 0   ,
           test_no    = 1   ,
           inst_count = 0   ;
 
-logic [31:0] instrData ;
-logic [ 4:0] regAddr   ;
-wire  [15:0] rtlPC ,
-             modelPC,
-             memAddr   ;
-wire  [31:0] memRData  ,
-             memWData  ,
-             regData   ,
-             regDataM  ;
-wire         memReadEn ,
-             memWriteEn;
+logic [31:0] instrData  ;
+logic [ 4:0] regAddr    ;
+wire  [15:0] rtlPC      ,
+             modelPC    ,
+             memAddr    ,
+             memAddrM   ;
+wire  [31:0] memRData   ,
+             memWData   ,
+             memRDataM  ,
+             memWDataM  ,
+             regData    ;
+wire         memReadEn  ,
+             memWriteEn ,
+             memReadEnM ,
+             memWriteEnM;
 
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
@@ -45,19 +49,24 @@ event reg_check_start;
 event reg_check_end  ;
 
 processor_model pmodel0(
-    .Clock      (Clock     ),
-    .nReset     (nReset    ),
-    .Instruction(instrData ),
-    .InstAddr   (modelPC),
-    .Register   (register  ),
-    .cAddr      (cAddr     )
+    .Clock      (Clock      ),
+    .nReset     (nReset     ),
+    .Instruction(instrData  ),
+    .InstAddr   (modelPC    ),
+    .Register   (register   ),
+    .cAddr      (cAddr      ),
+    .MemRData   (memRDataM  ),
+    .MemWData   (memWDataM  ),
+    .MemAddr    (memAddrM   ),
+    .MemWrite   (memWriteEnM),
+    .MemRead    (memReadEnM )
 );
 
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
     .InstrMem (instrData ),
-    .InstrAddr(rtlPC ),
+    .InstrAddr(rtlPC     ),
     .MemData  (memRData  ),
     .WriteData(memWData  ),
     .MemAddr  (memAddr   ),
@@ -102,7 +111,7 @@ task automatic check_register(int reg_addr, int reg_val);
     #(1*clk_p)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
-        $display("INFO: Register check (%8h != %8h).", regData, reg_val);
+        $display("INFO: Register check (%8h == %8h).", regData, reg_val);
     else
         $error("ERROR: Register mismatch $%2d (actual: %8h != model: %8h).", regAddr, regData, reg_val);
 

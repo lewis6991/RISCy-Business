@@ -24,10 +24,10 @@ module alu(
 
     always_comb
     begin
-        Out = 0         ;
-        En  = 1         ;
-        C   = 0         ;
-        O   = 0         ;
+        Out = 0;
+        En  = 1;
+        C   = 0;
+        O   = 0;
 
         case (ALUfunc)
             `ADD:
@@ -70,13 +70,15 @@ module alu(
             `MOVN:
             begin
                 Out = A;
-                En = (B != 0);
+                if (B == 0)
+                    En = 0;
             end
             
             `MOVZ:
             begin
                 Out = A;
-                En = (B == 0);
+                if (B != 0)
+                    En = 0;
             end
 
             `SLT:

@@ -12,15 +12,23 @@
 `include "branch_definition.sv"
 program processor_model(
     input                   Clock      ,
-    nReset     ,
+                            nReset     ,
     input            [31:0] Instruction,
     output           [15:0] InstAddr   ,
     output bit       [ 4:0] cAddr      ,
-    output bit [0:31][31:0] Register
+    output bit [0:31][31:0] Register   ,
+    output bit       [31:0] MemRData   ,
+                            MemWData   ,
+                            MemAddr    ,
+    output bit              MemWrite   ,
+                            MemRead
 );
 
 parameter br_d  = 2; // Delay for branches to occur.
 parameter reg_d = 4; // Delay for reg writes to occur.
+parameter mem_d = 2; // Delay for memory operations to occur.
+
+parameter mem_size = 4096;
 
 logic [63:0] acc        ;
 logic [ 5:0] opcode     ,
@@ -44,10 +52,17 @@ bit [0:31][31:0] register_packed;
 // Track the address of the register that changes.
 bit [4:0] caddr;
 
+int memory[0:mem_size-1];
+
 default clocking delay @ (posedge Clock);
     output pc      ;
     output Register;
     output cAddr   ;
+    output MemWrite;
+    output MemRead ;
+    output MemAddr ;
+    output MemRData;
+    output MemWData;
 endclocking
 
 assign opcode  = Instruction[31:26];
@@ -70,6 +85,11 @@ assign InstAddr = pc;
 initial while(1)
 begin
     @ (posedge Clock, negedge nReset)
+
+    //assert (`rs + offset < mem_size)
+    //else
+    //    $error("ERROR: Address %d is out of range. Maximum address is %d", `rs + offset, mem_size);
+
     if (~nReset) begin
         acc = 0;
         pc = 0;
@@ -100,24 +120,13 @@ endtask
 
 task update_registers();
     case (opcode)
-        `ADDI  ,
-        `ADDIU : `rt = `rs + imm;
-        `LUI   : `rt = imm << 16;
-        `ANDI  : `rt = `rs & imm;
-        `ORI   : `rt = `rs | imm;
-        `XORI  : `rt = `rs ^ imm;
-        `SLTI  ,
-        `SLTIU : `rt = `rs < imm ? 32'b1 : 32'b0;
-        `JAL   : `ra =  pc + 8;
-        `LB    :; //TODO
-        `LBU   :; //TODO
-        `LH    :; //TODO
-        `LHU   :; //TODO
-        `LW    :; //TODO
-        `LWL   :; //TODO
-        `LWR   :; //TODO
-        `LL    :; //TODO
-        `SC    :; //TODO
+        `ADDI, `ADDIU: `rt = `rs + imm;
+        `LUI         : `rt = imm << 16;
+        `ANDI        : `rt = `rs & imm;
+        `ORI         : `rt = `rs | imm;
+        `XORI        : `rt = `rs ^ imm;
+        `SLTI, `SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
+        `JAL         : `ra =  pc + 8;
         `ALU   :
         case (func)
             `SLL    : `rd = `rt <<  shamt;
@@ -164,14 +173,40 @@ task update_registers();
     delay.Register <= ##(reg_d) register_packed;
 endtask
 
-task update_memory();
+task automatic update_memory();
+    bit read  = 1;
+    bit write = 1;
+
     case (opcode)
-        `SB    :; //TODO
-        `SH    :; //TODO
-        `SW    :; //TODO
-        `SWL   :; //TODO
-        `SWR   :; //TODO
+        `SB : memory[(`rs + offset) >> 2]        = {24'b0, `rt[7:0]} ;
+        `SH : memory[(`rs + offset) >> 2]        = {16'b0, `rt[15:0]};
+        `SW : memory[(`rs + offset) >> 2]        = `rt               ;
+        `SWL: memory[(`rs + offset) >> 2][15: 0] = `rt[31:16]        ;
+        `SWR: memory[(`rs + offset) >> 2][31:16] = `rt[15: 0]        ;
+        default: write = 0;
     endcase
+    case (opcode)
+        `SB : delay.MemWData <= ##(mem_d) {24'b0, `rt[7:0]} ;
+        `SH : delay.MemWData <= ##(mem_d) {16'b0, `rt[15:0]};
+        `SW : delay.MemWData <= ##(mem_d) `rt               ;
+        `SWL: delay.MemWData <= ##(mem_d) `rt[31:16]        ;
+        `SWR: delay.MemWData <= ##(mem_d) `rt[15: 0]        ;
+        default: delay.MemWData <= ##(mem_d) 32'b0;
+    endcase
+    case (opcode)
+        `LB , `LBU: `rt = memory[(`rs + offset) >> 2][7:0];
+        `LH , `LHU: `rt = memory[(`rs + offset) >> 2][15:0];
+        `LL , `LW : `rt = memory[(`rs + offset) >> 2];
+        `LWL      : `rt = {memory[(`rs + offset) >> 2][31:16], `rt[15:0]};
+        `LWR      : `rt = {`rt[31:16], memory[(`rs + offset) >> 2][15:0]};
+        `SC       : `rt = (memory[(`rs + offset) >> 2] == `rt) ? 32'b1 : 32'b0;
+        default: read = 0;
+    endcase
+
+    delay.MemRead  <= ##(mem_d) read;
+    delay.MemWrite <= ##(mem_d) write;
+    delay.MemAddr  <= ##(mem_d) `rs + offset;
+    delay.MemRData <= ##(mem_d+1) read ? memory[(`rs + offset) >> 2] : 32'b0;
 endtask
 
 task update_acc();

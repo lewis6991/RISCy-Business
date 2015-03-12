@@ -85,7 +85,7 @@ module ex_control(
                 default:
                 begin
                     Out         = ALUout;
-                    RegWriteOut = ALUEn;
+                    RegWriteOut = RegWriteIn & ALUEn;
                     C           = ALUC;
                     Z           = ALUZ;
                     O           = ALUO;
