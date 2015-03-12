@@ -58,10 +58,10 @@ create_test_protocol
 dft_drc
 insert_dft }
 
-if (("$TYPE"=="opt") && ("$SCAN"=="1")) {compile_ultra -scan
-} else if (("$TYPE"=="opt") && ("$SCAN"=="0")) {compile_ultra
-} else if (("$TYPE"=="basic") && ("$SCAN"=="1")) {compile -scan
-} else if (("$TYPE"=="basic") && ("$SCAN"=="0")) {compile}
+if {("$TYPE"=="opt") && ("$SCAN"=="1")} {compile_ultra -scan
+} else if {("$TYPE"=="opt") && ("$SCAN"=="0")} {compile_ultra
+} else if {("$TYPE"=="basic") && ("$SCAN"=="1")} {compile -scan
+} else if {("$TYPE"=="basic") && ("$SCAN"=="0")} {compile}
 
 report_area > ../logs/synth_area_${TYPE}_${CLK_PERIOD}ns.rpt
 report_power > ../logs/synth_power_${TYPE}_${CLK_PERIOD}ns.rpt
