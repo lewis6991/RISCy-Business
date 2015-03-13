@@ -100,7 +100,8 @@ always @ (register)
 begin
     -> reg_check_start;
 
-       regAddr = #10 cAddr;
+    @(negedge Clock)
+    regAddr = cAddr;
 
     fork
         check_register(regAddr, register[regAddr]);
@@ -108,7 +109,8 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    #(2*clk_p)
+    @(posedge Clock)
+    @(posedge Clock)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
         $display("INFO: Register check (%8h == %8h).", regData, reg_val);
