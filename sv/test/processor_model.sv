@@ -173,17 +173,18 @@ task update_registers();
     delay.Register <= ##(reg_d) register_packed;
 endtask
 
-task automatic update_memory();
-    bit read  = 1;
-    bit write = 1;
+task automatic update_memory()        ;
+    bit read     = 1                  ;
+    bit write    = 1                  ;
+    int mem_addr = (`rs + offset) >> 2;
 
     case (opcode)
-        `SB : memory[(`rs + offset) >> 2]        = {24'b0, `rt[7:0]} ;
-        `SH : memory[(`rs + offset) >> 2]        = {16'b0, `rt[15:0]};
-        `SW : memory[(`rs + offset) >> 2]        = `rt               ;
-        `SWL: memory[(`rs + offset) >> 2][15: 0] = `rt[31:16]        ;
-        `SWR: memory[(`rs + offset) >> 2][31:16] = `rt[15: 0]        ;
-        default: write = 0;
+        `SB : memory[mem_addr]        = {24'b0, `rt[7:0]} ;
+        `SH : memory[mem_addr]        = {16'b0, `rt[15:0]};
+        `SW : memory[mem_addr]        = `rt               ;
+        `SWL: memory[mem_addr][15: 0] = `rt[31:16]        ;
+        `SWR: memory[mem_addr][31:16] = `rt[15: 0]        ;
+        default: write = 0                                ;
     endcase
     case (opcode)
         `SB : delay.MemWData <= ##(mem_d) {24'b0, `rt[7:0]} ;
@@ -191,22 +192,22 @@ task automatic update_memory();
         `SW : delay.MemWData <= ##(mem_d) `rt               ;
         `SWL: delay.MemWData <= ##(mem_d) `rt[31:16]        ;
         `SWR: delay.MemWData <= ##(mem_d) `rt[15: 0]        ;
-        default: delay.MemWData <= ##(mem_d) 32'b0;
+        default: delay.MemWData <= ##(mem_d) 32'b0          ;
     endcase
     case (opcode)
-        `LB , `LBU: `rt = memory[(`rs + offset) >> 2][7:0];
-        `LH , `LHU: `rt = memory[(`rs + offset) >> 2][15:0];
-        `LL , `LW : `rt = memory[(`rs + offset) >> 2];
-        `LWL      : `rt = {memory[(`rs + offset) >> 2][31:16], `rt[15:0]};
-        `LWR      : `rt = {`rt[31:16], memory[(`rs + offset) >> 2][15:0]};
-        `SC       : `rt = (memory[(`rs + offset) >> 2] == `rt) ? 32'b1 : 32'b0;
-        default: read = 0;
+        `LB , `LBU: `rt = memory[mem_addr][7:0]                    ;
+        `LH , `LHU: `rt = memory[mem_addr][15:0]                   ;
+        `LL , `LW : `rt = memory[mem_addr]                         ;
+        `LWL      : `rt = {memory[mem_addr][31:16], `rt[15:0]}     ;
+        `LWR      : `rt = {`rt[31:16], memory[mem_addr][15:0]}     ;
+        `SC       : `rt = (memory[mem_addr] == `rt) ? 32'b1 : 32'b0;
+        default: read = 0                                          ;
     endcase
 
-    delay.MemRead  <= ##(mem_d) read;
-    delay.MemWrite <= ##(mem_d) write;
-    delay.MemAddr  <= ##(mem_d) `rs + offset;
-    delay.MemRData <= ##(mem_d+1) read ? memory[(`rs + offset) >> 2] : 32'b0;
+    delay.MemRead  <= ##(mem_d) read                             ;
+    delay.MemWrite <= ##(mem_d) write                            ;
+    delay.MemAddr  <= ##(mem_d) `rs + offset                     ;
+    delay.MemRData <= ##(mem_d+1) read ? memory[mem_addr] : 32'b0;
 endtask
 
 task update_acc();
@@ -216,7 +217,7 @@ task update_acc();
             `MTHI : acc[63:32] = `rs;
             `MTLO : acc[31: 0] = `rs;
             `MULT ,
-            `MULTU: acc = `rs*`rt;
+            `MULTU: acc = `rs*`rt   ;
         endcase
         `MULL  :
         case (func)
