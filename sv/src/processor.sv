@@ -120,8 +120,6 @@ wire [31:0] ALUDataMin   ;
 wire [31:0] ALUDataMout  ;
 wire [31:0] ALUDataW     ;
 
-wire [31:0] MemData      ;
-
 wire [ 1:0] ForwardA     ;
 wire [ 1:0] ForwardB     ;
 
@@ -306,7 +304,6 @@ MEM mem0(
     .MemfuncIn   (MemfuncMin  ),
     .RtDataIn    (RtDataMin   ),
     .ALUDataIn   (ALUDataMin  ),
-    .MemDataIn   (MemData     ),
     .RegWriteOut (RegWriteMout),
     .MemtoRegOut (MemtoRegMout),
     .MemWrite    (MemWrite    ),
