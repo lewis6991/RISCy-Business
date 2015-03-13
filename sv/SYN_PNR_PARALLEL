@@ -1,0 +1,99 @@
+#!/bin/bash
+
+#----------------------------------------
+# File: SYN_PNR_PARALLEL
+# Description: Script to call SYN_PNR_PROC_TEST and run instances in parallel.
+# Primary Author: Dominic Murphy
+# Other Contributors:
+# Notes:
+#----------------------------------------
+
+main()
+{   
+    if [ "$3" -ge "$2" ]
+    then
+        START=$2
+        STOP=$3
+    else
+        START=$3
+        STOP=$2
+    fi
+    
+    MAX_JOBS=20
+    DIFF=$(($STOP-$START))
+
+    if [ "$DIFF" -gt "$MAX_JOBS" ]
+    then
+        echo "More than $MAX_JOBS jobs is not allowed! It's for your own good!"
+        exit 1
+    fi 
+ 
+    for i in `seq $START $STOP`
+    do
+        echo "Spawning ./SYN_PNR_TEST $1 $i &"
+        mkdir -p syn/logs_${i}${1}
+        ./SYN_PNR_TEST_PROC $1 $i > syn/logs_${i}${1}/run.log &
+    done
+
+    echo "All jobs spawned. Review logs for information"
+    
+    RUNNING=0
+    echo -n "Jobs Running"
+    while [ $RUNNING = "0" ] 
+    do
+	    sleep 5
+	    echo -n "." 
+	    ps | grep SYN_PNR_TEST > /dev/null
+    	RUNNING=$?
+    done
+    echo 
+    echo "All active SYN_PNR_TEST_PROC scripts concluded."
+    
+    exit
+}
+
+usage()
+{
+    echo "
+    -h, --help      Displays this message
+
+    This script will call the SYN_PNR_TEST_PROC in mutliple background instances.
+    ./SYN_PNR_PARALLEL TYPE START STOP
+    
+    TYPE       : [opt basic]
+        opt    : Optimised Synthesis (Slow, but best results)
+        basic  : Unoptimised Synthesis (Fast, but not optimal results)
+    
+    START      : []
+                 Any integer to define the clock period to start at.
+    STOP       : []
+                 Any integer to define the clock period to stop at.
+"
+    exit
+}
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]
+then
+    usage
+fi
+
+    ps | grep SYN_PNR_TEST > /dev/null
+    RUNNING=$?
+
+    if [ "$RUNNING" != "0" ]
+    then
+        echo "Warning: SYN_PNR_TEST_PROC is already running. Be careful not
+              to spawn too many jobs!"
+    
+    while true; do
+        read -p "Do you wish to continue? " yn
+        case $yn in
+            [Yy]* ) main "$@";;
+            [Nn]* ) exit;;
+            * ) echo "Please answer y or n.";;
+        esac
+    done
+    fi
+
+main "$@"
+
