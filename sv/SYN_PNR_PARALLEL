@@ -80,7 +80,7 @@ fi
     ps | grep SYN_PNR_TEST > /dev/null
     RUNNING=$?
 
-    if [ "$RUNNING" != "0" ]
+    if [ "$RUNNING" == "0" ]
     then
         echo "Warning: SYN_PNR_TEST_PROC is already running. Be careful not
               to spawn too many jobs!"
