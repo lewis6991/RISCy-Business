@@ -113,9 +113,11 @@ task automatic check_register(int reg_addr, int reg_val);
     @(posedge Clock)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
-        $display("INFO: Register check (%8h == %8h).", regData, reg_val);
+        $display("INFO: Register check (actual: %8h == model: %8h).",
+            regData, reg_val);
     else
-        $error("ERROR: Register mismatch $%2d (actual: %8h != model: %8h).", regAddr, regData, reg_val);
+        $error("ERROR: Register mismatch $%2d (actual: %8h != model: %8h).",
+            regAddr, regData, reg_val);
 
     -> reg_check_end;
 endtask
@@ -161,14 +163,15 @@ always @ (posedge Clock)
 begin
     PC_ASSERT: assert (rtlPC == modelPC)
     else
-        $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d", rtlPC, modelPC);
+        $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
+            rtlPC, modelPC);
 
     if(rtlPC[15:2] < inst_count)
-        instrData <= #20  get_instruction(rtlPC[15:2]); // was here!
+        instrData <= #20 get_instruction(rtlPC[15:2]);
     else if(rtlPC[15:2] == inst_count + 10)
         finish_test();
-    else // was here!
-        instrData <=#20   0;
+    else
+        instrData <= #20 0;
 end
 
 task finish_test();

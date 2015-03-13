@@ -86,9 +86,6 @@ initial while(1)
 begin
     @ (posedge Clock, negedge nReset)
 
-    //assert (`rs + offset < mem_size)
-    //else
-    //    $error("ERROR: Address %d is out of range. Maximum address is %d", `rs + offset, mem_size);
 
     if (~nReset) begin
         acc = 0;
@@ -177,7 +174,9 @@ task automatic update_memory();
     bit read  = 1;
     bit write = 1;
 
-    `define mem_data memory[(`rs + offset) >> 2]
+    int mem_addr = (`rs + offset) >> 2;
+
+    `define mem_data memory[mem_addr]
 
     // Memory write block
     case (opcode)
@@ -199,6 +198,11 @@ task automatic update_memory();
         `SC       : `rt = (`mem_data == `rt) ? 1 : 0   ;
         default   : read = 0                           ;
     endcase
+
+    MEM_ADDR_ASSERT: assert (!write && !read || mem_addr < mem_size)
+    else
+        $error("ERROR: Address %d is out of range. Maximum address is %d.",
+            mem_addr, mem_size);
 
     // Clocking drives
     delay.MemRead  <= ##(mem_d  ) read                 ;
@@ -250,8 +254,8 @@ function int count_leading_digit(logic [31:0] operand, bit arg);
     int i;
 
     for (i = 0; i < 32; ++i)
-    if (operand[31-i] != arg)
-        break;
+        if (operand[31-i] != arg)
+            break;
 
     COUNT_LEADING_DIGIT_ASSERT : assert (i <= 32)
     return i;
