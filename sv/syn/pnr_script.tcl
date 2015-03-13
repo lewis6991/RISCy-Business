@@ -43,7 +43,7 @@ addFiller -cell FILL1 FILL2 FILL5 FILL10 FILL25 -prefix FILLER -markFixed
 verifyConnectivity -type all -error 1000 -warning 50
 verifyGeometry
 streamOut processorlayout.gds -mapFile streamOut.map -libName DesignLib -stripes 1 -units 1000 -mode ALL
-saveNetlist "../processor_net.v"
+saveNetlist "processor_net.v"
 isExtractRCModeSignoff
 isExtractRCModeSignoff
 rcOut -spf processor.spf

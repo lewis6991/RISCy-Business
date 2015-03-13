@@ -10,10 +10,10 @@
 
 main()
 {
-if [ $host != $hind ] #&& [ $host != $hart ] 
+if [ $host != $hind ] && [ $host != $hart ] 
 then
-    echo "Error: Synthesis and Testing requires hind CAD server. Exiting..." #or hart CAD server for tools. Exiting..."
-    #exit 1
+    echo "Error: Synthesis and Testing requires hind CAD server. Exiting..."
+    exit 1
 fi
 
 
@@ -34,7 +34,8 @@ Depending on the design, optimisation settings and server usage, this could take
 "
 
 while true; do
-    read -p "Do you wish to continue? " yn
+    #read -p "Do you wish to continue? " yn
+    yn=Y #Override Question.
     case $yn in
         [Yy]* ) init $1 $2 $3;;
         [Nn]* ) exit;;
@@ -53,7 +54,7 @@ then
     lin_warn $1 $2
 else
     run $1 $2
-    echo $RESULTS
+    ./RUNME -pnr=${2}${1} -plusargs="+clk_p=${2}" | tee syn/logs_${2}${1}/run.log
     exit
 fi
 }
@@ -96,11 +97,11 @@ echo "Beginning synthesis..."
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
-./RUN_PNR $CLK_PERIOD
+./RUN_PNR $TYPE $CLK_PERIOD
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
-RESULTS=$(./RUNME -pnr -plusargs="+clk_p=${2}")
+RESULTS=$(./RUNME -pnr=${CLK_PERIOD}${TYPE} -plusargs="+clk_p=${2}")
 echo "Tests complete."
 }
 
@@ -123,7 +124,7 @@ done
 
 lin()
 {
-rm -rf logs >&/dev/null
+#rm -rf logs >&/dev/null
 
 declare -i CLK_PERIOD
 
@@ -134,7 +135,7 @@ while true
 do
     echo ""
     echo "Testing clock period of ${CLK_PERIOD}ns"
-    run $TYPE $CLK_PERIOD
+    run $TYPE $CLK_PERIOD 0 # HARD CODED. REVISIT
     grep "processor testcase" run.log
     TOTAL=$(grep "processor testcase" run.log | wc -l) >/dev/null
     PASSES=$(echo "$RESULTS" | tr ' ' '\n' | grep PASS | wc -l) >/dev/null
@@ -170,7 +171,7 @@ done
 
 iter()
 {
-rm -rf logs >&/dev/null
+#rm -rf logs >&/dev/null
 
 declare -i CLK_PERIOD
 declare -i CLK_PERIOD_MODIFIER

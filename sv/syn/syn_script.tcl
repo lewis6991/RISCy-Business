@@ -75,7 +75,7 @@ report_qor > ../logs/synth_summary_${TYPE}_${CLK_PERIOD}ns.rpt
 change_names -rules verilog -hierarchy -verbose
 
 if ("$SCAN"=="1") {write_test_protocol -out top.spf}
-write -f verilog -hierarchy -output "../processor_synth.v"
+write -f verilog -hierarchy -output processor_synth.v
 
 write_sdc design.sdc
 write_sdf design.sdf

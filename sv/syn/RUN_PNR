@@ -26,11 +26,11 @@ endif
 
 source SOC_Setup.sh
 
-mkdir -p logs
-mkdir -p work
-cd work >&/dev/null
+mkdir -p logs_${2}${1}
+mkdir -p work_${2}${1}
+cd work_${2}${1} >&/dev/null
 
-velocity -init ../pnr_script.tcl > ../logs/pnr_${1}.log
-echo "PNR Complete. Results written to logs/pnr_${1}.log"
+velocity -init ../pnr_script.tcl > ../logs_${2}${1}/pnr.log
+echo "PNR Complete. Results written to logs_${2}${1}/pnr.log"
 
 exit

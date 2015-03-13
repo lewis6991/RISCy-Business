@@ -23,14 +23,14 @@ if ($1 == clean) then
     exit
 endif
 
-mkdir -p logs
-mkdir -p work
-cd work >&/dev/null
+mkdir -p logs_${2}${1}
+mkdir -p work_${2}${1}
+cd work_${2}${1} >&/dev/null
 source ../DC_Setup.sh
 
 if($1 == check) then
-    dc_shell -f "../syn_check.tcl" > ../logs/check_syn.log
-    echo "Complete. Results written to logs/check_syn.log"
+    dc_shell -f "../syn_check.tcl" > ../logs_${2}${1}/check_syn.log
+    echo "Complete. Results written to logs_${2}${1}/check_syn.log"
     exit
 endif
 
@@ -40,8 +40,8 @@ else
     set SCAN = 0
 endif
 
-dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $SCAN;" -f "../syn_script.tcl" > ../logs/syn_$2.log
-echo "SYN Complete. Results written to logs/syn_$2.log"
+dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $SCAN;" -f "../syn_script.tcl" > ../logs_${2}${1}/syn.log
+echo "SYN Complete. Results written to logs_${2}${1}/syn.log"
 exit
 
 echo "Error: No/Unrecognised argument provided."
