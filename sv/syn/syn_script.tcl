@@ -68,10 +68,10 @@ if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile
 }
 
-report_area > ../logs/synth_area_${TYPE}_${CLK_PERIOD}ns.rpt
-report_power > ../logs/synth_power_${TYPE}_${CLK_PERIOD}ns.rpt
-report_timing > ../logs/synth_timing_${TYPE}_${CLK_PERIOD}ns.rpt
-report_qor > ../logs/synth_summary_${TYPE}_${CLK_PERIOD}ns.rpt
+report_area > ../logs_${CLK_PERIOD}${TYPE}/synth_area_${CLK_PERIOD}${TYPE}.rpt
+report_power > ../logs_${CLK_PERIOD}${TYPE}/synth_power_${CLK_PERIOD}${TYPE}.rpt
+report_timing > ../logs_${CLK_PERIOD}${TYPE}/synth_timing_${CLK_PERIOD}${TYPE}.rpt
+report_qor > ../logs_${CLK_PERIOD}${TYPE}/synth_summary_${CLK_PERIOD}${TYPE}.rpt
 change_names -rules verilog -hierarchy -verbose
 
 if ("$SCAN"=="1") {write_test_protocol -out top.spf}
