@@ -22,7 +22,6 @@ module MEM(
     input        [ 2:0] MemfuncIn   ,
     input        [31:0] RtDataIn    ,
                         ALUDataIn   ,
-                        MemDataIn   ,
     output logic        RegWriteOut ,
                         MemtoRegOut ,
                         MemWrite    ,
