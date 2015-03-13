@@ -117,8 +117,8 @@ main()
     then
         if [[ $PNRARGS = *"-pnr="* ]]
         then
-            PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${SYNARGS/-pnr=/}/processor.sdf"
+            PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
+            NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             echo $NC_ARGS
             proc
         else
