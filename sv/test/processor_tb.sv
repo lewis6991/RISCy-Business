@@ -108,7 +108,7 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    #(1*clk_p)
+    #(2*clk_p)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
         $display("INFO: Register check (%8h == %8h).", regData, reg_val);
