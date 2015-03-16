@@ -148,7 +148,7 @@ IF if0(
 PIPE #(.n(64)) pipe0(
     .Clock (Clock                           ),
     .nReset(nReset                          ),
-    .In    ({InstructionF, 16'b0, InstrAddr}),
+    .In    ({InstructionF, 16'd0, InstrAddr}),
     .Out   ({InstructionD, InstrAddrDin    })
 );
 
