@@ -7,8 +7,8 @@
 
 source ../library_Setup
 
-analyze -library WORK -format sverilog {
-../../../../src/signextend.sv
+analyze -format sverilog {
+../../src/signextend.sv
 ../../src/registers.sv 
 ../../src/processor.sv 
 ../../src/pcinc.sv 
@@ -30,6 +30,7 @@ analyze -library WORK -format sverilog {
 ../../src/PIPE.sv 
 ../../src/MEM.sv 
 ../../src/IF.sv
+../../src/HDU.sv
 ../../src/FU.sv 
 ../../src/EX.sv 
 ../../src/DEC.sv
