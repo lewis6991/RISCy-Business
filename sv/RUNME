@@ -103,7 +103,7 @@ main()
         if [[ $SYNARGS = *"-syn="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${SYNARGS/-syn=/}/design.sdf"GS
+            NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${SYNARGS/-syn=/}/design.sdf"
             proc
             #summarytext=$"${summarytext} Unknown clock period ${clockp}
 #"
