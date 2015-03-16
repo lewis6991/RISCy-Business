@@ -42,6 +42,8 @@ analyze -format sverilog {
 
 elaborate PROCESSOR -architecture verilog -library DEFAULT
 
+check_design > ../logs_${CLK_PERIOD}${TYPE}/synth_check_design_${CLK_PERIOD}${TYPE}.rpt
+
 if ("$SCAN"=="1") {set_scan_configuration -style multiplexed_flip_flop}
 
 check_timing
@@ -59,18 +61,21 @@ dft_drc
 insert_dft }
 
 if {($TYPE=="opt")   && ($SCAN==1)} {
-	compile_ultra -scan
+	compile_ultra -scan -timing_high_effort_script
 } elseif {($TYPE=="opt")   && ($SCAN==0)} {
-	compile_ultra
+	compile_ultra -timing_high_effort_script
 } elseif {($TYPE=="basic") && ($SCAN==1)} {
 	compile -scan
 } elseif {($TYPE=="basic") && ($SCAN==0)} {
 	compile
 }
 
+report_design > ../logs_${CLK_PERIOD}${TYPE}/synth_design_${CLK_PERIOD}${TYPE}.rpt
 report_area > ../logs_${CLK_PERIOD}${TYPE}/synth_area_${CLK_PERIOD}${TYPE}.rpt
 report_power > ../logs_${CLK_PERIOD}${TYPE}/synth_power_${CLK_PERIOD}${TYPE}.rpt
 report_timing > ../logs_${CLK_PERIOD}${TYPE}/synth_timing_${CLK_PERIOD}${TYPE}.rpt
+report_resources > ../logs_${CLK_PERIOD}${TYPE}/synth_resources_${CLK_PERIOD}${TYPE}
+report_clock -skew -attributes > ../logs_${CLK_PERIOD}${TYPE}/synth_clock_${CLK_PERIOD}${TYPE}.rpt
 report_qor > ../logs_${CLK_PERIOD}${TYPE}/synth_summary_${CLK_PERIOD}${TYPE}.rpt
 change_names -rules verilog -hierarchy -verbose
 
