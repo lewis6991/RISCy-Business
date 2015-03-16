@@ -393,7 +393,6 @@ mux m3(
 
 HDU hdu0(
     .MemReadE(MemReadEin),
-    .Clock   (Clock     ),
     .RtAddrE (RtAddrE   ),
     .RsAddrD (RsAddrD   ),
     .RtAddrD (RtAddrD   ),
