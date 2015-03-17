@@ -11,8 +11,6 @@
 
 module processor_tb;
 
-timeunit 1ns; timeprecision 10ps;
-
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
 import "DPI-C" function void compile_asm(string arg);
@@ -125,6 +123,7 @@ endtask
 //Testing procedure
 initial
 begin
+    $sdf_annotate("syn/work_10opt/design.sdf", prcsr0);
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));
 
@@ -153,7 +152,7 @@ always begin
 
     // Timeout mechanism.
     ++cycles;
-    TIMEOUT_CTRL: assert (cycles < 10000)
+    TIMEOUT_CTRL: assert (cycles < 20000)
     else
         $fatal(1, "FATAL: Timeout");
 end
