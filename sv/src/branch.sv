@@ -2,7 +2,7 @@
 // File              : branch.sv
 // Description       : Branch logic for execute stage
 // Primary Author    : Ethan Bishop
-// Other Contributors: 
+// Other Contributors: Lewis Russell
 // Notes             : Controls the PC for JUMP and BRANCH instructions
 //------------------------------------------------------------------------------
 
@@ -12,10 +12,10 @@
 module branch(
     input               Enable , // Enable branch module
     input        [31:0] PCIn   , // Program counter input.
-                        A      , // ALU input A
+    input signed [31:0] A      , // ALU input A
                         B      , // ALU input B
     input        [31:0] Address, // Address input
-    input        [ 5:0] Func   , 
+    input        [ 5:0] Func   ,
     output logic [31:0] PCout  , // Program counter
                         Ret    , // Return address
     output logic        Taken    // Branch taken
@@ -25,68 +25,31 @@ module branch(
     begin
         PCout = PCIn;
         Taken = 0;
-        
+
         if (Enable)
+        begin
             case (Func)
-                `J,
-                `JAL:
-                    begin
-                        PCout = {PCIn[31:28], Address[25:0], 2'b00};
-                        Taken = 1;
-                    end
-                
-                `JR,
-                `JALR:
-                    begin
-                        PCout = Address;
-                        Taken = 1;
-                    end
-                    
-                `BEQ:
-                    if (A == B)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                `BNE:
-                    if (A != B)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                        
-                `BGEZ,
-                `BGEZAL:
-                    if (signed'(A) >= 0)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                `BGTZ:
-                    if (signed'(A) > 0)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                `BLEZ:
-                    if (signed'(A) <= 0)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                        
-                `BLTZ,
-                `BLTZAL:
-                    if (signed'(A) < 0)
-                        begin
-                            PCout = PCIn + {Address[29:0], 2'b00};
-                            Taken = 1;
-                        end
-                        
+                `J, `JAL, `JR, `JALR: Taken = 1     ;
+                `BEQ                : Taken = A == B;
+                `BNE                : Taken = A != B;
+                `BGEZ, `BGEZAL      : Taken = A >= 0;
+                `BGTZ               : Taken = A >  0;
+                `BLEZ               : Taken = A <= 0;
+                `BLTZ, `BLTZAL      : Taken = A <  0;
             endcase
-        
+            case (Func)
+                `J   , `JAL   : PCout = {PCIn[31:28], Address[25:0], 2'd0};
+                `JR  , `JALR  : PCout = Address;
+                `BEQ          : if (A == B) PCout = PCIn + {Address[29:0], 2'd0};
+                `BNE          : if (A != B) PCout = PCIn + {Address[29:0], 2'd0};
+                `BGEZ, `BGEZAL: if (A >= 0) PCout = PCIn + {Address[29:0], 2'd0};
+                `BGTZ         : if (A >  0) PCout = PCIn + {Address[29:0], 2'd0};
+                `BLEZ         : if (A <= 0) PCout = PCIn + {Address[29:0], 2'd0};
+                `BLTZ, `BLTZAL: if (A <  0) PCout = PCIn + {Address[29:0], 2'd0};
+            endcase
+        end
     end
-        
+
     assign Ret = PCIn + 8;
 
 endmodule
