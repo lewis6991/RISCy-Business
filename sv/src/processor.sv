@@ -109,8 +109,6 @@ wire [2:0]  MemfuncW     ;
 wire [4:0]  ShamtD       ;
 wire [4:0]  ShamtE       ;
 
-wire [31:0] PCAddrInc    ;
-
 wire [31:0] InstrAddrDin ;
 wire [31:0] InstrAddrDout;
 wire [31:0] InstrAddrE   ;
@@ -141,8 +139,7 @@ IF if0(
     .BranchAddr (BranchAddr  ),
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
-    .InstrOut   (InstructionF),
-    .PCAddrInc  (PCAddrInc   )
+    .InstrOut   (InstructionF)
 );
 
 PIPE #(.n(64)) pipe0(
