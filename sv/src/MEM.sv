@@ -28,31 +28,28 @@ module MEM(
                         MemRead     ,
     output logic [ 2:0] MemfuncOut  ,
     output logic [ 4:0] RAddrOut    ,
-    output logic [15:0] MemAddr     ,  
+    output logic [15:0] MemAddr     ,
     output logic [31:0] MemWriteData,
                         ALUDataOut  ,
                         RtDataOut
 );
 
-always_comb
-    begin
+    always_comb
         case(MemfuncIn)
             `BS    : MemWriteData = {{24{RtDataIn[ 7]}},RtDataIn[ 7:0]};
             `HS    : MemWriteData = {{16{RtDataIn[15]}},RtDataIn[15:0]};
-            `WD    : MemWriteData = RtDataIn                           ;
+            //`WD    : MemWriteData = RtDataIn                           ;
             default: MemWriteData = RtDataIn                           ;
         endcase
-    end
-    
-    
-    assign RegWriteOut  = RegWriteIn;
-    assign MemtoRegOut  = MemtoRegIn;
-    assign MemWrite     = MemWriteIn;
-    assign MemRead      = MemReadIn ;
-    assign RAddrOut     = RAddrIn   ;
-    assign MemAddr      = ALUDataIn ;
-    assign ALUDataOut   = ALUDataIn ;
-    assign RtDataOut    = RtDataIn  ;
-    assign MemfuncOut   = MemfuncIn ;
+
+    assign RegWriteOut = RegWriteIn;
+    assign MemtoRegOut = MemtoRegIn;
+    assign MemWrite    = MemWriteIn;
+    assign MemRead     = MemReadIn ;
+    assign RAddrOut    = RAddrIn   ;
+    assign MemAddr     = ALUDataIn ;
+    assign ALUDataOut  = ALUDataIn ;
+    assign RtDataOut   = RtDataIn  ;
+    assign MemfuncOut  = MemfuncIn ;
 
 endmodule

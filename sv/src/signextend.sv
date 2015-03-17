@@ -3,7 +3,7 @@
 // Description       : 16-bit to 32-bit sign extension
 // Primary Author    : Dominic Murphy
 // Other Contributors: Lewis Russell
-// Notes             : 
+// Notes             :
 //------------------------------------------------------------------------------
 
 module signextend(
@@ -12,6 +12,6 @@ module signextend(
     output logic [31:0] Out
 );
 
-    assign Out = Unsgnsel? {{16{1'b0}}, In}:{{16{In[15]}}, In};
+    assign Out = Unsgnsel ? {16'd0, In} : {{16{In[15]}}, In};
 
 endmodule

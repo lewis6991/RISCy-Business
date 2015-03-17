@@ -23,7 +23,7 @@ module IF(
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
-    output logic [31:0] InstrOut   
+    output logic [31:0] InstrOut
 );
 
     wire [31:0] progaddrout ,
@@ -57,7 +57,7 @@ module IF(
         .Y  (progaddrnext)
     );
 
-    assign InstrAddr = (progaddrout & {32{nStall}});
-    assign InstrOut  = (InstrMem    & {32{nStall}});
+    assign InstrAddr = progaddrout & {32{nStall}};
+    assign InstrOut  = InstrMem    & {32{nStall}};
 
 endmodule

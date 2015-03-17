@@ -3,13 +3,13 @@
 // Description       : Program Counter
 // Primary Author    : Dominic Murphy
 // Other Contributors: Lewis Russell
-// Notes             : 
+// Notes             :
 //------------------------------------------------------------------------------
 
 module pc(
-    input               Clock      , 
+    input               Clock      ,
                         nReset     ,
-    input        [31:0] ProgAddrIn , 
+    input        [31:0] ProgAddrIn ,
     output logic [31:0] ProgAddrOut
 );
 
@@ -17,6 +17,6 @@ module pc(
         if(~nReset)
             ProgAddrOut <= 32'd0;
         else
-            ProgAddrOut <= #20 ProgAddrIn;
+            ProgAddrOut <= #1 ProgAddrIn;
 
 endmodule

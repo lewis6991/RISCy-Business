@@ -17,7 +17,7 @@ module PIPE #(parameter n = 1)(
         if(~nReset)
             Out <= {n{1'b0}};
         else
-            Out <= #20 In;
+            Out <= In;
 
 
 //assign Out = In; // Pipeline Bypass

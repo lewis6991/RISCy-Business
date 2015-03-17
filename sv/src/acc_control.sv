@@ -30,7 +30,7 @@ module acc_control(
         if (~nReset)
             ACCout <= 64'd0;
         else
-            ACCout <= #20 ACCin;
+            ACCout <= #1 ACCin;
 
     always_comb
     begin

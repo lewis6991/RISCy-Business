@@ -28,9 +28,9 @@ always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         RegData <= 32'd0;
     else if (RegAddr == 0)
-        RegData <= #20 0;
+        RegData <= #1 0;
     else
-        RegData <= #20 data[RegAddr];
+        RegData <= #1 data[RegAddr];
 
 // Synchronous write
 always_ff @ (posedge Clock, negedge nReset)
@@ -39,8 +39,8 @@ always_ff @ (posedge Clock, negedge nReset)
          * nReset.*/
         for (int k = 1; k < 32; k++)
             data[k] <= 0;
-    else if (RegWrite && (RdAddr != 0))
-        data[RdAddr] <= #20 RdData;
+    else if (RegWrite && RdAddr != 0)
+        data[RdAddr] <= #1 RdData;
 
 // Asynchronous read
 always_comb
