@@ -62,7 +62,8 @@ wire ALUOpE      ;
 wire MULOpD      ;
 wire MULOpE      ;
 
-wire BranchTaken ;
+wire BranchTakenE;
+wire BranchTakenM;
 
 wire [31:0] InstructionF ;
 wire [31:0] InstructionD ;
@@ -129,7 +130,8 @@ wire        ForwardSrcB  ;
 wire [31:0] A            ;
 wire [31:0] B            ;
 
-wire [31:0] BranchAddr   ;
+wire [31:0] PCoutE       ;//BranchAddr   ;
+wire [31:0] PCoutM       ;
 
 wire        nStall       ;
 
@@ -137,8 +139,8 @@ IF if0(
     .Clock      (Clock       ),
     .nReset     (nReset      ),
     .nStall     (nStall      ),
-    .BranchTaken(BranchTaken ),
-    .BranchAddr (BranchAddr  ),
+    .BranchTaken(BranchTakenM),
+    .BranchAddr (PCoutM      ),//(BranchAddr  ),
     .InstrMem   (InstrMem    ),
     .InstrAddr  (InstrAddr   ),
     .InstrOut   (InstructionF),
@@ -266,11 +268,11 @@ EX ex(
     .MemReadOut (MemReadEout ),
     .MemtoRegOut(MemtoRegEout),
     .MemWriteOut(MemWriteEout),
-    .PCout      (BranchAddr  ),
-    .BranchTaken(BranchTaken )
+    .PCout      (PCoutE      ),//(BranchAddr  ),
+    .BranchTaken(BranchTakenE)
 );
 
-PIPE #(.n(76)) pipe2(
+PIPE #(.n(109)) pipe2(
     .Clock(Clock),
     .nReset(nReset),
     .In({
@@ -281,17 +283,21 @@ PIPE #(.n(76)) pipe2(
         RegWriteEout,
         MemReadEout ,
         MemtoRegEout,
-        MemWriteEout
+        MemWriteEout,
+        PCoutE      ,
+        BranchTakenE
     }),
     .Out({
-        ALUDataMin ,
-        RtDataMin  ,
-        RAddrMin   ,
-        MemfuncMin ,
-        RegWriteMin,
-        MemReadM   ,
-        MemtoRegMin,
-        MemWriteM
+        ALUDataMin  ,
+        RtDataMin   ,
+        RAddrMin    ,
+        MemfuncMin  ,
+        RegWriteMin ,
+        MemReadM    ,
+        MemtoRegMin ,
+        MemWriteM   ,
+        PCoutM      ,
+        BranchTakenM
     })
 );
 

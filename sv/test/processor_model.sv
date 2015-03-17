@@ -24,7 +24,7 @@ program processor_model(
                             MemRead
 );
 
-parameter br_d  = 2; // Delay for branches to occur.
+parameter br_d  = 3; // Delay for branches to occur.
 parameter reg_d = 4; // Delay for reg writes to occur.
 parameter mem_d = 2; // Delay for memory operations to occur.
 
