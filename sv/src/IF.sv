@@ -59,6 +59,5 @@ module IF(
 
     assign InstrAddr = (progaddrout & {32{nStall}});
     assign InstrOut  = (InstrMem    & {32{nStall}});
-    assign PCAddrInc = progaddrmout;
 
 endmodule
