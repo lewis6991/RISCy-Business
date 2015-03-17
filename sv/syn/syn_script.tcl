@@ -49,6 +49,7 @@ if ("$SCAN"=="1") {set_scan_configuration -style multiplexed_flip_flop}
 check_timing
 create_clock Clock -name Clock -period $CLK_PERIOD
 set_fix_hold Clock
+uniquify
 
 if ("$SCAN"=="1") {
 set_dft_signal -type ScanClock -port Clock -view exist -timing {45 55}
