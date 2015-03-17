@@ -68,12 +68,13 @@ if {($TYPE=="opt")   && ($SCAN==1)} {
 } elseif {($TYPE=="basic") && ($SCAN==1)} {
 	compile -scan
 } elseif {($TYPE=="basic") && ($SCAN==0)} {
-	compile
+compile
 }
 
 report_design > ../logs_${CLK_PERIOD}${TYPE}/synth_design_${CLK_PERIOD}${TYPE}.rpt
 report_area > ../logs_${CLK_PERIOD}${TYPE}/synth_area_${CLK_PERIOD}${TYPE}.rpt
 report_power > ../logs_${CLK_PERIOD}${TYPE}/synth_power_${CLK_PERIOD}${TYPE}.rpt
+report_cell > ../logs_${CLK_PERIOD}${TYPE}/synth_cell_${CLK_PERIOD}${TYPE}.rpt
 report_timing > ../logs_${CLK_PERIOD}${TYPE}/synth_timing_${CLK_PERIOD}${TYPE}.rpt
 report_resources > ../logs_${CLK_PERIOD}${TYPE}/synth_resources_${CLK_PERIOD}${TYPE}
 report_clock -skew -attributes > ../logs_${CLK_PERIOD}${TYPE}/synth_clock_${CLK_PERIOD}${TYPE}.rpt
