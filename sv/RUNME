@@ -104,9 +104,8 @@ main()
         then
             PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
             NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${SYNARGS/-syn=/}/design.sdf"
+            echo $NC_ARGS
             proc
-            #summarytext=$"${summarytext} Unknown clock period ${clockp}
-#"
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
 "
@@ -117,6 +116,8 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
+            NC_ARGS="${NC_ARGS} +sdf_file+syn/work_${SYNARGS/-syn=/}/processor.sdf"
+            echo $NC_ARGS
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
