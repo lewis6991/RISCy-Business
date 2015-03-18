@@ -1,7 +1,10 @@
 module EX_test_3(
 );
 
-timeunit 10ns; timeprecision 100ps;
+timeunit 1ns; timeprecision 100ps;
+const int clk  = 100;
+const int c3_4 = 75;
+const int c1_4 = 25;
 
 logic        Clock      ,
              nReset     ,
@@ -42,8 +45,8 @@ EX ex0 (.*);
 
 always
     begin
-        #10ns Clock = 1;
-        #10ns Clock = 0;
+        #(clk/2) Clock = 1;
+        #(clk/2) Clock = 0;
     end
 
 initial
@@ -59,16 +62,16 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd0;
-                PCin       = 32'd0;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd0;
-                MemfuncIn  = 3'd0;
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h0;
+                PCin       = 32'h0;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h0;
+                MemfuncIn  = 3'h0;
         
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 0;
                 Jump       = 0;
@@ -79,16 +82,16 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd0;
-                PCin       = 32'd0;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd0;
-                MemfuncIn  = 3'd0;
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h0;
+                PCin       = 32'h0;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h0;
+                MemfuncIn  = 3'h0;
         
-        #20ns   nReset     = 1;
+        #clk   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -99,21 +102,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 1;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd305397760;
-                Immediate  = 32'd305397760;
-                PCin       = 32'd4;
-                Shamt      = 5'd8;
-                RAddrIn    = 5'd1;
-                Func       = 6'd32;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd305397760) &&
-                (RtDataOut   == 32'd305397760) &&
-                (PCout       == 32'd4        ) &&
-                (RAddrOut    == 5'd1         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h12340000;
+                Immediate  = 32'h12340000;
+                PCin       = 32'h4;
+                Shamt      = 5'h8;
+                RAddrIn    = 5'h1;
+                Func       = 6'h20;
+                MemfuncIn  = 3'h0;
+//1                
+        #c1_4    assert(
+                (Out         == 32'h12340000 ) &&
+                (RtDataOut   == 32'h12340000 ) &&
+                (PCout       == 32'h4        ) &&
+                (RAddrOut    == 5'h1         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -123,7 +126,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -134,21 +137,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 1;
                 BRASrc     = 0;
-                A          = 32'd305397760;
-                B          = 32'd305397760;
-                Immediate  = 32'd22136;
-                PCin       = 32'd8;
-                Shamt      = 5'd25;
-                RAddrIn    = 5'd1;
-                Func       = 6'd37;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd305419896) &&
-                (RtDataOut   == 32'd305397760) &&
-                (PCout       == 32'd8        ) &&
-                (RAddrOut    == 5'd1         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12340000;
+                B          = 32'h12340000;
+                Immediate  = 32'h5678;
+                PCin       = 32'h8;
+                Shamt      = 5'h19;
+                RAddrIn    = 5'h1;
+                Func       = 6'h25;
+                MemfuncIn  = 3'h0;
+//2                
+        #c1_4    assert(
+                (Out         == 32'h12345678) &&
+                (RtDataOut   == 32'h12340000) &&
+                (PCout       == 32'h8        ) &&
+                (RAddrOut    == 5'h1         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -158,7 +161,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -169,21 +172,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 1;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd19070976;
-                PCin       = 32'd12;
-                Shamt      = 5'd4;
-                RAddrIn    = 5'd2;
-                Func       = 6'd32;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd19070976 ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd12       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h01230000;
+                PCin       = 32'hC;
+                Shamt      = 5'h4;
+                RAddrIn    = 5'h2;
+                Func       = 6'h20;
+                MemfuncIn  = 3'h0;
+//3                
+        #c1_4    assert(
+                (Out         == 32'h01230000 ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'hC        ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -193,7 +196,42 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
+                ALUOp      = 1;
+                MULOp      = 0;
+                Jump       = 0;
+                Branch     = 0;
+                RegWriteIn = 1;
+                MemReadIn  = 0;
+                MemtoRegIn = 0;
+                MemWriteIn = 0;
+                ALUSrc     = 1;
+                BRASrc     = 0;
+                A          = 32'h01230000;
+                B          = 32'h01230000;
+                Immediate  = 32'h00004567;
+                PCin       = 32'h10;
+                Shamt      = 5'h15;
+                RAddrIn    = 5'h2;
+                Func       = 6'h25;
+                MemfuncIn  = 3'h0;
+//4        
+        #c1_4    assert(
+                (Out         == 32'h01234567 ) &&
+                (RtDataOut   == 32'h01230000 ) &&
+                (PCout       == 32'h10       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
+                (RegWriteOut == 1            ) &&
+                (MemReadOut  == 0            ) &&
+                (MemtoRegOut == 0            ) &&
+                (MemWriteOut == 0            ) &&
+                (BranchTaken == 0            )
+                )
+                else
+                    $error("Failed at time %d", $time);
+        
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 1;
                 Jump       = 0;
@@ -204,21 +242,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd305419896;
-                B          = 32'd19088743;
-                Immediate  = 32'd6146;
-                PCin       = 32'd20;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd3;
-                Func       = 6'd2;
-                MemfuncIn  = 3'd0;
-        
-        #5ns    assert(
-                (Out         == 32'd19088743 ) &&
-                (RtDataOut   == 32'd19070976 ) &&
-                (PCout       == 32'd16       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h01234567;
+                Immediate  = 32'h1802;
+                PCin       = 32'h14;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h3;
+                Func       = 6'h2;
+                MemfuncIn  = 3'h0;
+//5                
+        #c1_4    assert(
+                (Out         == 32'hB8C52248 ) &&
+                (RtDataOut   == 32'h01234567 ) &&
+                (PCout       == 32'h14       ) &&
+                (RAddrOut    == 5'h3         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -228,42 +266,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
         
-        #15ns   nReset     = 1;
-                ALUOp      = 0;
-                MULOp      = 1;
-                Jump       = 0;
-                Branch     = 0;
-                RegWriteIn = 1;
-                MemReadIn  = 0;
-                MemtoRegIn = 0;
-                MemWriteIn = 0;
-                ALUSrc     = 0;
-                BRASrc     = 0;
-                A          = 32'd305419896;
-                B          = 32'd19088743;
-                Immediate  = 32'd6146;
-                PCin       = 32'd20;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd3;
-                Func       = 6'd2;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd3099927112) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd20       ) &&
-                (RAddrOut    == 5'd3         ) &&
-                (MemfuncOut  == 3'd0         ) &&
-                (RegWriteOut == 1            ) &&
-                (MemReadOut  == 0            ) &&
-                (MemtoRegOut == 0            ) &&
-                (MemWriteOut == 0            ) &&
-                (BranchTaken == 0            )
-                )
-                else
-                    $error("Failed at time %d", $time);
-        
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -274,21 +277,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd205419896;
-                B          = 32'd0;
-                Immediate  = 32'd17;
-                PCin       = 32'd24;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd17;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd24       ) &&
-                (RAddrOut    == 5'd0         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h0;
+                Immediate  = 32'h11;
+                PCin       = 32'h18;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h11;
+                MemfuncIn  = 3'h0;
+//6                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h18       ) &&
+                (RAddrOut    == 5'h0         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -298,7 +301,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -309,21 +312,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd205419896;
-                B          = 32'd0;
-                Immediate  = 32'd19;
-                PCin       = 32'd28;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd19;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd28       ) &&
-                (RAddrOut    == 5'd0         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h0;
+                Immediate  = 32'h13;
+                PCin       = 32'h1C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h13;
+                MemfuncIn  = 3'h0;
+//7                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h1C       ) &&
+                (RAddrOut    == 5'h0         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -333,7 +336,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -344,21 +347,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd205419896;
-                B          = 32'd19088743;
-                Immediate  = 32'd24;
-                PCin       = 32'd32;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd24;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd32       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h1234567;
+                Immediate  = 32'h18;
+                PCin       = 32'h20;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h18;
+                MemfuncIn  = 3'h0;
+//8                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567 ) &&
+                (PCout       == 32'h20       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -368,7 +371,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
         
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -379,21 +382,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd8208;
-                PCin       = 32'd36;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd4;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd1357421  ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd36       ) &&
-                (RAddrOut    == 5'd4         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h2010;
+                PCin       = 32'h24;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h4;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//9                
+        #c1_4    assert(
+                (Out         == 32'h14B66D  ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h24       ) &&
+                (RAddrOut    == 5'h4         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -403,7 +406,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -414,21 +417,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd10258;
-                PCin       = 32'd40;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd5;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd3099927112) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd40       ) &&
-                (RAddrOut    == 5'd5         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h2812;
+                PCin       = 32'h28;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h5;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//10                
+        #c1_4    assert(
+                (Out         == 32'hB8C52248) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h28       ) &&
+                (RAddrOut    == 5'h5         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -438,7 +441,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 1;
                 Jump       = 0;
@@ -449,21 +452,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd305419896;
-                B          = 32'd19088743;
-                Immediate  = 32'd0;
-                PCin       = 32'd44;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd0;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd44       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h1234567;
+                Immediate  = 32'h0;
+                PCin       = 32'h2C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h0;
+                MemfuncIn  = 3'h0;
+//11                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567 ) &&
+                (PCout       == 32'h2C       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -473,7 +476,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -484,21 +487,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd12304;
-                PCin       = 32'd48;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd6;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2714843  ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd48       ) &&
-                (RAddrOut    == 5'd6         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h3010;
+                PCin       = 32'h30;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h6;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//12                
+        #c1_4    assert(
+                (Out         == 32'h296CDB  ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h30       ) &&
+                (RAddrOut    == 5'h6         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -508,7 +511,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -519,21 +522,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd14354;
-                PCin       = 32'd52;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd7;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd1904886928) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd52       ) &&
-                (RAddrOut    == 5'd7         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h3812;
+                PCin       = 32'h34;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h7;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//13                
+        #c1_4    assert(
+                (Out         == 32'h718A4490) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h34       ) &&
+                (RAddrOut    == 5'h7         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -543,7 +546,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 1;
                 Jump       = 0;
@@ -554,21 +557,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd19088743;
-                B          = 32'd19088743;
-                Immediate  = 32'd4;
-                PCin       = 32'd56;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd4;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd56       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h1234567;
+                B          = 32'h1234567;
+                Immediate  = 32'h4;
+                PCin       = 32'h38;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h4;
+                MemfuncIn  = 3'h0;
+//14                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567  ) &&
+                (PCout       == 32'h38       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -578,7 +581,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -589,21 +592,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd16400;
-                PCin       = 32'd60;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd8;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2630004  ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd60       ) &&
-                (RAddrOut    == 5'd8         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h4010;
+                PCin       = 32'h3C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h8;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//15                
+        #c1_4    assert(
+                (Out         == 32'h282174   ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h3C       ) &&
+                (RAddrOut    == 5'h8         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -613,7 +616,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -624,21 +627,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd18450;
-                PCin       = 32'd64;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd9;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2525992223) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd64       ) &&
-                (RAddrOut    == 5'd9         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h4812;
+                PCin       = 32'h40;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h9;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//16                
+        #c1_4    assert(
+                (Out         == 32'h968F951F) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h40       ) &&
+                (RAddrOut    == 5'h9         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -648,7 +651,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 1;
                 Jump       = 0;
@@ -659,21 +662,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd19088743;
-                B          = 32'd19088743;
-                Immediate  = 32'd1;
-                PCin       = 32'd68;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd1;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd68       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h1234567;
+                B          = 32'h1234567;
+                Immediate  = 32'h1;
+                PCin       = 32'h44;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h1;
+                MemfuncIn  = 3'h0;
+//17                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567 ) &&
+                (PCout       == 32'h44       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -683,7 +686,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -694,21 +697,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd20496;
-                PCin       = 32'd72;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd10;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2714843  ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd72       ) &&
-                (RAddrOut    == 5'd10        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h5010;
+                PCin       = 32'h48;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hA;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//18                
+        #c1_4    assert(
+                (Out         == 32'h296CDB  ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h48       ) &&
+                (RAddrOut    == 5'hA        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -718,7 +721,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -729,21 +732,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd22546;
-                PCin       = 32'd76;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd11;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd1904886928) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd76       ) &&
-                (RAddrOut    == 5'd11        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h5812;
+                PCin       = 32'h4C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hB;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//19                
+        #c1_4    assert(
+                (Out         == 32'h718A4490) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h4C       ) &&
+                (RAddrOut    == 5'hB        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -753,7 +756,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 0;
                 MULOp      = 1;
                 Jump       = 0;
@@ -764,21 +767,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd19088743;
-                B          = 32'd19088743;
-                Immediate  = 32'd5;
-                PCin       = 32'd80;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd5;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd80       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h1234567;
+                B          = 32'h1234567;
+                Immediate  = 32'h5;
+                PCin       = 32'h50;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h5;
+                MemfuncIn  = 3'h0;
+//20                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567 ) &&
+                (PCout       == 32'h50       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -788,7 +791,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -799,21 +802,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd24592;
-                PCin       = 32'd84;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd12;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2630004  ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd84       ) &&
-                (RAddrOut    == 5'd12        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h6010;
+                PCin       = 32'h54;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hC;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//21                
+        #c1_4    assert(
+                (Out         == 32'h282174  ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h54       ) &&
+                (RAddrOut    == 5'hC        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -823,7 +826,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -834,21 +837,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd26642;
-                PCin       = 32'd88;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd13;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd2525992223) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd88       ) &&
-                (RAddrOut    == 5'd13        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h6812;
+                PCin       = 32'h58;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hD;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//22                
+        #c1_4    assert(
+                (Out         == 32'h968F951F) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h58       ) &&
+                (RAddrOut    == 5'hD        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -858,7 +861,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -869,21 +872,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd305419896;
-                B          = 32'd19088743;
-                Immediate  = 32'd25;
-                PCin       = 32'd92;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd2;
-                Func       = 6'd25;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd19088743 ) &&
-                (PCout       == 32'd92       ) &&
-                (RAddrOut    == 5'd2         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h1234567;
+                Immediate  = 32'h19;
+                PCin       = 32'h5C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h2;
+                Func       = 6'h19;
+                MemfuncIn  = 3'h0;
+//23                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h1234567 ) &&
+                (PCout       == 32'h5C       ) &&
+                (RAddrOut    == 5'h2         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -893,7 +896,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -904,21 +907,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd28688;
-                PCin       = 32'd96;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd14;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd1357421  ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd96       ) &&
-                (RAddrOut    == 5'd14        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h7010;
+                PCin       = 32'h60;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hE;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//24                
+        #c1_4    assert(
+                (Out         == 32'h14B66D  ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h60       ) &&
+                (RAddrOut    == 5'hE        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -928,7 +931,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -939,21 +942,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd30738;
-                PCin       = 32'd100;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd15;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd3099927112) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd100      ) &&
-                (RAddrOut    == 5'd15        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'h7812;
+                PCin       = 32'h64;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'hF;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//25                
+        #c1_4    assert(
+                (Out         == 32'hB8C52248) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h64      ) &&
+                (RAddrOut    == 5'hF        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -963,7 +966,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -974,21 +977,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd305419896;
-                B          = 32'd0;
-                Immediate  = 32'd17;
-                PCin       = 32'd104;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd17;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd104      ) &&
-                (RAddrOut    == 5'd0         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h12345678;
+                B          = 32'h0;
+                Immediate  = 32'h11;
+                PCin       = 32'h68;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h11;
+                MemfuncIn  = 3'h0;
+//26                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h68      ) &&
+                (RAddrOut    == 5'h0         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -998,7 +1001,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -1009,21 +1012,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd19088743;
-                B          = 32'd0;
-                Immediate  = 32'd19;
-                PCin       = 32'd108;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd0;
-                Func       = 6'd19;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd0        ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd108      ) &&
-                (RAddrOut    == 5'd0         ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h1234567;
+                B          = 32'h0;
+                Immediate  = 32'h13;
+                PCin       = 32'h6C;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h0;
+                Func       = 6'h13;
+                MemfuncIn  = 3'h0;
+//27                
+        #c1_4    assert(
+                (Out         == 32'h0        ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h6C      ) &&
+                (RAddrOut    == 5'h0         ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 0            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -1033,7 +1036,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -1044,21 +1047,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd4294934544;
-                PCin       = 32'd112;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd16;
-                Func       = 6'd16;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd305419896) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd112      ) &&
-                (RAddrOut    == 5'd16        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'hFFFF8010;
+                PCin       = 32'h70;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h10;
+                Func       = 6'h10;
+                MemfuncIn  = 3'h0;
+//28                
+        #c1_4    assert(
+                (Out         == 32'h12345678) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h70      ) &&
+                (RAddrOut    == 5'h10        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -1068,7 +1071,7 @@ initial
                 else
                     $error("Failed at time %d", $time);
                 
-        #15ns   nReset     = 1;
+        #c3_4   nReset     = 1;
                 ALUOp      = 1;
                 MULOp      = 0;
                 Jump       = 0;
@@ -1079,21 +1082,21 @@ initial
                 MemWriteIn = 0;
                 ALUSrc     = 0;
                 BRASrc     = 0;
-                A          = 32'd0;
-                B          = 32'd0;
-                Immediate  = 32'd4294936594;
-                PCin       = 32'd116;
-                Shamt      = 5'd0;
-                RAddrIn    = 5'd17;
-                Func       = 6'd18;
-                MemfuncIn  = 3'd0;
-                
-        #5ns    assert(
-                (Out         == 32'd19088743 ) &&
-                (RtDataOut   == 32'd0        ) &&
-                (PCout       == 32'd116      ) &&
-                (RAddrOut    == 5'd17        ) &&
-                (MemfuncOut  == 3'd0         ) &&
+                A          = 32'h0;
+                B          = 32'h0;
+                Immediate  = 32'hFFFF8812;
+                PCin       = 32'h74;
+                Shamt      = 5'h0;
+                RAddrIn    = 5'h11;
+                Func       = 6'h12;
+                MemfuncIn  = 3'h0;
+//29                
+        #c1_4    assert(
+                (Out         == 32'h1234567 ) &&
+                (RtDataOut   == 32'h0        ) &&
+                (PCout       == 32'h74      ) &&
+                (RAddrOut    == 5'h11        ) &&
+                (MemfuncOut  == 3'h0         ) &&
                 (RegWriteOut == 1            ) &&
                 (MemReadOut  == 0            ) &&
                 (MemtoRegOut == 0            ) &&
@@ -1102,6 +1105,8 @@ initial
                 )
                 else
                     $error("Failed at time %d", $time);
+
+    $finish;
     end
                  
 endmodule
