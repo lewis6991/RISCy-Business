@@ -23,6 +23,7 @@ logic     Clock      = 1'b0,
 int       cycles     = 0   ,
           test_no    = 1   ,
           inst_count = 0   ;
+string    sdf_file         ;
 
 logic [31:0] instrData  ;
 logic [ 4:0] regAddr    ;
@@ -123,7 +124,9 @@ endtask
 //Testing procedure
 initial
 begin
-    $sdf_annotate("syn/work_10opt/design.sdf", prcsr0);
+    void'($value$plusargs("sdf=%s", sdf_file));
+    $sdf_annotate(sdf_file, prcsr0);
+
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));
 
