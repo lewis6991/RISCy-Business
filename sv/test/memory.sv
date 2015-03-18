@@ -15,6 +15,8 @@ module memory #(
     input                          Clock    ,
                                    nReset   ,
                                    WriteEn  ,
+                                   WriteL   ,
+                                   WriteR   ,
                                    ReadEn   ,
     input        [AddressSize-1:0] Address  ,
     input        [   WordSize-1:0] WriteData,
@@ -34,10 +36,23 @@ module memory #(
                 memory[i] <= #20 0;
         else if(WriteEn)
             begin
-                memory[Address + 3] <= #20 WriteData[31:24];
-                memory[Address + 2] <= #20 WriteData[23:16];
-                memory[Address + 1] <= #20 WriteData[15: 8];
-                memory[Address    ] <= #20 WriteData[ 7: 0];
+                if(WriteL)
+                    begin
+                       memory[Address + 3] <= #20 WriteData[31:24];
+                       memory[Address + 2] <= #20 WriteData[23:16]; 
+                    end
+                else if(WriteR)
+                    begin
+                       memory[Address + 1] <= #20 WriteData[15: 8];
+                       memory[Address    ] <= #20 WriteData[ 7: 0]; 
+                    end
+                else
+                    begin
+                        memory[Address + 3] <= #20 WriteData[31:24];
+                        memory[Address + 2] <= #20 WriteData[23:16];
+                        memory[Address + 1] <= #20 WriteData[15: 8];
+                        memory[Address    ] <= #20 WriteData[ 7: 0];
+                    end
             end
 
     // Read block

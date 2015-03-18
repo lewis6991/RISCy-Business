@@ -10,6 +10,7 @@
 `include "alu_definition.sv"
 `include "mul_definition.sv"
 `include "branch_definition.sv"
+`include "mem_func.sv"
 
 module decoder(
     output logic [1:0] RegDst  ,
@@ -261,7 +262,17 @@ module decoder(
                 MemWrite = 1'b1;
             end
 
-            `LL:;
+            `LL:
+            begin
+                Func     = `ADD       ;
+                MemFunc  = `WD        ;
+                ALUOp    = 1'b1       ;
+                ALUSrc   = 1'b1       ;
+                MemRead  = 1'b1       ;
+                MemtoReg = 1'b1       ;
+                RegWrite = 1'b1       ;
+            end
+
             `SC:;
             default:;
         endcase

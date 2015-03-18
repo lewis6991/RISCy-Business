@@ -39,7 +39,10 @@ wire  [31:0] memRData   ,
 wire         memReadEn  ,
              memWriteEn ,
              memReadEnM ,
-             memWriteEnM;
+             memWriteEnM,
+             memWriteL  ,
+             memWriteR  ;
+             
 
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
@@ -71,6 +74,8 @@ PROCESSOR prcsr0 (
     .MemAddr  (memAddr   ),
     .MemWrite (memWriteEn),
     .MemRead  (memReadEn ),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .RegAddr  (regAddr   ),
     .RegData  (regData   )
 );

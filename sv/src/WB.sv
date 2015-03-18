@@ -28,7 +28,7 @@ module WB(
             `BU    : MemDataOut = {       {24{1'b0}},MemData[ 7:0]};
             `HS    : MemDataOut = {{16{MemData[15]}},MemData[15:0]};
             `HU    : MemDataOut = {       {16{1'b0}},MemData[15:0]};
-            //`WD    : MemDataOut = MemData                          ;
+            `WD    : MemDataOut = MemData                          ;
             `WL    : MemDataOut = {    MemData[31:16],RtData[15:0]};
             `WR    : MemDataOut = {    RtData[31:16],MemData[15:0]};
             default: MemDataOut = MemData                          ;
