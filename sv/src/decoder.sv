@@ -95,7 +95,6 @@ module decoder(
                     `BGEZ,
                     `BLTZ:
                     begin
-                        Unsgnsel = 1'b1    ;
                         Func     = BraCode ;
                         Branch   = 1'b1    ;
                         BRASrc   = 1'b1    ;
@@ -103,7 +102,6 @@ module decoder(
 
                     `BGEZAL, `BLTZAL:
                     begin
-                        Unsgnsel = 1'b1    ;
                         RegDst   = 2'b10   ;
                         Func     = BraCode ;
                         BRASrc   = 1'b1    ;
@@ -219,7 +217,6 @@ module decoder(
 
             `BLEZ, `BGTZ, `BEQ, `BNE:
             begin
-                Unsgnsel = 1'b1  ;
                 Func     = OpCode;
                 Branch   = 1'b1  ;
                 BRASrc   = 1'b1  ;
