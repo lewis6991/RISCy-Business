@@ -85,6 +85,6 @@ if ("$SCAN"=="1") {write_test_protocol -out top.spf}
 write -f verilog -hierarchy -output processor_synth.v
 
 write_sdc design.sdc
-write_sdf design.sdf
+write_sdf -version 1.0 design.sdf
 
 exit
