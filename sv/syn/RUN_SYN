@@ -40,7 +40,7 @@ else
     set SCAN = 0
 endif
 
-dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $SCAN;" -f "../syn_script.tcl" > ../logs_${2}${1}/syn.log
+dc_shell -x "set TYPE $1; set CLK_PERIOD $2; set SCAN $SCAN;" -f "../syn_script.tcl" | tee ../logs_${2}${1}/syn.log
 echo "SYN Complete. Results written to logs_${2}${1}/syn.log"
 exit
 
