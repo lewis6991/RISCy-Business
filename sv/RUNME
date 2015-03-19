@@ -116,7 +116,7 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCARGS +define+SDF_FILE=pnr/work_${PNRARGS/-pnr=/}/processor.sdf"
+            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
