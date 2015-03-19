@@ -273,7 +273,16 @@ module decoder(
                 RegWrite = 1'b1       ;
             end
 
-            `SC:;
+            `SC:
+            begin
+                Func     = `ADD       ;
+                MemFunc  = OpCode[5:3];
+                ALUOp    = 1'b1       ;
+                ALUSrc   = 1'b1       ;
+                MemRead  = 1'b1       ;
+                MemtoReg = 1'b1       ;
+                RegWrite = 1'b1       ;
+            end
             default:;
         endcase
     end

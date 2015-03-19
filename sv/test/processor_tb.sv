@@ -87,6 +87,8 @@ memory memory0 (
     .ReadEn   (memReadEn ),
     .ReadData (memRData  ),
     .WriteEn  (memWriteEn),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .WriteData(memWData  )
 );
 

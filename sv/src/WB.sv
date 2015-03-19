@@ -31,6 +31,7 @@ module WB(
             `WD    : MemDataOut = MemData                          ;
             `WL    : MemDataOut = {    MemData[31:16],RtData[15:0]};
             `WR    : MemDataOut = {    RtData[31:16],MemData[15:0]};
+            `WC    : MemDataOut = (RtData == MemData)?   1'b1: 1'b0;
             default: MemDataOut = MemData                          ;
         endcase
 

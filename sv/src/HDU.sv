@@ -16,7 +16,7 @@ module HDU(
 
     always_comb
     begin
-        if(MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
+       if(MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
             nStall <= 1'b0;
         else
             nStall <= 1'b1;
