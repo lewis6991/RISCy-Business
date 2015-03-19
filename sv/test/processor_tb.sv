@@ -42,7 +42,7 @@ wire         memReadEn  ,
              memWriteEnM,
              memWriteL  ,
              memWriteR  ;
-             
+
 
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
@@ -87,6 +87,8 @@ memory memory0 (
     .ReadEn   (memReadEn ),
     .ReadData (memRData  ),
     .WriteEn  (memWriteEn),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .WriteData(memWData  )
 );
 
