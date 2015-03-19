@@ -129,8 +129,8 @@ endtask
 //Testing procedure
 initial
 begin
-    void'($value$plusargs("sdf=%s", sdf_file));
-    $sdf_annotate(sdf_file, prcsr0);
+    //void'($value$plusargs("sdf=%s", sdf_file));
+    $sdf_annotate("syn/work_10opt/processor.sdf", prcsr0);
 
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));
