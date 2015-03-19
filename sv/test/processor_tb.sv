@@ -39,7 +39,10 @@ wire  [31:0] memRData   ,
 wire         memReadEn  ,
              memWriteEn ,
              memReadEnM ,
-             memWriteEnM;
+             memWriteEnM,
+             memWriteL  ,
+             memWriteR  ;
+
 
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
@@ -71,6 +74,8 @@ PROCESSOR prcsr0 (
     .MemAddr  (memAddr   ),
     .MemWrite (memWriteEn),
     .MemRead  (memReadEn ),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .RegAddr  (regAddr   ),
     .RegData  (regData   )
 );
@@ -124,8 +129,10 @@ endtask
 //Testing procedure
 initial
 begin
-    void'($value$plusargs("sdf=%s", sdf_file));
-    $sdf_annotate(sdf_file, prcsr0);
+    `ifdef SDF_FILE
+        `define STRINGIFY(x) `"x`"
+        $sdf_annotate(`STRINGIFY(`SDF_FILE), prcsr0);
+    `endif
 
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));

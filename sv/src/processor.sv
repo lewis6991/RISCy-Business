@@ -17,7 +17,9 @@ module PROCESSOR(
     output logic [15:0] InstrAddr,
                         MemAddr  ,
     output logic        MemWrite ,
-                        MemRead
+                        MemRead  ,
+                        WriteL   ,
+                        WriteR
 );
 
 wire JumpD        ;
@@ -405,6 +407,8 @@ MEM mem0(
     .MemtoRegOut (MemtoRegMout),
     .MemWrite    (MemWrite    ),
     .MemRead     (MemRead     ),
+    .WriteL      (WriteL      ),
+    .WriteR      (WriteR      ),
     .MemfuncOut  (MemfuncMout ),
     .RAddrOut    (RAddrMout   ),
     .MemAddr     (MemAddr     ),

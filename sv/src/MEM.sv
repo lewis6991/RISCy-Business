@@ -26,6 +26,8 @@ module MEM(
                         MemtoRegOut ,
                         MemWrite    ,
                         MemRead     ,
+                        WriteL      ,
+                        WriteR      ,
     output logic [ 2:0] MemfuncOut  ,
     output logic [ 4:0] RAddrOut    ,
     output logic [15:0] MemAddr     ,
@@ -34,13 +36,25 @@ module MEM(
                         RtDataOut
 );
 
-always_comb
-    case(MemfuncIn)
-        `BS    : MemWriteData = {{24{RtDataIn[ 7]}},RtDataIn[ 7:0]};
-        `HS    : MemWriteData = {{16{RtDataIn[15]}},RtDataIn[15:0]};
-        `WD    : MemWriteData = RtDataIn                           ;
-        default: MemWriteData = RtDataIn                           ;
-    endcase
+    always_comb
+        begin
+            WriteL = 0;
+            WriteR = 0;
+            case(MemfuncIn)
+                `BS    : MemWriteData = {{24{RtDataIn[ 7]}},RtDataIn[ 7:0]};
+                `HS    : MemWriteData = {{16{RtDataIn[15]}},RtDataIn[15:0]};
+                `WD    : MemWriteData = RtDataIn                           ;
+                `WL    : begin
+                             WriteL = 1                                    ;
+                             MemWriteData = RtDataIn                       ;
+                         end
+                `WR    : begin
+                             WriteR = 1                                    ;
+                             MemWriteData = RtDataIn                       ;
+                         end
+                default: MemWriteData = RtDataIn                           ;
+            endcase
+        end
 
 assign RegWriteOut = RegWriteIn;
 assign MemtoRegOut = MemtoRegIn;

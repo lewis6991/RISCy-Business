@@ -8,13 +8,15 @@
 //                      www.doulos.com/knowhow/verilog_designers_guide/models/simple_ram_model
 //------------------------------------------------------------------------------
 module memory #(
-    parameter AddressSize = 13,
+    parameter AddressSize = 16,
     parameter WordSize    = 32
 )
 (
     input                          Clock    ,
                                    nReset   ,
                                    WriteEn  ,
+                                   WriteL   ,
+                                   WriteR   ,
                                    ReadEn   ,
     input        [AddressSize-1:0] Address  ,
     input        [   WordSize-1:0] WriteData,
@@ -34,10 +36,23 @@ module memory #(
                 memory[i] <= #20 0;
         else if(WriteEn)
             begin
-                memory[Address  ] <= #20 WriteData[31:24];
-                memory[Address+1] <= #20 WriteData[23:16];
-                memory[Address+2] <= #20 WriteData[15: 8];
-                memory[Address+3] <= #20 WriteData[ 7: 0];
+                if(WriteL)
+                    begin
+                       memory[Address + 3] <= #20 WriteData[31:24];
+                       memory[Address + 2] <= #20 WriteData[23:16]; 
+                    end
+                else if(WriteR)
+                    begin
+                       memory[Address + 1] <= #20 WriteData[15: 8];
+                       memory[Address    ] <= #20 WriteData[ 7: 0]; 
+                    end
+                else
+                    begin
+                        memory[Address + 3] <= #20 WriteData[31:24];
+                        memory[Address + 2] <= #20 WriteData[23:16];
+                        memory[Address + 1] <= #20 WriteData[15: 8];
+                        memory[Address    ] <= #20 WriteData[ 7: 0];
+                    end
             end
 
     // Read block
@@ -45,12 +60,7 @@ module memory #(
         if (~nReset)
             ReadData <= #20 0;
         else if(ReadEn)
-            begin
-                ReadData[31:24] <= #20 memory[Address  ];
-                ReadData[23:16] <= #20 memory[Address+1];
-                ReadData[15: 8] <= #20 memory[Address+2];
-                ReadData[ 7: 0] <= #20 memory[Address+3];
-            end
+                ReadData <= #20 {memory[Address + 3], memory[Address + 2], memory[Address + 1], memory[Address]};
         else
             ReadData <= #20 0;
 

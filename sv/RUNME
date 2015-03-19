@@ -103,6 +103,7 @@ main()
         if [[ $SYNARGS = *"-syn="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
+            NCARGS=$"$NCARGS -plusargs=\"+sdf=syn/work_${SYNARGS/-syn=/}/design.sdf\""
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
@@ -114,6 +115,7 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
+            NCARGS=$"$NCARGS -plusargs=\"+sdf=syn/work_${PNRARGS/-pnr=/}/processor.sdf\""
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
@@ -285,13 +287,7 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
-NC_ARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+10ps/1fs -sv_lib complib.so"
+NC_ARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 main "$@"
-
-
-
-
-
-

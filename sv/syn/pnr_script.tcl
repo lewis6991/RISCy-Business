@@ -47,6 +47,6 @@ saveNetlist "processor_net.v"
 isExtractRCModeSignoff
 isExtractRCModeSignoff
 rcOut -spf processor.spf
-delayCal #-sdf processor.sdf
-write_sdf -edges noedge
+delayCal
+write_sdf -version 2.1 -edges noedge -recrem split processor.sdf
 exit
