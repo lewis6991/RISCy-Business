@@ -12,14 +12,11 @@ module PIPE #(parameter n = 1)(
     input        [n-1:0] In    ,
     output logic [n-1:0] Out
 );
-// PIPELINE BYPASSED FOR TESTING
-    always_ff @ (posedge Clock, negedge nReset)
-        if(~nReset)
-            Out <= {n{1'b0}};
-        else
-            Out <= In;
 
-
-//assign Out = In; // Pipeline Bypass
+always_ff @ (posedge Clock, negedge nReset)
+    if(~nReset)
+        Out <= {n{1'b0}};
+    else
+        Out <= #1 In;
 
 endmodule

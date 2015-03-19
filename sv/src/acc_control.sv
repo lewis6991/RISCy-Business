@@ -35,12 +35,12 @@ module acc_control(
     always_comb
     begin
 
-        Out   = 0;
-        ACCin = ACCout;
-        Z     = (ACCin == 0);
-        O     = 0;
-        N     = ACCin[63];
-        C     = 0;
+        Out   = 0         ;
+        ACCin = ACCout    ;
+        Z     = ACCin == 0;
+        O     = 0         ;
+        N     = ACCin[63] ;
+        C     = 0         ;
 
         if (ACCEn)
             case (MULfunc)
@@ -68,15 +68,13 @@ module acc_control(
                 end
 
                 `MFHI:  Out = ACCout[63:32];
-                `MFLO:  Out = ACCout[31:0];
+                `MFLO:  Out = ACCout[31: 0];
                 `MTHI:  ACCin[63:32] = In;
-                `MTLO:  ACCin[31:0] = In;
+                `MTLO:  ACCin[31: 0] = In;
 
                 `MULT,
                 `MULTU: ACCin = In;
-
             endcase
-
     end
 
 endmodule

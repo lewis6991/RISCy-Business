@@ -20,19 +20,19 @@ module WB(
     output logic [31:0] WBData
 );
 
-    logic [31:0] MemDataOut;
+logic [31:0] MemDataOut;
 
-    always_comb
-        case(Memfunc)
-            `BS    : MemDataOut = {{24{MemData[ 7]}},MemData[ 7:0]};
-            `BU    : MemDataOut = {       {24{1'b0}},MemData[ 7:0]};
-            `HS    : MemDataOut = {{16{MemData[15]}},MemData[15:0]};
-            `HU    : MemDataOut = {       {16{1'b0}},MemData[15:0]};
-            //`WD    : MemDataOut = MemData                          ;
-            `WL    : MemDataOut = {    MemData[31:16],RtData[15:0]};
-            `WR    : MemDataOut = {    RtData[31:16],MemData[15:0]};
-            default: MemDataOut = MemData                          ;
-        endcase
+always_comb
+    case(Memfunc)
+        `BS     : MemDataOut = {{24{MemData[ 7]}}, MemData[ 7:0]};
+        `BU     : MemDataOut = {       {24{1'b0}}, MemData[ 7:0]};
+        `HS     : MemDataOut = {{16{MemData[15]}}, MemData[15:0]};
+        `HU     : MemDataOut = {       {16{1'b0}}, MemData[15:0]};
+        `WD     : MemDataOut = MemData                           ;
+        `WL     : MemDataOut = {   MemData[31:16],  RtData[15:0]};
+        `WR     : MemDataOut = {    RtData[31:16], MemData[15:0]};
+         default: MemDataOut = MemData                           ;
+    endcase
 
     mux mux4(
         .Sel(MemtoReg  ),

@@ -28,7 +28,7 @@ always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         RegData <= 32'd0;
     else if (RegAddr == 0)
-        RegData <= #1 0;
+        RegData <= 32'd0;
     else
         RegData <= #1 data[RegAddr];
 
@@ -43,17 +43,7 @@ always_ff @ (posedge Clock, negedge nReset)
         data[RdAddr] <= #1 RdData;
 
 // Asynchronous read
-always_comb
-begin
-    if (RsAddr == 0)
-        RsData = 0;
-    else
-        RsData = data[RsAddr];
-
-    if (RtAddr == 0)
-        RtData = 0;
-    else
-        RtData = data[RtAddr];
-end
+assign RsData = (RsAddr == 0) ? 0 : data[RsAddr];
+assign RtData = (RtAddr == 0) ? 0 : data[RtAddr];
 
 endmodule

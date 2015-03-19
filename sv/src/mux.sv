@@ -14,6 +14,6 @@ module mux #(parameter n = 32)(
     output logic [n-1:0] Y
 );
 
-    assign Y = Sel ? B : A;
+assign Y = Sel ? B : A;
 
 endmodule

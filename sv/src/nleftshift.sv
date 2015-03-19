@@ -7,10 +7,10 @@
 //------------------------------------------------------------------------------
 
 module nleftshift #(parameter n = 2)(
-    input        [31:0] In ,
-    output logic [31:0] Out
+        input        [31:0] In ,
+        output logic [31:0] Out
 );
 
-    assign Out = {In[31-n:0], {n{1'b0}}};
+assign Out = {In[31-n:0], {n{1'b0}}};
 
 endmodule

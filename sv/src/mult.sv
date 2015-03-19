@@ -11,7 +11,7 @@ module mult(
     output logic [63:0] Out
 );
 
-    assign Out = A * B;
+assign Out = A * B;
 
 endmodule
 

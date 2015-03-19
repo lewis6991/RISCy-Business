@@ -7,19 +7,18 @@
 //-----------------------------------------------------------------------------------------------
 
 module HDU(
-    input        MemReadE,
-    input [4:0]  RtAddrE ,
-                 RsAddrD ,
-                 RtAddrD ,
-    output logic nStall
+input        MemReadE,
+             Clock   ,
+input [4:0]  RtAddrE ,
+             RsAddrD ,
+             RtAddrD ,
+output logic nStall
 );
 
-    always_comb
-    begin
-        if(MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
-            nStall <= 1'b0;
-        else
-            nStall <= 1'b1;
-    end
+always_comb
+    if (MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
+        nStall <= 1'b0;
+    else
+        nStall <= 1'b1;
 
 endmodule
