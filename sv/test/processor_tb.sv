@@ -106,7 +106,6 @@ always @ (register)
 begin
     -> reg_check_start;
 
-    @(negedge Clock)
     regAddr = cAddr;
 
     fork
@@ -115,7 +114,6 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    @(posedge Clock)
     @(posedge Clock)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
@@ -131,8 +129,10 @@ endtask
 //Testing procedure
 initial
 begin
-    void'($value$plusargs("sdf=%s", sdf_file));
-    $sdf_annotate(sdf_file, prcsr0);
+    `ifdef SDF_FILE
+        `define STRINGIFY(x) `"x`"
+        $sdf_annotate(`STRINGIFY(`SDF_FILE), prcsr0,,, "MINIMUM");
+    `endif
 
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));
@@ -170,10 +170,13 @@ end
 // Control test depending on program counter.
 always @ (posedge Clock)
 begin
-    PC_ASSERT: assert (rtlPC == modelPC)
-    else
-        $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
-            rtlPC, modelPC);
+    if(nReset)
+    begin
+        PC_ASSERT: assert (rtlPC == modelPC)
+        else
+            $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
+                rtlPC, modelPC);
+    end
 
     if(rtlPC[15:2] < inst_count)
         instrData <= #20 get_instruction(rtlPC[15:2]);

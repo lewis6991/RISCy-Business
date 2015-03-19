@@ -24,6 +24,15 @@ module registers(
 logic [31:0] data[1:31]; // 31 registers of 32 bit width (respectively).
 
 // Debug functionality to allow access to registers post-synthesis and post-pnr
+always_comb
+begin
+    if (RegAddr == 0)
+        RegData = 0;
+    else
+        RegData = data[RegAddr];
+end
+
+/*
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         RegData <= 32'd0;
@@ -31,7 +40,7 @@ always_ff @ (posedge Clock, negedge nReset)
         RegData <= #1 0;
     else
         RegData <= #1 data[RegAddr];
-
+*/
 // Synchronous write
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
