@@ -49,5 +49,5 @@ isExtractRCModeSignoff
 isExtractRCModeSignoff
 rcOut -spf processor.spf
 delayCal
-write_sdf -edges noedge processor.sdf  
+write_sdf -edges noedge -splitrecrem -remashold processor.sdf  
 exit
