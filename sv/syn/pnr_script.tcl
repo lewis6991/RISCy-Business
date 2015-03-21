@@ -28,6 +28,7 @@ optDesign -preCTS
 addCTSCellList {BUF2 INV2}
 clockDesign -genSpecOnly Clock.ctstch
 clockDesign -specFile Clock.ctstch -outDir clock_report -fixedInstBeforeCTS
+optDesign -postCTS
 setNanoRouteMode -quiet -routeWithTimingDriven true
 setNanoRouteMode -quiet -routeTdrEffort 8
 setNanoRouteMode -quiet -routeTopRoutingLayer default
