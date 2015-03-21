@@ -14,6 +14,9 @@
     .set    noreorder
     .set    noat
 
+nop
+nop
+nop
     li      $1,      0x82340000
     ori     $1,  $1, 0x5678
     li      $2,      0x55550000
