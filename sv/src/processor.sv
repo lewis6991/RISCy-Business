@@ -137,7 +137,7 @@ wire [4:0]  ShamtE1      ;
 
 wire [31:0] PCAddrInc    ;
 
-wire [31:0] InstrAddrDin ;
+wire [15:0] InstrAddrDin ;
 wire [31:0] InstrAddrDout;
 wire [31:0] InstrAddrE1  ;
 
@@ -175,43 +175,43 @@ IF if0(
     .PCAddrInc  (PCAddrInc   )
 );
 
-PIPE #(.n(64)) pipe0(
-    .Clock (Clock                           ),
-    .nReset(nReset                          ),
-    .In    ({InstructionF, 16'b0, InstrAddr}),
-    .Out   ({InstructionD, InstrAddrDin    })
+PIPE #(.n(48)) pipe0(
+    .Clock (Clock                      ),
+    .nReset(nReset                     ),
+    .In    ({InstructionF, InstrAddr   }),
+    .Out   ({InstructionD, InstrAddrDin})
 );
 
 DEC de0(
-    .Clock       (Clock        ),
-    .nReset      (nReset       ),
-    .RegWriteIn  (RegWriteW    ),
-    .Instruction (InstructionD ),
-    .RData       (RDataW       ),
-    .InstrAddrIn (InstrAddrDin ),
-    .RAddrIn     (RAddrW       ),
-    .RegAddr     (RegAddr      ),
-    .ImmData     (ImmDataD     ),
-    .RsAddr      (RsAddrD      ),
-    .RtAddr      (RtAddrD      ),
-    .RsData      (RsData       ),
-    .RtData      (RtData       ),
-    .InstrAddrOut(InstrAddrDout),
-    .RegData     (RegData      ),
-    .RAddrOut    (RAddrD       ),
-    .Branch      (BranchD      ),
-    .Jump        (JumpD        ),
-    .MemRead     (MemReadD     ),
-    .MemtoReg    (MemtoRegD    ),
-    .ALUOp       (ALUOpD       ),
-    .MULOp       (MULOpD       ),
-    .MemWrite    (MemWriteD    ),
-    .ALUSrc      (ALUSrcD      ),
-    .BRASrc      (BRASrcD      ),
-    .RegWriteOut (RegWriteD    ),
-    .ALUfunc     (ALUfuncD     ),
-    .Memfunc     (MemfuncD     ),
-    .Shamt       (ShamtD       )
+    .Clock       (Clock                ),
+    .nReset      (nReset               ),
+    .RegWriteIn  (RegWriteW            ),
+    .Instruction (InstructionD         ),
+    .RData       (RDataW               ),
+    .InstrAddrIn ({16'b0, InstrAddrDin}),
+    .RAddrIn     (RAddrW               ),
+    .RegAddr     (RegAddr              ),
+    .ImmData     (ImmDataD             ),
+    .RsAddr      (RsAddrD              ),
+    .RtAddr      (RtAddrD              ),
+    .RsData      (RsData               ),
+    .RtData      (RtData               ),
+    .InstrAddrOut(InstrAddrDout        ),
+    .RegData     (RegData              ),
+    .RAddrOut    (RAddrD               ),
+    .Branch      (BranchD              ),
+    .Jump        (JumpD                ),
+    .MemRead     (MemReadD             ),
+    .MemtoReg    (MemtoRegD            ),
+    .ALUOp       (ALUOpD               ),
+    .MULOp       (MULOpD               ),
+    .MemWrite    (MemWriteD            ),
+    .ALUSrc      (ALUSrcD              ),
+    .BRASrc      (BRASrcD              ),
+    .RegWriteOut (RegWriteD            ),
+    .ALUfunc     (ALUfuncD             ),
+    .Memfunc     (MemfuncD             ),
+    .Shamt       (ShamtD               )
 );
 
 PIPE #(.n(167)) pipe1(
