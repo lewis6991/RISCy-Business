@@ -44,6 +44,7 @@ main()
             (-gui)          GUI_VAR="+gui"
                             echo "Include GUI";;
             (-q|--quiet)    QUIET=1;;
+            (-v|--verbose)  VERBOSE=1;;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
             (-syn*)         RUN_SYN=1
                             SYNARGS=$1;;
@@ -103,7 +104,7 @@ main()
         if [[ $SYNARGS = *"-syn="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NC_ARGS=$"$NC_ARGS +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
+            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
@@ -115,7 +116,7 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NC_ARGS=$"$NC_ARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
+            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
@@ -168,7 +169,7 @@ proc()
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
-        ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC >> run.log
+        templog=$(ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC)
         if [ "$?" = "0" ]
         then
             summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/} .. PASS
@@ -180,13 +181,18 @@ proc()
             summarytext=${summarytext/+clk_p=*[0-9]/}
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS $PROCLOC
+                echo "$templog"
             fi
+        fi
+        echo "$templog" >> run.log
+        if [ -n "$VERBOSE" ]
+        then
+            echo "$templog"
         fi
     else
         for test in {1..7}
         do
-            ncverilog $NC_ARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC >> run.log
+            templog=$(ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC)
             if [ "$?" = "0" ]
             then
                 summarytext="${summarytext}processor testcase $test .. PASS
@@ -196,8 +202,13 @@ proc()
 "
                 if [ -z "$QUIET" ]
                 then
-                    ncverilog $NC_ARGS "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC
+                    echo "$templog"
                 fi
+            fi
+            echo "$templog" >> run.log
+            if [ -n "$VERBOSE" ]
+            then
+                echo "$templog"
             fi
         done
     fi
@@ -210,7 +221,7 @@ stages()
     for i in ${MODULES[@]};
     do
         echo "  ### Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
+        templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv)
         if [ "$?" = "0" ]
         then
             summarytext="${summarytext}$i .. PASS
@@ -220,8 +231,13 @@ stages()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                echo "$templog"
             fi
+        fi
+        echo "$templog" >> run.log
+        if [ -n "$VERBOSE" ]
+        then
+            echo "$templog"
         fi
         echo "      .. done"
     done
@@ -233,7 +249,7 @@ specific()
     for i in ${SPECIFIC[@]}
     do
         echo "##### Testing ${i}.sv"
-        ncverilog $NC_ARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv >> run.log
+        templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv)
         if [ "$?" = "0" ]
         then
             summarytext="${summarytext}$i .. PASS
@@ -243,8 +259,13 @@ specific()
 "
             if [ -z "$QUIET" ]
             then
-                ncverilog $NC_ARGS +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv
+                echo "$templog"
             fi
+        fi
+        echo "$templog" >> run.log
+        if [ -n "$VERBOSE" ]
+        then
+            echo "$templog"
         fi
         echo "      .. done"
     done
@@ -288,7 +309,7 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/processor_tb.sv src/*.sv"
-NC_ARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
+NCARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 main "$@"

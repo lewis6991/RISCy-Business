@@ -7,12 +7,12 @@
 //-----------------------------------------------------------------------------------------------
 
 module HDU(
-input        MemReadE,
-             Clock   ,
-input [4:0]  RtAddrE ,
-             RsAddrD ,
-             RtAddrD ,
-output logic nStall
+    input        MemReadE,
+                 Clock   ,
+    input [4:0]  RtAddrE ,
+                 RsAddrD ,
+                 RtAddrD ,
+    output logic nStall
 );
 
 always_comb

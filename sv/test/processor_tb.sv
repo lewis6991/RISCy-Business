@@ -87,6 +87,8 @@ memory memory0 (
     .ReadEn   (memReadEn ),
     .ReadData (memRData  ),
     .WriteEn  (memWriteEn),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .WriteData(memWData  )
 );
 
@@ -175,11 +177,11 @@ begin
                rtlPC, modelPC);
 
     if(rtlPC[15:2] < inst_count)
-        instrData <= #20 get_instruction(rtlPC[15:2]);
+        instrData <= #50 get_instruction(rtlPC[15:2]);
     else if(rtlPC[15:2] == inst_count + 10)
         finish_test();
     else
-        instrData <= #20 0;
+        instrData <= #50 0;
 end
 
 task finish_test();
