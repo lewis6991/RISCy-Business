@@ -41,7 +41,7 @@ main()
             (-bp)           RUN_BP=1;;
             (--specific=*)  SPECIFIC="$SPECIFIC ${1//"--specific="/}";;
             (-s=*)          SPECIFIC="$SPECIFIC ${1//"-s="/}";;
-            (-gui)          GUI_VAR="+gui"
+            (-gui)          GUI_VAR="+ncaccess+r +gui +tcl+processor.tcl"
                             echo "Include GUI";;
             (-q|--quiet)    QUIET=1;;
             (-v|--verbose)  VERBOSE=1;;
@@ -309,7 +309,7 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/enums.sv test/processor_tb.sv src/*.sv"
-NCARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
+NCARGS="+nc64bit -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 main "$@"
