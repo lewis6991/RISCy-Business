@@ -39,8 +39,8 @@ logic [ 4:0] rs_addr    ,
              shamt      ;
 logic [15:0] imm        ,
              offset     ;
-logic [31:0] pc      = 0;
-logic [25:0] address    ;
+logic [15:0] pc      = 0;
+logic signed [25:0] address    ;
 
 // Internal registers are signed unpacked array.
 int register[0:31];
@@ -81,6 +81,7 @@ assign InstAddr = pc;
 `define rt register[rt_addr]
 `define rd register[rd_addr]
 `define ra register[31]
+`define r0 register[0]
 
 initial while(1)
 begin
@@ -103,16 +104,25 @@ begin
     end
 end
 
-task update_caddr();
-    if (opcode inside {
-            `ADDI, `ADDIU, `LUI , `ANDI , `ORI , `XORI , `SLTI, `SLTIU})
-        delay.cAddr <= ##(reg_d) rt_addr;
-    else if (opcode == `JAL)
-        delay.cAddr <= ##(reg_d) 31;
-    else if (opcode inside {`ALU, `MULL})
-        delay.cAddr <= ##(reg_d) rd_addr;
-    else if (opcode == `BRANCH && func inside {`BGEZAL, `BLTZAL})
-        delay.cAddr <= ##(reg_d) 31;
+task automatic update_caddr();
+    bit [4:0] new_caddr    ;
+    bit       update    = 1;
+
+    if (opcode == `BRANCH && func inside {`BGEZAL, `BLTZAL})
+        new_caddr = 31;
+    else
+        case(opcode)
+            `ADDI, `ADDIU,
+            `LUI , `ANDI ,
+            `ORI , `XORI ,
+            `SLTI, `SLTIU: new_caddr = rt_addr;
+            `JAL         : new_caddr = 31     ;
+            `ALU , `MULL : new_caddr = rd_addr;
+            default      : update    = 0      ;
+        endcase
+
+    if (update)
+        delay.cAddr <= ##(reg_d) new_caddr;
 endtask
 
 task update_registers();
@@ -137,15 +147,15 @@ task update_registers();
             `MOVN   : if (`rt != 0) `rd =  `rs;
             `MFHI   : `rd = acc[63:32];
             `MFLO   : `rd = acc[31: 0];
-            `ADD    : `rd = `rs + `rt;
+            `ADD    ,
             `ADDU   : `rd = `rs + `rt;
-            `SUB    : `rd = `rs - `rt;
+            `SUB    ,
             `SUBU   : `rd = `rs - `rt;
             `AND    : `rd = `rs & `rt;
             `NOR    : `rd = ~(`rs | `rt);
             `OR     : `rd = `rs | `rt;
             `XOR    : `rd = `rs ^ `rt;
-            `SLT    : `rd = `rs < `rt ? 32'b1 : 32'b0;
+            `SLT    ,
             `SLTU   : `rd = `rs < `rt ? 32'b1 : 32'b0;
             `JALR   : `rd = pc + 8;
             0:;//NOP
@@ -162,6 +172,8 @@ task update_registers();
             `CLZ: `rd = count_leading_digit(`rs, 0);
         endcase
     endcase
+
+    `r0 = 0;
 
     // Move registers to packed array.
     foreach(register[i])
@@ -199,10 +211,10 @@ task automatic update_memory();
         default   : read = 0                           ;
     endcase
 
-    MEM_ADDR_ASSERT: assert (!write && !read || mem_addr < mem_size)
-    else
-        $error("ERROR: Address %d is out of range. Maximum address is %d.",
-            mem_addr, mem_size);
+    //MEM_ADDR_ASSERT: assert (!write && !read || mem_addr < mem_size)
+    //else
+    //    $error("ERROR: Address %d is out of range. Maximum address is %d.",
+    //        mem_addr, mem_size);
 
     // Clocking drives
     delay.MemRead  <= ##(mem_d  ) read                 ;
@@ -237,7 +249,7 @@ task update_pc();
         `BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         `BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         `BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-        `J, `JAL: delay.pc <= ##(br_d) {pc[31:28], 28'b0} + (address << 2);
+        `J, `JAL: delay.pc <= ##(br_d) (address << 2);
         `ALU   :
         case (func)
             `JR, `JALR: delay.pc <= ##(br_d) `rs;
