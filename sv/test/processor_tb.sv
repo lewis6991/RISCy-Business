@@ -87,6 +87,8 @@ memory memory0 (
     .ReadEn   (memReadEn ),
     .ReadData (memRData  ),
     .WriteEn  (memWriteEn),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
     .WriteData(memWData  )
 );
 
@@ -104,7 +106,6 @@ always @ (register)
 begin
     -> reg_check_start;
 
-    @(negedge Clock)
     regAddr = cAddr;
 
     fork
@@ -113,7 +114,6 @@ begin
 end
 
 task automatic check_register(int reg_addr, int reg_val);
-    @(posedge Clock)
     @(posedge Clock)
 
     REG_DATA_ASSERT: assert (regData == reg_val)
@@ -131,7 +131,7 @@ initial
 begin
     `ifdef SDF_FILE
         `define STRINGIFY(x) `"x`"
-        $sdf_annotate(`STRINGIFY(`SDF_FILE), prcsr0);
+        $sdf_annotate(`STRINGIFY(`SDF_FILE), prcsr0,,,"MAXIMUM");
     `endif
 
     void'($value$plusargs("test=%d", test_no));
@@ -170,22 +170,28 @@ end
 // Control test depending on program counter.
 always @ (posedge Clock)
 begin
-    PC_ASSERT: assert (rtlPC == modelPC)
-    else
-        $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
-            rtlPC, modelPC);
+    if (nReset)
+       PC_ASSERT: assert (rtlPC == modelPC)
+       else
+           $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
+               rtlPC, modelPC);
 
     if(rtlPC[15:2] < inst_count)
-        instrData <= #20 get_instruction(rtlPC[15:2]);
+        instrData <= #50 get_instruction(rtlPC[15:2]);
     else if(rtlPC[15:2] == inst_count + 10)
         finish_test();
     else
-        instrData <= #20 0;
+        instrData <= #50 0;
 end
 
 task finish_test();
     $display("\nINFO: Test Finished.\n");
     $finish;
 endtask
+
+//initial begin
+//    $dumpfile("top.vcd");
+//    $dumpvars;
+//end
 
 endmodule

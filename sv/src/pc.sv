@@ -14,7 +14,7 @@ module pc(
 );
 
     always_ff @ (posedge Clock, negedge nReset)
-        if(~nReset)
+        if (~nReset)
             ProgAddrOut <= 32'd0;
         else
             ProgAddrOut <= #1 ProgAddrIn;

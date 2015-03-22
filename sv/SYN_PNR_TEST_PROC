@@ -54,7 +54,8 @@ then
     lin_warn $1 $2
 else
     run $1 $2
-    ./RUNME -pnr=${2}${1} -plusargs="+clk_p=${2}" | tee syn/logs_${2}${1}/run.log
+    declare -i CLK_P=${2}*10 #Done to align with timeunit.
+    ./RUNME -pnr=${2}${1} -plusargs="+clk_p=${CLK_P}" | tee syn/logs_${2}${1}/run.log
     exit
 fi
 }
@@ -78,7 +79,9 @@ usage()
         iter   : Specify 'iter' here to perform iteration. This will 
                  sequentially synthesise, place & route
                  and test for the best possible clock period.
-        lin   : **Write Help Here**
+        lin   : Specify 'lin' here to perform linear iteration. This will
+                sequentially synthesise, place & route and test for clock periods
+                from the specified down to 1ns.
 "
     exit
 }
@@ -93,7 +96,7 @@ cd syn
 ./RUN_PNR clean > /dev/null
 echo "Workspace cleaned"
 echo "Beginning synthesis..."
-./RUN_SYN $TYPE $CLK_PERIOD
+./RUN_SYN $TYPE $CLK_PERIOD 1 # HARD CODED. REVISIT
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
@@ -101,7 +104,9 @@ echo "Beginning place & route..."
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
-RESULTS=$(./RUNME -pnr=${CLK_PERIOD}${TYPE} -plusargs="+clk_p=${2}")
+declare -i CLK_P=${CLK_PERIOD}*10 #Done to align with timeunit.
+RESULTS=$(./RUNME -pnr=${CLK_PERIOD}${TYPE} -plusargs="+clk_p=${CLK_P}")
+echo "$RESULTS"
 echo "Tests complete."
 }
 
@@ -135,7 +140,7 @@ while true
 do
     echo ""
     echo "Testing clock period of ${CLK_PERIOD}ns"
-    run $TYPE $CLK_PERIOD 0 # HARD CODED. REVISIT
+    run $TYPE $CLK_PERIOD
     grep "processor testcase" run.log
     TOTAL=$(grep "processor testcase" run.log | wc -l) >/dev/null
     PASSES=$(echo "$RESULTS" | tr ' ' '\n' | grep PASS | wc -l) >/dev/null

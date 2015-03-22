@@ -116,7 +116,7 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCARGS +define+SDF_FILE=pnr/work_${PNRARGS/-pnr=/}/processor.sdf"
+            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             proc
         else
             summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
@@ -301,6 +301,7 @@ fi
 if [ ! -f ./complib.so ]; then
     echo "Warning: complib.so library file not found, will compile it from source."
     gcc ../sw/complib.c -fPIC -shared -o complib.so -I /opt/cad/soft/cadence/ius/tools/inca/include
+    #gcc ../sw/complib.c -c -o complib.so -I /opt/esdcad/software/synopsys/linux/vcs-mx_D-2009.12-5/include
 fi
 
 echo -e 'run.log

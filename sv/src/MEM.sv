@@ -15,7 +15,7 @@
 
 module MEM(
     input               RegWriteIn  ,
-                        MemtoRegIn  ,
+			            MemtoRegIn  ,
                         MemReadIn   ,
                         MemWriteIn  ,
     input        [ 4:0] RAddrIn     ,
@@ -46,24 +46,24 @@ module MEM(
                 `WD    : MemWriteData = RtDataIn                           ;
                 `WL    : begin
                              WriteL = 1                                    ;
-                             MemWriteData = RtDataIn                       ;      
+                             MemWriteData = RtDataIn                       ;
                          end
                 `WR    : begin
                              WriteR = 1                                    ;
-                             MemWriteData = RtDataIn                       ;      
+                             MemWriteData = RtDataIn                       ;
                          end
                 default: MemWriteData = RtDataIn                           ;
             endcase
         end
 
-    assign RegWriteOut = RegWriteIn;
-    assign MemtoRegOut = MemtoRegIn;
-    assign MemWrite    = MemWriteIn;
-    assign MemRead     = MemReadIn ;
-    assign RAddrOut    = RAddrIn   ;
-    assign MemAddr     = ALUDataIn ;
-    assign ALUDataOut  = ALUDataIn ;
-    assign RtDataOut   = RtDataIn  ;
-    assign MemfuncOut  = MemfuncIn ;
+assign RegWriteOut = RegWriteIn;
+assign MemtoRegOut = MemtoRegIn;
+assign MemWrite    = MemWriteIn;
+assign MemRead     = MemReadIn ;
+assign RAddrOut    = RAddrIn   ;
+assign MemAddr     = ALUDataIn ;
+assign ALUDataOut  = ALUDataIn ;
+assign RtDataOut   = RtDataIn  ;
+assign MemfuncOut  = MemfuncIn ;
 
 endmodule

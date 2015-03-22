@@ -23,7 +23,8 @@ module IF(
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
-    output logic [31:0] InstrOut
+    output logic [31:0] InstrOut   ,
+                        PCAddrInc
 );
 
     wire [31:0] progaddrout ,
@@ -32,10 +33,10 @@ module IF(
                 progaddrmout;
 
     pc pc0(
-        .Clock      (Clock        ),
-        .nReset     (nReset       ),
-        .ProgAddrIn (progaddrnext ),
-        .ProgAddrOut(progaddrout  )
+        .Clock      (Clock       ),
+        .nReset     (nReset      ),
+        .ProgAddrIn (progaddrnext),
+        .ProgAddrOut(progaddrout )
     );
 
     pcinc pcinc0(
@@ -59,5 +60,6 @@ module IF(
 
     assign InstrAddr = progaddrout & {32{nStall}};
     assign InstrOut  = InstrMem    & {32{nStall}};
+    assign PCAddrInc = progaddrmout;
 
 endmodule

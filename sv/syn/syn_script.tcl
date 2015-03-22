@@ -13,30 +13,32 @@ source ../library_Setup
 
 analyze -format sverilog {
 ../../src/signextend.sv
-../../src/registers.sv 
-../../src/processor.sv 
-../../src/pcinc.sv 
-../../src/pc.sv 
-../../src/op_definition.sv 
+../../src/registers.sv
+../../src/processor.sv
+../../src/pcinc.sv
+../../src/pc.sv
+../../src/op_definition.sv
 ../../src/nleftshift.sv
-../../src/muxthree.sv  
+../../src/muxthree.sv
 ../../src/mux.sv
-../../src/mult.sv 
-../../src/mul_definition.sv 
-../../src/ex_mult.sv 
-../../src/ex_control.sv 
+../../src/mult.sv
+../../src/mul_definition.sv
+../../src/ex_mult.sv
+../../src/ex_control.sv
 ../../src/decoder.sv
 ../../src/branch.sv
-../../src/alu_definition.sv 
-../../src/alu.sv 
-../../src/acc_control.sv 
-../../src/WB.sv 
-../../src/PIPE.sv 
-../../src/MEM.sv 
+../../src/alu_definition.sv
+../../src/alu.sv
+../../src/acc_control.sv
+../../src/WB.sv
+../../src/PIPE.sv
+../../src/MEM.sv
 ../../src/IF.sv
 ../../src/HDU.sv
-../../src/FU.sv 
-../../src/EX.sv 
+../../src/FU.sv
+../../src/EX1.sv
+../../src/EX2.sv
+../../src/muxfour.sv
 ../../src/DEC.sv
 }
 
@@ -57,7 +59,7 @@ set_dft_signal -view existing_dft -port nReset -type Reset -active 0
 set_dft_configuration -fix_set enable -fix_reset enable
 set_dft_signal  -view spec -port nReset -type TestData
 set_autofix_configuration -type reset -test_data nReset
-create_test_protocol 
+create_test_protocol
 dft_drc
 insert_dft }
 

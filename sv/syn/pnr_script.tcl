@@ -28,6 +28,7 @@ optDesign -preCTS
 addCTSCellList {BUF2 INV2}
 clockDesign -genSpecOnly Clock.ctstch
 clockDesign -specFile Clock.ctstch -outDir clock_report -fixedInstBeforeCTS
+optDesign -postCTS
 setNanoRouteMode -quiet -routeWithTimingDriven true
 setNanoRouteMode -quiet -routeTdrEffort 8
 setNanoRouteMode -quiet -routeTopRoutingLayer default
@@ -48,5 +49,5 @@ isExtractRCModeSignoff
 isExtractRCModeSignoff
 rcOut -spf processor.spf
 delayCal
-write_sdf -version 2.1 -edges noedge -recrem split processor.sdf
+write_sdf -edges noedge -splitrecrem -remashold processor.sdf  
 exit
