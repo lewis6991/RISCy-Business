@@ -3,7 +3,7 @@
 // Description       : Operational instruction codes
 // Primary Author    : Dhanushan Raveendran
 // Other Contributors: Lewis Russell, Ethan Bishop
-// Notes             :  
+// Notes             :
 //------------------------------------------------------------------------------
 
 `define ADDI   6'b001000

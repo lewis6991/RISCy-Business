@@ -308,7 +308,7 @@ echo -e 'run.log
 ' > run.log
 summarytext=""
 newtext=""
-PROCLOC="test/processor_tb.sv src/*.sv"
+PROCLOC="test/enums.sv test/processor_tb.sv src/*.sv"
 NCARGS="+nc64bit +ncaccess+r -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"

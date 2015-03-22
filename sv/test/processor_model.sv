@@ -30,16 +30,16 @@ parameter mem_d = 3; // Delay for memory operations to occur.
 
 parameter mem_size = 4096;
 
-logic [63:0] acc        ;
-logic [ 5:0] opcode     ,
-             func       ;
-logic [ 4:0] rs_addr    ,
-             rt_addr    ,
-             rd_addr    ,
-             shamt      ;
-logic [15:0] imm        ,
-             offset     ;
-logic [15:0] pc      = 0;
+logic        [63:0] acc        ;
+e_op_code           opcode     ;
+logic        [ 5:0] func       ;
+logic        [ 4:0] rs_addr    ,
+                    rt_addr    ,
+                    rd_addr    ,
+                    shamt      ;
+logic        [15:0] imm        ,
+                    offset     ;
+logic        [15:0] pc      = 0;
 logic signed [25:0] address    ;
 
 // Internal registers are signed unpacked array.
@@ -112,12 +112,12 @@ task automatic update_caddr();
         new_caddr = 31;
     else
         case(opcode)
-            `ADDI, `ADDIU,
-            `LUI , `ANDI ,
-            `ORI , `XORI ,
-            `SLTI, `SLTIU: new_caddr = rt_addr;
-            `JAL         : new_caddr = 31     ;
-            `ALU , `MULL : new_caddr = rd_addr;
+            ADDI, ADDIU,
+            LUI , ANDI ,
+            ORI , XORI ,
+            SLTI, SLTIU: new_caddr = rt_addr;
+            JAL         : new_caddr = 31     ;
+            ALU , MULL : new_caddr = rd_addr;
             default      : update    = 0      ;
         endcase
 
@@ -127,14 +127,15 @@ endtask
 
 task update_registers();
     case (opcode)
-        `ADDI, `ADDIU: `rt = `rs + imm;
-        `LUI         : `rt = imm << 16;
-        `ANDI        : `rt = `rs & imm;
-        `ORI         : `rt = `rs | imm;
-        `XORI        : `rt = `rs ^ imm;
-        `SLTI, `SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
-        `JAL         : `ra =  pc + 8;
-        `ALU   :
+        ADDI        : `rt = `rs + signed'(imm);
+        ADDIU       : `rt = `rs + imm;
+        LUI         : `rt = imm << 16;
+        ANDI        : `rt = `rs & imm;
+        ORI         : `rt = `rs | imm;
+        XORI        : `rt = `rs ^ imm;
+        SLTI, SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
+        JAL         : `ra =  pc + 8;
+        ALU   :
         case (func)
             `SLL    : `rd = `rt <<  shamt;
             `SLLV   : `rd = `rt <<  `rs  ;
@@ -160,12 +161,12 @@ task update_registers();
             `JALR   : `rd = pc + 8;
             0:;//NOP
         endcase
-        `BRANCH:
+        BRANCH:
         case (rt_addr)
             `BGEZAL: if (`rs >= 0) `ra = pc + 8;
             `BLTZAL: if (`rs <  0) `ra = pc + 8;
         endcase
-        `MULL  :
+        MULL  :
         case (func)
             `MUL: `rd = `rs*`rt;
             `CLO: `rd = count_leading_digit(`rs, 1);
@@ -192,23 +193,23 @@ task automatic update_memory();
 
     // Memory write block
     case (opcode)
-        `SB    : `mem_data        = {24'b0, `rt[7:0]} ;
-        `SH    : `mem_data        = {16'b0, `rt[15:0]};
-        `SW    : `mem_data        = `rt               ;
-        `SWL   : `mem_data[15: 0] = `rt[31:16]        ;
-        `SWR   : `mem_data[31:16] = `rt[15: 0]        ;
+        SB     : `mem_data        = {24'b0, `rt[7:0]} ;
+        SH     : `mem_data        = {16'b0, `rt[15:0]};
+        SW     : `mem_data        = `rt               ;
+        SWL    : `mem_data[15: 0] = `rt[31:16]        ;
+        SWR    : `mem_data[31:16] = `rt[15: 0]        ;
         default: write = 0                            ;
     endcase
 
     // Memory read block
     case (opcode)
-        `LB , `LBU: `rt = `mem_data[7:0]               ;
-        `LH , `LHU: `rt = `mem_data[15:0]              ;
-        `LL , `LW : `rt = `mem_data                    ;
-        `LWL      : `rt = {`mem_data[31:16], `rt[15:0]};
-        `LWR      : `rt = {`rt[31:16], `mem_data[15:0]};
-        `SC       : `rt = (`mem_data == `rt) ? 1 : 0   ;
-        default   : read = 0                           ;
+        LB , LBU: `rt = `mem_data[7:0]               ;
+        LH , LHU: `rt = `mem_data[15:0]              ;
+        LL , LW : `rt = `mem_data                    ;
+        LWL     : `rt = {`mem_data[31:16], `rt[15:0]};
+        LWR     : `rt = {`rt[31:16], `mem_data[15:0]};
+        SC      : `rt = (`mem_data == `rt) ? 1 : 0   ;
+        default : read = 0                           ;
     endcase
 
     //MEM_ADDR_ASSERT: assert (!write && !read || mem_addr < mem_size)
@@ -226,14 +227,14 @@ endtask
 
 task update_acc();
     case (opcode)
-        `ALU   :
+        ALU   :
         case (func)
             `MTHI : acc[63:32] = `rs;
             `MTLO : acc[31: 0] = `rs;
             `MULT ,
             `MULTU: acc = `rs*`rt   ;
         endcase
-        `MULL  :
+        MULL  :
         case (func)
             `MADD, `MADDU : acc = acc + `rs*`rt;
             `MSUB, `MSUBU : acc = acc - `rs*`rt;
@@ -245,16 +246,16 @@ task update_pc();
     pc <= pc + 4;
 
     case (opcode)
-        `BEQ   : if (`rs == `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-        `BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
-        `BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
-        `BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-        `J, `JAL: delay.pc <= ##(br_d) (address << 2);
-        `ALU   :
+        BEQ   : if (`rs == `rt) delay.pc <= ##(br_d) pc + (offset << 2);
+        BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
+        BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
+        BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
+        J, JAL: delay.pc <= ##(br_d) (address << 2);
+        ALU   :
         case (func)
             `JR, `JALR: delay.pc <= ##(br_d) `rs;
         endcase
-        `BRANCH:
+        BRANCH:
         case (rt_addr)
             `BGEZ, `BGEZAL: if (`rs >= 0) delay.pc <= ##(br_d) pc + (offset << 2);
             `BLTZ, `BLTZAL: if (`rs <  0) delay.pc <= ##(br_d) pc + (offset << 2);

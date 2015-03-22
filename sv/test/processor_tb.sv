@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 `include "memory.sv"
 `include "processor_model.sv"
+`include "classes/instruction.sv"
 
 module processor_tb;
 
@@ -91,15 +92,31 @@ memory memory0 (
     .WriteR   (memWriteR ),
     .WriteData(memWData  )
 );
-
-property reg0_data;
+//-------------------------------------------------------------------------------
+// Properties ------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+property p_reg0_data;
     @ (posedge Clock)
     register[0] == 0;
 endproperty
 
-REG0_DATA_ASSERT: assert property (reg0_data)
+property p_pc_value;
+    @ (posedge Clock)
+    if (nReset)
+        rtlPC == modelPC;
+endproperty
+//-------------------------------------------------------------------------------
+// Assertions -------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+REG0_ASSERT: assert property (p_reg0_data)
 else
     $error("ERROR: Reg $0 contains a non-zero value(%8h).", register[0]);
+
+PC_ASSERT: assert property (p_pc_value)
+else
+    $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d.",
+        rtlPC, modelPC);
+//-------------------------------------------------------------------------------
 
 // Always block to verify every register change.
 always @ (register)
@@ -137,24 +154,48 @@ begin
     void'($value$plusargs("test=%d", test_no));
     void'($value$plusargs("clk_p=%d", clk_p));
 
-    // This is function is only needed to specify where the compile script
-    // resides. Implementing this function allows us to rename and move the
-    // script if we ever need.
-    set_compile_script("../sw/compile2int");
-
-    // Compile the asm file so we can fetch instructions.
-    compile_asm($sformatf("../sw/testcase%0d", test_no));
-
-    // Get the amount of instructions in the testcase so we can set a finish
-    // point.
-    inst_count = get_instruction_count();
-
-    $display("\nINFO: Testcase %0d selected.", test_no);
-    $display("\nINFO: Starting Test...\n");
-
     // De-assert reset after non-integer amount of clock cycles.
     #(5.2*clk_p) nReset = 1;
+
+    if ($test$plusargs("random"))
+    begin
+        $display("\nINFO: Starting Random Test...\n");
+        run_random();
+    end
+    else
+    begin
+        // This is function is only needed to specify where the compile script
+        // resides. Implementing this function allows us to rename and move the
+        // script if we ever need.
+        set_compile_script("../sw/compile2int");
+
+        // Compile the asm file so we can fetch instructions.
+        compile_asm($sformatf("../sw/testcase%0d", test_no));
+
+        // Get the amount of instructions in the testcase so we can set a finish
+        // point.
+        inst_count = get_instruction_count();
+
+        $display("\nINFO: Testcase %0d selected.", test_no);
+        $display("\nINFO: Starting Test...\n");
+
+        run_testcase();
+    end
 end
+
+task run_random();
+    Instruction new_inst;
+
+    repeat(1000)
+    begin
+        @ (posedge Clock)
+        #20
+        new_inst = new();
+        void'(new_inst.randomize());
+        instrData = new_inst.getInstruction();
+    end
+    finish_test();
+endtask
 
 //Clock implementation
 always begin
@@ -168,21 +209,18 @@ always begin
 end
 
 // Control test depending on program counter.
-always @ (posedge Clock)
-begin
-    if (nReset)
-       PC_ASSERT: assert (rtlPC == modelPC)
-       else
-           $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d",
-               rtlPC, modelPC);
-
-    if(rtlPC[15:2] < inst_count)
-        instrData <= #50 get_instruction(rtlPC[15:2]);
-    else if(rtlPC[15:2] == inst_count + 10)
-        finish_test();
-    else
-        instrData <= #50 0;
-end
+task run_testcase();
+    while(1)
+    begin
+        @ (posedge Clock)
+        if(rtlPC[15:2] < inst_count)
+            instrData <= #50 get_instruction(rtlPC[15:2]);
+        else if(rtlPC[15:2] == inst_count + 10)
+            finish_test();
+        else
+            instrData <= #50 0;
+    end
+endtask
 
 task finish_test();
     $display("\nINFO: Test Finished.\n");
