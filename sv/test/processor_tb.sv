@@ -26,8 +26,8 @@ int       cycles     = 0   ,
           inst_count = 0   ;
 string    sdf_file         ;
 
-logic [31:0] instrData  ;
-logic [ 4:0] regAddr    ;
+logic [31:0] instrData = 0;
+logic [ 4:0] regAddr = 0;
 wire  [15:0] rtlPC      ,
              modelPC    ,
              memAddr    ,

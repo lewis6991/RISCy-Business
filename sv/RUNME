@@ -103,7 +103,7 @@ main()
     then
         if [[ $SYNARGS = *"-syn="* ]]
         then
-            PROCLOC="test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
+            PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
             NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
             proc
         else
@@ -115,7 +115,7 @@ main()
     then
         if [[ $PNRARGS = *"-pnr="* ]]
         then
-            PROCLOC="test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
+            PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
             NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             proc
         else
