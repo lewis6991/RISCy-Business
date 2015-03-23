@@ -157,8 +157,8 @@ task update_registers();
             `SRL : `rd = `rt >>  shamt;
             `SRLV: `rd = `rt >>  `rs  ;
             `JALR: `rd =  pc + 8;
-            `MOVZ: if (`rt == 0) `rd =  `rs;
-            `MOVN: if (`rt != 0) `rd =  `rs;
+            `MOVZ: if (`rt == 0) `rd = `rs;
+            `MOVN: if (`rt != 0) `rd = `rs;
             `MFHI: `rd = acc[63:32];
             `MFLO: `rd = acc[31: 0];
             `ADD ,

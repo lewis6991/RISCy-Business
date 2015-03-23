@@ -46,6 +46,7 @@ main()
             (-q|--quiet)    QUIET=1;;
             (-v|--verbose)  VERBOSE=1;;
             (-plusargs=*)   PLUSARGS=${1//"-plusargs="/};;
+            (-clk*)         CLOCK=${1//"-clk"/};;
             (-syn*)         RUN_SYN=1
                             SYNARGS=$1;;
             (-pnr*)         RUN_PNR=1
@@ -55,6 +56,57 @@ main()
         esac
         shift
     done
+
+    #if [ -n "$PLUSARGS" ]
+    #then
+    #    myarray=($PLUSARGS)
+    #    for element in "${myarray[@]}"
+    #    do
+    #        if [[ $element = *"clk_p"* ]]
+    #        then
+    #            echo "Outdated use of clk_p. Please see 'RUNME --help'"
+    #            exit 1
+    #        fi
+    #    done
+#
+    #fi
+    if [ -n "$CLOCK" ]
+    then
+        if [[ $CLOCK = *"="[0-9]* ]]
+        then
+            CLKARGS=${CLOCK//"="/}
+            CLKARGS=$(echo $CLKARGS | tr "-" " ")
+            CLKARGS=$(echo $CLKARGS | tr "," " ")
+            CLKARGS=($CLKARGS)
+            if [ -n "${CLKARGS[1]}" ]
+            then
+                if [ -z "${CLKARGS[2]}" ]
+                then
+                    declare -i a=${CLKARGS[0]}
+                    declare -i b=${CLKARGS[1]}
+                    declare -i c=($b-$a)/10
+                    if [ $c = "0" ]
+                    then
+                        c="1"
+                    fi
+                    CLKARGS[2]=$c
+                fi
+                CLOCK=""
+                for (( j=${CLKARGS[0]}; j<=${CLKARGS[1]}; j=j+${CLKARGS[2]} ))
+                do
+                    CLOCK=( ${CLOCK[@]} $j )
+                done
+            else
+                CLOCK=${CLKARGS[0]}
+            fi
+        else
+            echo "No clock period defined. Default period = 10ns"
+            CLOCK="100"
+        fi
+    else
+        echo "No clock period defined. Default period = 10ns"
+        CLOCK="100"
+    fi
 
     if [ -n "$SPECIFIC" ]
     then
@@ -154,6 +206,12 @@ usage()
     -pnr               Runs the test cases on the placed and routed design
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
+    -clk=\"N\"           Used to set the clock period. If not set, a default
+        =\"N-M\"         value of 10ns is chosen. A range can be set by
+        =\"N-M,L\"       specifying the lowest-highest clock periods, and the
+                       increment. If no increment is given, the code will
+                       attempt to run test for 10 different periods
+
     -plusargs=\"\"       Include plusargs to any command to set arguments
                        within the testbench itself. Full list below.
                        Arguments can be chained by including a single
@@ -169,47 +227,59 @@ proc()
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
-        templog=$(ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS $PROCLOC)
-        if [ "$?" = "0" ]
-        then
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/} .. PASS
-"
-            summarytext=${summarytext/+clk_p=*[0-9]/}
-        else
-            summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/} ..  FAIL
-"
-            summarytext=${summarytext/+clk_p=*[0-9]/}
-            if [ -z "$QUIET" ]
+        #PUT EACH CLOCK CASE HERE
+        for i in "${CLOCK[@]}"
+        do
+            ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+clk_p=$i" $PROCLOC > temp.log
+            if [ "$?" = "0" ]
             then
-                echo "$templog"
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i)
+    "
+                if [ -n "$VERBOSE" ]
+                then
+                    echo "INFO: Clock = $i"
+                    echo "$(cat temp.log)"
+                fi
+                break
+            else
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: ..  FAIL ($i)
+    "
+                if [ -z "$QUIET" ]
+                then
+                    echo "INFO: Clock = $i"
+                    echo "$(cat temp.log)"
+                fi
             fi
-        fi
-        echo "$templog" >> run.log
-        if [ -n "$VERBOSE" ]
-        then
-            echo "$templog"
-        fi
+            echo "$(cat temp.log)" >> run.log
+        done
     else
         for test in {1..7}
         do
-            templog=$(ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test $PROCLOC)
-            if [ "$?" = "0" ]
-            then
-                summarytext="${summarytext}processor testcase $test .. PASS
-"
-            else
-                summarytext="${summarytext}processor testcase $test .. FAIL
-"
-                if [ -z "$QUIET" ]
+            #PUT EACH CLOCK CASE HERE
+            for i in "${CLOCK[@]}"
+            do
+                ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+test="$test "+clk_p=$i" $PROCLOC > temp.log
+                if [ "$?" = "0" ]
                 then
-                    echo "$templog"
+                    summarytext="${summarytext}processor testcase $test .. PASS ($i)
+    "
+                    if [ -n "$VERBOSE" ]
+                    then
+                        echo "INFO: Clock = $i"
+                        echo "$(cat temp.log)"
+                    fi
+                    break
+                else
+                    summarytext="${summarytext}processor testcase $test .. FAIL ($i)
+    "
+                    if [ -z "$QUIET" ]
+                    then
+                        echo "INFO: Clock = $i"
+                        echo "$(cat temp.log)"
+                    fi
                 fi
-            fi
-            echo "$templog" >> run.log
-            if [ -n "$VERBOSE" ]
-            then
-                echo "$templog"
-            fi
+                echo "$(cat temp.log)" >> run.log
+            done
         done
     fi
     echo "      .. done"
@@ -221,25 +291,32 @@ stages()
     for i in ${MODULES[@]};
     do
         echo "  ### Testing ${i}.sv"
-        templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv)
-        if [ "$?" = "0" ]
-        then
-            summarytext="${summarytext}$i .. PASS
-"
-        else
-            summarytext="${summarytext}$i .. FAIL
-"
-            if [ -z "$QUIET" ]
+        #PUT EACH CLOCK CASE HERE
+        for j in "${CLOCK[@]}"
+        do
+            templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "+clk_p=$j" "test/${i}_tb.sv" src/${i}.sv)
+            if [ "$?" = "0" ]
             then
-                echo "$templog"
+                summarytext="${summarytext}$i .. PASS ($j)
+    "
+                if [ -n "$VERBOSE" ]
+                then
+                    echo "INFO: Clock = $j"
+                    echo "$templog"
+                fi
+                break
+            else
+                summarytext="${summarytext}$i .. FAIL ($j)
+    "
+                if [ -z "$QUIET" ]
+                then
+                    echo "INFO: Clock = $j"
+                    echo "$templog"
+                fi
             fi
-        fi
-        echo "$templog" >> run.log
-        if [ -n "$VERBOSE" ]
-        then
-            echo "$templog"
-        fi
-        echo "      .. done"
+            echo "$templog" >> run.log
+            echo "      .. done"
+        done
     done
     echo "##### .. done"
 }
@@ -248,26 +325,34 @@ specific()
 {
     for i in ${SPECIFIC[@]}
     do
-        echo "##### Testing ${i}.sv"
-        templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "test/${i}_tb.sv" src/${i}.sv)
-        if [ "$?" = "0" ]
-        then
-            summarytext="${summarytext}$i .. PASS
-"
-        else
-            summarytext="${summarytext}$i .. FAIL
-"
-            if [ -z "$QUIET" ]
+        #PUT EACH CLOCK CASE HERE
+        for j in "${CLOCK[@]}"
+        do
+            echo "INFO: Clock = $j"
+            ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "+clk_p=$j" "test/${i}_tb.sv" src/${i}.sv
+            templog=$(ncverilog $NCARGS $GUI_VAR +incdir+src/ $PLUSARGS "+clk_p=$j" "test/${i}_tb.sv" src/${i}.sv)
+            if [ "$?" = "0" ]
             then
-                echo "$templog"
+                summarytext="${summarytext}$i .. PASS ($j)
+    "
+                if [ -n "$VERBOSE" ]
+                then
+                    echo "##### Testing ${i}.sv"
+                    echo "$templog"
+                fi
+                break
+            else
+                summarytext="${summarytext}$i .. FAIL ($j)
+    "
+                if [ -z "$QUIET" ]
+                then
+                    echo "##### Testing ${i}.sv"
+                    echo "$templog"
+                fi
             fi
-        fi
-        echo "$templog" >> run.log
-        if [ -n "$VERBOSE" ]
-        then
-            echo "$templog"
-        fi
-        echo "      .. done"
+            echo "$templog" >> run.log
+            echo "      .. done"
+        done
     done
 }
 
@@ -278,15 +363,15 @@ padding()
        declare -i NUMCS
        TOTAL=${#a}
        NUMCS=$TOTAL
-       if [ $NUMCS -gt 8 ]
+       if [ $NUMCS -gt 13 ]
        then
-           NUMCS=$NUMCS-8
+           NUMCS=$NUMCS-13
            newtext="${newtext}${a:0:$NUMCS} "
            for (( j=1; j<=14-$NUMCS; j++ ))
            do
                newtext="${newtext}."
            done
-           newtext="${newtext} ${a:$TOTAL-4:$TOTAL}\n"
+           newtext="${newtext} ${a:$TOTAL-10:$TOTAL}\n"
        fi
     done <<< "$summarytext"
 }
