@@ -200,11 +200,11 @@ task automatic update_memory();
 
     // Memory write block
     case (opcode)
-        SB     : `mem_data        = {24'b0, `rt[7:0]} ;
-        SH     : `mem_data        = {16'b0, `rt[15:0]};
+        SB     : `mem_data        = signed'(`rt[7:0]) ;
+        SH     : `mem_data        = signed'(`rt[15:0]);
         SW     : `mem_data        = `rt               ;
-        SWL    : `mem_data[15: 0] = `rt[31:16]        ;
-        SWR    : `mem_data[31:16] = `rt[15: 0]        ;
+        SWL    : `mem_data[31:16] = `rt[31:16]        ;
+        SWR    : `mem_data[15: 0] = `rt[15: 0]        ;
         default: write = 0                            ;
     endcase
 
