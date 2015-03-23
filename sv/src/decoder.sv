@@ -174,6 +174,7 @@ module decoder(
 
             `ANDI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `AND;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
@@ -182,6 +183,7 @@ module decoder(
 
             `ORI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `OR ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
@@ -190,6 +192,7 @@ module decoder(
 
             `XORI:
             begin
+                Unsgnsel = 1'b1;
                 Func     = `XOR;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
