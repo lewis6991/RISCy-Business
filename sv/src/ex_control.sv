@@ -18,6 +18,7 @@ module ex_control(
                         RegWriteIn ,
                         BRAtaken   ,
                         ALUEn      ,
+                        MemWrite   ,
     input        [ 5:0] Func       ,
     output logic        ACCEn      , // Enable ACC write
                         MULSelB    , // MUL module select
@@ -60,6 +61,7 @@ module ex_control(
                 default:
                 begin
                     OutSel      = 2'b00;
+                    RegWriteOut = ALUEn & !MemWrite;
                 end
             endcase
 

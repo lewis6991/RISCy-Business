@@ -121,6 +121,7 @@ module EX1(
         .RegWriteIn  (RegWriteIn ),
         .BRAtaken    (BRAtaken   ),
         .ALUEn       (ALUEn      ),
+        .MemWrite    (MemWriteIn ),
         .Func        (Func       ),
         .ACCEn       (ACCEn      ),
         .MULSelB     (MULSelB    ), // MUL module select
