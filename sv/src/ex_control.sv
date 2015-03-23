@@ -60,7 +60,6 @@ module ex_control(
                 default:
                 begin
                     OutSel      = 2'b00;
-                    RegWriteOut = ALUEn;
                 end
             endcase
 
