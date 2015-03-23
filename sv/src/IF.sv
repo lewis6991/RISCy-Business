@@ -58,8 +58,8 @@ module IF(
         .Y  (progaddrnext)
     );
 
-    assign InstrAddr = progaddrout & {32{nStall}};
-    assign InstrOut  = InstrMem    & {32{nStall}};
-    assign PCAddrInc = progaddrmout;
+    assign InstrAddr = progaddrout            ;
+    assign InstrOut  = InstrMem & {32{nStall}};
+    assign PCAddrInc = progaddrmout           ;
 
 endmodule

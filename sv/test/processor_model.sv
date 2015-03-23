@@ -13,6 +13,7 @@
 program processor_model(
     input                   Clock      ,
                             nReset     ,
+                            Stall      ,
     input            [31:0] Instruction,
     output           [15:0] InstAddr   ,
     output bit       [ 4:0] cAddr      ,
@@ -87,7 +88,6 @@ initial while(1)
 begin
     @ (posedge Clock, negedge nReset)
 
-
     if (~nReset) begin
         acc = 0;
         pc = 0;
@@ -96,11 +96,20 @@ begin
     end
     else
     begin
-        update_caddr();
-        update_acc();
-        update_pc();
-        update_registers();
-        update_memory();
+        if (~Stall)
+        begin
+            update_caddr();
+            update_acc();
+            update_pc();
+            update_registers();
+            update_memory();
+
+            // Move registers to packed array.
+            foreach(register[i])
+                register_packed[i] = register[i];
+
+            delay.Register <= ##(reg_d) register_packed;
+        end
     end
 end
 
@@ -115,10 +124,14 @@ task automatic update_caddr();
             ADDI, ADDIU,
             LUI , ANDI ,
             ORI , XORI ,
+            LB  , LBU  ,
+            LH  , LHU  ,
+            LW  , LWL  ,
+            LWR , LL, SC,
             SLTI, SLTIU: new_caddr = rt_addr;
-            JAL         : new_caddr = 31     ;
+            JAL        : new_caddr = 31     ;
             ALU , MULL : new_caddr = rd_addr;
-            default      : update    = 0      ;
+            default    : update    = 0      ;
         endcase
 
     if (update)
@@ -127,38 +140,38 @@ endtask
 
 task update_registers();
     case (opcode)
-        ADDI        : `rt = `rs + signed'(imm);
-        ADDIU       : `rt = `rs + imm;
-        LUI         : `rt = imm << 16;
-        ANDI        : `rt = `rs & imm;
-        ORI         : `rt = `rs | imm;
-        XORI        : `rt = `rs ^ imm;
+        ADDI       : `rt = `rs + signed'(imm);
+        ADDIU      : `rt = `rs + imm;
+        LUI        : `rt = imm << 16;
+        ANDI       : `rt = `rs & imm;
+        ORI        : `rt = `rs | imm;
+        XORI       : `rt = `rs ^ imm;
         SLTI, SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
-        JAL         : `ra =  pc + 8;
+        JAL        : `ra =  pc + 8;
         ALU   :
         case (func)
-            `SLL    : `rd = `rt <<  shamt;
-            `SLLV   : `rd = `rt <<  `rs  ;
-            `SRA    : `rd = `rt >>> shamt;
-            `SRAV   : `rd = `rt >>> `rs  ;
-            `SRL    : `rd = `rt >>  shamt;
-            `SRLV   : `rd = `rt >>  `rs  ;
-            `JALR   : `rd =  pc + 8;
-            `MOVZ   : if (`rt == 0) `rd =  `rs;
-            `MOVN   : if (`rt != 0) `rd =  `rs;
-            `MFHI   : `rd = acc[63:32];
-            `MFLO   : `rd = acc[31: 0];
-            `ADD    ,
-            `ADDU   : `rd = `rs + `rt;
-            `SUB    ,
-            `SUBU   : `rd = `rs - `rt;
-            `AND    : `rd = `rs & `rt;
-            `NOR    : `rd = ~(`rs | `rt);
-            `OR     : `rd = `rs | `rt;
-            `XOR    : `rd = `rs ^ `rt;
-            `SLT    ,
-            `SLTU   : `rd = `rs < `rt ? 32'b1 : 32'b0;
-            `JALR   : `rd = pc + 8;
+            `SLL : `rd = `rt <<  shamt;
+            `SLLV: `rd = `rt <<  `rs  ;
+            `SRA : `rd = `rt >>> shamt;
+            `SRAV: `rd = `rt >>> `rs  ;
+            `SRL : `rd = `rt >>  shamt;
+            `SRLV: `rd = `rt >>  `rs  ;
+            `JALR: `rd =  pc + 8;
+            `MOVZ: if (`rt == 0) `rd =  `rs;
+            `MOVN: if (`rt != 0) `rd =  `rs;
+            `MFHI: `rd = acc[63:32];
+            `MFLO: `rd = acc[31: 0];
+            `ADD ,
+            `ADDU: `rd = `rs + `rt;
+            `SUB ,
+            `SUBU: `rd = `rs - `rt;
+            `AND : `rd = `rs & `rt;
+            `NOR : `rd = ~(`rs | `rt);
+            `OR  : `rd = `rs | `rt;
+            `XOR : `rd = `rs ^ `rt;
+            `SLT ,
+            `SLTU: `rd = `rs < `rt ? 32'b1 : 32'b0;
+            `JALR: `rd = pc + 8;
             0:;//NOP
         endcase
         BRANCH:
@@ -175,12 +188,6 @@ task update_registers();
     endcase
 
     `r0 = 0;
-
-    // Move registers to packed array.
-    foreach(register[i])
-        register_packed[i] = register[i];
-
-    delay.Register <= ##(reg_d) register_packed;
 endtask
 
 task automatic update_memory();
@@ -203,13 +210,15 @@ task automatic update_memory();
 
     // Memory read block
     case (opcode)
-        LB , LBU: `rt = `mem_data[7:0]               ;
-        LH , LHU: `rt = `mem_data[15:0]              ;
-        LL , LW : `rt = `mem_data                    ;
-        LWL     : `rt = {`mem_data[31:16], `rt[15:0]};
-        LWR     : `rt = {`rt[31:16], `mem_data[15:0]};
-        SC      : `rt = (`mem_data == `rt) ? 1 : 0   ;
-        default : read = 0                           ;
+        LB     : `rt = signed'(`mem_data[7:0])      ;
+        LBU    : `rt = `mem_data[7:0]               ;
+        LH     : `rt = signed'(`mem_data[15:0])     ;
+        LHU    : `rt = `mem_data[15:0]              ;
+        LL , LW: `rt = `mem_data                    ;
+        LWL    : `rt = {`mem_data[31:16], `rt[15:0]};
+        LWR    : `rt = {`rt[31:16], `mem_data[15:0]};
+        SC     : `rt = (`mem_data == `rt) ? 1 : 0   ;
+        default: read = 0                           ;
     endcase
 
     //MEM_ADDR_ASSERT: assert (!write && !read || mem_addr < mem_size)

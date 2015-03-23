@@ -19,7 +19,8 @@ module PROCESSOR(
     output logic        MemWrite ,
                         MemRead  ,
                         WriteL   ,
-                        WriteR
+                        WriteR   ,
+                        nStall
 );
 
 wire JumpD        ;
@@ -159,7 +160,6 @@ wire [31:0] B            ;
 
 wire [31:0] BranchAddr   ;
 
-wire        nStall       ;
 wire        BRASrcD      ;
 wire        BRASrcE      ;
 
@@ -176,10 +176,10 @@ IF if0(
 );
 
 PIPE #(.n(48)) pipe0(
-    .Clock (Clock                      ),
-    .nReset(nReset                     ),
-    .In    ({InstructionF, InstrAddr   }),
-    .Out   ({InstructionD, InstrAddrDin})
+    .Clock (Clock                                   ),
+    .nReset(nReset                                  ),
+    .In    ({InstructionF, InstrAddr & {16{nStall}}}),
+    .Out   ({InstructionD, InstrAddrDin}            )
 );
 
 DEC de0(

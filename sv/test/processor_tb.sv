@@ -42,7 +42,8 @@ wire         memReadEn  ,
              memReadEnM ,
              memWriteEnM,
              memWriteL  ,
-             memWriteR  ;
+             memWriteR  ,
+             nStall     ;
 
 
 bit signed [0:31][31:0] register;
@@ -62,7 +63,8 @@ processor_model pmodel0(
     .MemWData   (memWDataM  ),
     .MemAddr    (memAddrM   ),
     .MemWrite   (memWriteEnM),
-    .MemRead    (memReadEnM )
+    .MemRead    (memReadEnM ),
+    .Stall      (~nStall    )
 );
 
 PROCESSOR prcsr0 (
@@ -78,7 +80,8 @@ PROCESSOR prcsr0 (
     .WriteL   (memWriteL ),
     .WriteR   (memWriteR ),
     .RegAddr  (regAddr   ),
-    .RegData  (regData   )
+    .RegData  (regData   ),
+    .nStall   (nStall    )
 );
 
 memory memory0 (

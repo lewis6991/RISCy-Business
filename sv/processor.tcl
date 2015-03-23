@@ -18,6 +18,14 @@ simvision {
     waveform add -signals processor_tb.check_register.REG_DATA_ASSERT.REG_DATA_ASSERT
     waveform add -signals processor_tb.instrData
     waveform add -signals processor_tb.pmodel0.opcode
+    waveform add -signals processor_tb.pmodel0.rs_addr
+    waveform add -signals processor_tb.pmodel0.rt_addr
+    waveform add -signals processor_tb.pmodel0.rd_addr
+    waveform add -signals processor_tb.pmodel0.func
+    waveform add -signals processor_tb.pmodel0.imm
+    waveform add -signals processor_tb.pmodel0.shamt
+    waveform add -signals processor_tb.pmodel0.address
+    waveform add -signals processor_tb.pmodel0.stall
     group new -name Memory -contents {
         processor_tb.memAddr
         processor_tb.memAddrM
