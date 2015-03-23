@@ -63,10 +63,12 @@ create_test_protocol
 dft_drc
 insert_dft }
 
+set_optimize_reigsters
+
 if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
 } elseif {($TYPE=="opt")   && ($SCAN==0)} {
-	compile_ultra -timing_high_effort_script
+	compile_ultra -retime -timing_high_effort_script
 } elseif {($TYPE=="basic") && ($SCAN==1)} {
 	compile -scan
 } elseif {($TYPE=="basic") && ($SCAN==0)} {
@@ -89,4 +91,3 @@ write -f verilog -hierarchy -output processor_synth.v
 write_sdc design.sdc
 write_sdf -version 1.0 design.sdf
 
-exit
