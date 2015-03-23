@@ -101,11 +101,11 @@ main()
             fi
         else
             echo "No clock period defined. Default period = 10ns"
-            CLOCK="10"
+            CLOCK="100"
         fi
     else
         echo "No clock period defined. Default period = 10ns"
-        CLOCK="10"
+        CLOCK="100"
     fi
 
     if [ -n "$SPECIFIC" ]
@@ -233,7 +233,7 @@ proc()
             ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+clk_p=$i" $PROCLOC > temp.log
             if [ "$?" = "0" ]
             then
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i) 
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i)
     "
                 if [ -n "$VERBOSE" ]
                 then
@@ -242,7 +242,7 @@ proc()
                 fi
                 break
             else
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: ..  FAIL ($i) 
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: ..  FAIL ($i)
     "
                 if [ -z "$QUIET" ]
                 then
