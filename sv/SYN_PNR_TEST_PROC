@@ -10,52 +10,66 @@
 
 main()
 {
-if [ $host != $hind ] && [ $host != $hart ] 
+if [ $host != $hind ]
 then
     echo "Error: Synthesis and Testing requires hind CAD server. Exiting..."
     exit 1
 fi
 
-
 if [ $(echo $DISPLAY) = "" ]
 then
     echo "Error: Display connection not mapped (Necessary for Place & Route tool).
-          Run ssh with -X argument. Exiting..."
+          Run ssh with -Y argument. Exiting..."
     exit 1
 fi
 
-echo "
-This script will perform the following:
-1. Clean out any existing synthesis and/or place & route files.
-2. Synthesise, then place & route the processor as it stands.
-3. Run the testing script, executing the test cases and printing the results.
-
-Depending on the design, optimisation settings and server usage, this could take a long time.
-"
-
-while true; do
-    #read -p "Do you wish to continue? " yn
-    yn=Y #Override Question.
-    case $yn in
-        [Yy]* ) init $1 $2 $3;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer y or n.";;
-    esac
-done
+init ${@}
 }
+
+#iter lin opt basic 'CLKP'
 
 init()
 {
-if [ "$3" = "iter" ]
+    SYNMODE="opt"
+
+while [ "$1" != "" ]; do
+    case $1 in
+        (-h|--help)  usage;;
+        ([0-9]*)     CLOCK=$1;;
+        (iter)       RUN_ITER=1;;
+        (lin)        RUN_LIN=1;;
+        (opt)        RUN_OPT=1
+                     SYNMODE=$1;;
+        (basic)      RUN_BASIC=1
+                     SYNMODE=$1;;
+    esac
+    shift
+done
+
+if [ -z "$CLOCK" ]
 then
-    iter_warn $1 $2
-elif [ "$3" = "lin" ]
+    echo "No clock period defined"
+    exit 1
+elif [ -n "$RUN_ITER" ] && [ -n "$RUN_LIN" ]
 then
-    lin_warn $1 $2
+    echo "Both iter & lin defined"
+    exit 1
+elif [ -n "$RUN_OPT" ] && [ -n "$RUN_BASIC" ]
+then
+    echo "Both opt & basic defined"
+    exit 1
+fi
+
+if [ -n "$RUN_ITER" ]
+then
+    iter_warn $SYNMODE $CLOCK
+elif [ -n "$RUN_LIN" ]
+then
+    lin_warn $SYNMODE $CLOCK
 else
-    run $1 $2
-    declare -i CLK_P=${2}*10 #Done to align with timeunit.
-    ./RUNME -pnr=${2}${1} -plusargs="+clk_p=${CLK_P}" | tee syn/logs_${2}${1}/run.log
+    run $SYNMODE $CLOCK
+    declare -i CLK_P=$CLOCK*10 #Done to align with timeunit.
+    ./RUNME -pnr=$CLOCK$SYNMODE -clk=$CLK_P | tee syn/logs_$CLOCK$SYNMODE/run.log
     exit
 fi
 }
@@ -63,6 +77,14 @@ fi
 usage()
 {
     echo "
+    This script will perform the following:
+    1. Clean out any existing synthesis and/or place & route files.
+    2. Synthesise, then place & route the processor as it stands.
+    3. Run the testing script, executing the test cases and printing the results.
+
+    Depending on the design, optimisation settings and server usage, this could
+    take a long time.
+
     -h,--help       Displays this message
     
     This script should be called in the following fashion:
@@ -220,7 +242,6 @@ done
 
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
-hart="hart.ecs.soton.ac.uk"
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
