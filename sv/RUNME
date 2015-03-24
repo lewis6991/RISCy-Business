@@ -82,15 +82,22 @@ main()
             then
                 if [ -z "${CLKARGS[2]}" ]
                 then
-                    declare -i a=${CLKARGS[0]}
-                    declare -i b=${CLKARGS[1]}
-                    declare -i c=($b-$a)/10
-                    if [ $c = "0" ]
+                    declare -i ac=${CLKARGS[0]}
+                    declare -i bc=${CLKARGS[1]}
+                    declare -i cc=($bc-$ac)/10
+                    if [ $cc = "0" ]
                     then
-                        c="1"
+                        cc="1"
                     fi
-                    CLKARGS[2]=$c
+                    CLKARGS[2]=$cc
+                else
+                    if [ ${CLKARGS[2]} = "0" ]
+                    then
+                        CLKARGS[2]="1"
+                    fi
+                    
                 fi
+
                 CLOCK=""
                 for (( j=${CLKARGS[0]}; j<=${CLKARGS[1]}; j=j+${CLKARGS[2]} ))
                 do
@@ -159,7 +166,7 @@ main()
             NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
             proc
         else
-            summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
+            summarytext=$"${summarytext} No -syn directory selected i.e. -syn=10opt
 "
         fi
     fi
@@ -171,7 +178,7 @@ main()
             NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
             proc
         else
-            summarytext=$"${summarytext} No clock period selected. Avaiable periods are:
+            summarytext=$"${summarytext} No -pnr directory selected i.e. -pnr=10opt
 "
         fi
     fi
@@ -206,11 +213,13 @@ usage()
     -pnr               Runs the test cases on the placed and routed design
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
-    -clk=\"N\"           Used to set the clock period. If not set, a default
-        =\"N-M\"         value of 10ns is chosen. A range can be set by
-        =\"N-M,L\"       specifying the lowest-highest clock periods, and the
-                       increment. If no increment is given, the code will
-                       attempt to run test for 10 different periods
+    -clk=\"L\"           Used to set the clock period. If not set, a default
+        =\"L-U\"         value of 10ns is chosen. A range can be set by
+        =\"L-U,I\"       specifying the lowest (L) to the highest (H) clock 
+                       period, and the increment (I). If no increment is 
+                       given, the code will attempt to run test for 10 
+                       different periods.
+                       NOTE: Specify in terms of 100ps i.e. 100 = 10ns
 
     -plusargs=\"\"       Include plusargs to any command to set arguments
                        within the testbench itself. Full list below.
@@ -233,7 +242,7 @@ proc()
             ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+clk_p=$i" $PROCLOC > temp.log
             if [ "$?" = "0" ]
             then
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i)
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i) 
     "
                 if [ -n "$VERBOSE" ]
                 then
@@ -242,7 +251,7 @@ proc()
                 fi
                 break
             else
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: ..  FAIL ($i)
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. FAIL ($i) 
     "
                 if [ -z "$QUIET" ]
                 then
@@ -360,19 +369,23 @@ padding()
 {
     while read a
     do
-       declare -i NUMCS
-       TOTAL=${#a}
-       NUMCS=$TOTAL
-       if [ $NUMCS -gt 13 ]
-       then
-           NUMCS=$NUMCS-13
-           newtext="${newtext}${a:0:$NUMCS} "
-           for (( j=1; j<=14-$NUMCS; j++ ))
-           do
-               newtext="${newtext}."
-           done
-           newtext="${newtext} ${a:$TOTAL-10:$TOTAL}\n"
-       fi
+        for (( i=1; i<${#a}; i++ )); do
+            if [ "${a:$i-1:1}" = "." ] && [ "${a:$i:1}" = "." ]
+            then
+                break
+            fi
+        done
+
+        newtext="${newtext}${a:0:$i}"
+        if [ $i != "1" ]
+        then
+            for (( j=$i; j<=21; j++ ))
+            do
+                newtext="${newtext}."
+            done
+        fi
+        newtext="${newtext}${a:$i:${#a}}\n"
+
     done <<< "$summarytext"
 }
 
