@@ -14,8 +14,6 @@ module EX1(
                         Jump       ,
                         Branch     ,
                         RegWriteIn ,
-                        MemReadIn  ,
-                        MemtoRegIn ,
                         MemWriteIn ,
                         ALUSrc     ,
                         BRASrc     ,
@@ -24,22 +22,14 @@ module EX1(
                         Immediate  , // Immediate from Decode stage.
                         PCin       , // Program counter input.
     input        [ 4:0] Shamt      , // Shift amount.
-    input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
     output logic [63:0] Out        ,
-    input        [ 2:0] MemfuncIn  ,
-    output logic [ 4:0] RAddrOut   ,
-    output logic [ 2:0] MemfuncOut ,
-    output logic [31:0] RtDataOut  ,
-                        PCout      , // Program counter output.
+    output logic [31:0] PCout      , // Program counter output.
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
                         N          , // Output negative flag.
                         RegWriteOut,
-                        MemReadOut ,
-                        MemtoRegOut,
-                        MemWriteOut,
                         BranchTaken,
                         ACCEn
 );
@@ -57,7 +47,7 @@ module EX1(
     wire ALUC, ALUZ, ALUO, ALUN;
     wire MULC, MULZ, MULO, MULN;
     wire C1  , Z1  , O1  , N1;
-    
+
     wire MULSelB;
     wire ALUEn;
     wire BRAEn;
@@ -82,7 +72,7 @@ module EX1(
         .A      (A        ), // ALU input A
         .B      (B        ), // ALU input B
         .Address(BRAAddr  ), // Address input
-        .Func   (Func     ), 
+        .Func   (Func     ),
         .PCout  (PCout    ), // Program counter
         .Ret    (BRAret   ), // Return address
         .Taken  (BRAtaken )  // Branch taken
@@ -146,26 +136,19 @@ module EX1(
         .Y  (Out      ),
         .Sel(OutSel[1])
     );
-    
+
     mux #(.n(4)) mux7(
         .A  ({ALUC, ALUZ, ALUO, ALUN}),
         .B  (4'b0                    ),
         .Y  ({C1  , Z1  , O1  , N1  }),
         .Sel(OutSel[0])
     );
-    
+
     mux #(.n(4)) mux8(
         .A  ({C1  , Z1  , O1  , N1  }),
         .B  ({MULC, MULZ, MULO, MULN}),
         .Y  ({C   , Z   , O   , N   }),
         .Sel(OutSel[1])
     );
-    
-    assign MemReadOut  = MemReadIn;
-    assign MemtoRegOut = MemtoRegIn;
-    assign MemWriteOut = MemWriteIn;
-    assign RAddrOut    = RAddrIn   ;
-    assign RtDataOut   = B         ;
-    assign MemfuncOut  = MemfuncIn ;
 
 endmodule

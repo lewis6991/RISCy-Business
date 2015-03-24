@@ -9,32 +9,18 @@
 module EX2(
     input               Clock      ,
                         nReset     ,
-                        RegWriteIn ,
-                        MemReadIn  ,
-                        MemtoRegIn ,
-                        MemWriteIn ,
                         ALUC       ,
                         ALUZ       ,
                         ALUO       ,
                         ALUN       ,
                         ACCEn      ,
-    input        [ 2:0] MemfuncIn  ,
-    input        [31:0] RtDataIn   ,
     input        [63:0] In         , // ACC input
-    input        [ 4:0] RAddrIn    ,
     input        [ 5:0] Func       ,
-    output logic [ 2:0] MemfuncOut ,
     output logic [31:0] Out        ,
-                        RtDataOut  ,
-    output logic [ 4:0] RAddrOut   ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
-                        N          , // Output negative flag.
-                        RegWriteOut,
-                        MemReadOut ,
-                        MemtoRegOut,
-                        MemWriteOut
+                        N            // Output negative flag.
 );
 
     wire [31:0] ACCout;
@@ -70,13 +56,5 @@ module EX2(
         .Y  ({C   , Z   , O   , N   }),
         .Sel(ACCEn                   )
     );
-
-    assign RegWriteOut = RegWriteIn;
-    assign MemReadOut  = MemReadIn;
-    assign MemtoRegOut = MemtoRegIn;
-    assign MemWriteOut = MemWriteIn;
-    assign MemfuncOut  = MemfuncIn;
-    assign RAddrOut    = RAddrIn;
-    assign RtDataOut   = RtDataIn;
 
 endmodule

@@ -66,7 +66,7 @@ default clocking delay @ (posedge Clock);
     output MemWData;
 endclocking
 
-assign opcode  = Instruction[31:26];
+assign opcode  = e_op_code'(Instruction[31:26]);
 assign rs_addr = Instruction[25:21];
 assign rt_addr = Instruction[20:16];
 assign rd_addr = Instruction[15:11];

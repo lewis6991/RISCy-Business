@@ -45,31 +45,30 @@ wire        shiftsel,
 wire [1:0]  regdst;
 wire [4:0]  raddrinstr;
 
-assign Shamt        = Instruction[10:6] ;
-assign InstrAddrOut = InstrAddrIn       ;
-assign RsAddr       = Instruction[25:21];
-assign RtAddr       = Instruction[20:16];
+assign Shamt  = Instruction[10:6] ;
+assign RsAddr = Instruction[25:21];
+assign RtAddr = Instruction[20:16];
 
 decoder dec0 (
-    .RegDst  (regdst                    ),
-    .Branch  (Branch                    ),
-    .Jump    (Jump                      ),
-    .MemRead (MemRead                   ),
-    .MemtoReg(MemtoReg                  ),
-    .ALUOp   (ALUOp                     ),
-    .MULOp   (MULOp                     ),
-    .MemWrite(MemWrite                  ),
-    .ALUSrc  (ALUSrc                    ),
-    .BRASrc  (BRASrc                    ),
-    .RegWrite(RegWriteOut               ),
-    .ShiftSel(shiftsel                  ),
-    .ImmSize (immsize                   ),
-    .Unsgnsel(unsgnsel                  ),
-    .Func    (ALUfunc                   ),
-    .MemFunc (Memfunc                   ),
-    .OpCode  (Instruction[31:26]        ),
-    .FuncCode(Instruction[5:0]          ),
-    .BraCode (Instruction[20:16]        )
+    .RegDst  (regdst            ),
+    .Branch  (Branch            ),
+    .Jump    (Jump              ),
+    .MemRead (MemRead           ),
+    .MemtoReg(MemtoReg          ),
+    .ALUOp   (ALUOp             ),
+    .MULOp   (MULOp             ),
+    .MemWrite(MemWrite          ),
+    .ALUSrc  (ALUSrc            ),
+    .BRASrc  (BRASrc            ),
+    .RegWrite(RegWriteOut       ),
+    .ShiftSel(shiftsel          ),
+    .ImmSize (immsize           ),
+    .Unsgnsel(unsgnsel          ),
+    .Func    (ALUfunc           ),
+    .MemFunc (Memfunc           ),
+    .OpCode  (Instruction[31:26]),
+    .FuncCode(Instruction[5:0]  ),
+    .BraCode (Instruction[20:16])
 );
 
 registers reg0(
@@ -113,11 +112,11 @@ mux #(.n(5))mux3(             // regdst = 00, RAddrOut = rt
     .Sel(regdst[0]         )
 );
 
-mux #(.n(5))mux4(             // regdst = 1x, RAddrOut = 31
-    .A  (raddrinstr        ),
-    .B  (5'd31             ), // ra = Reg 31 (return register)
-    .Y  (RAddrOut          ),
-    .Sel(regdst[1]         )
+mux #(.n(5))mux4(     // regdst = 1x, RAddrOut = 31
+    .A  (raddrinstr),
+    .B  (5'd31     ), // ra = Reg 31 (return register)
+    .Y  (RAddrOut  ),
+    .Sel(regdst[1] )
 );
 
 endmodule
