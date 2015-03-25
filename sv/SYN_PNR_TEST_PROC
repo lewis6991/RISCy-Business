@@ -120,7 +120,7 @@ cd syn
 ./RUN_PNR clean > /dev/null
 echo "Workspace cleaned"
 echo "Beginning synthesis..."
-if [ QUIET -eq 1 ]
+if [ $QUIET -eq 1 ]
 then
     ./RUN_SYN $TYPE $CLK_PERIOD 1 > /dev/null # HARD CODED. REVISIT
 else
@@ -129,7 +129,7 @@ fi
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
-if [ QUIET -eq 1 ]
+if [ $QUIET -eq 1 ]
 then
     ./RUN_PNR $TYPE $CLK_PERIOD > /dev/null
 else
