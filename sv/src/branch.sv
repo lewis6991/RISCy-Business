@@ -8,6 +8,7 @@
 
 `include "op_definition.sv"
 `include "alu_definition.sv"
+`include "branch_definition.sv"
 
 module branch(
     input               Enable , // Enable branch module

@@ -156,15 +156,16 @@ main()
     fi
     if [ -n "$RUN_PROC" ]
     then
-        proc
+        proc "## BEHAVIOURAL ##"
     fi
     if [ -n "$RUN_SYN" ]
     then
         if [[ $SYNARGS = *"-syn="* ]]
         then
             PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
-            proc
+            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
+            proc "## SYNTHESIS ##"
+            NCARGS=$NCDEFAULT
         else
             summarytext=$"${summarytext} No -syn directory selected i.e. -syn=10opt
 "
@@ -175,8 +176,9 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCARGS +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
-            proc
+            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
+            proc "## PLACE & ROUTE ##"
+            NCARGS=$NCDEFAULT
         else
             summarytext=$"${summarytext} No -pnr directory selected i.e. -pnr=10opt
 "
@@ -184,10 +186,10 @@ main()
     fi
 
     padding
-    echo -e "\n$newtext" >> run.log
+    echo -e "$newtext" >> run.log
     coltext=${newtext//PASS/\\e[92mPASS\\e[39m}
     newtext=${coltext//FAIL/\\e[1;4;91mFAIL\\e[21;24;39m}
-    echo -e "\n$newtext"
+    echo -e "$newtext"
 
     exit 0
 }
@@ -233,6 +235,9 @@ usage()
 
 proc()
 {
+    echo "          $1"
+    summarytext=$"${summarytext}$1
+"
     echo "##### Testing the entire processor"
     if [[ $PLUSARGS = *"+test"* ]]
     then
@@ -243,16 +248,17 @@ proc()
             if [ "$?" = "0" ]
             then
                 summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i) 
-    "
+"
                 if [ -n "$VERBOSE" ]
                 then
                     echo "INFO: Clock = $i"
                     echo "$(cat temp.log)"
                 fi
+                echo "$(cat temp.log)" >> run.log
                 break
             else
                 summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. FAIL ($i) 
-    "
+"
                 if [ -z "$QUIET" ]
                 then
                     echo "INFO: Clock = $i"
@@ -271,16 +277,17 @@ proc()
                 if [ "$?" = "0" ]
                 then
                     summarytext="${summarytext}processor testcase $test .. PASS ($i)
-    "
+"
                     if [ -n "$VERBOSE" ]
                     then
                         echo "INFO: Clock = $i"
                         echo "$(cat temp.log)"
                     fi
+                    echo "$(cat temp.log)" >> run.log
                     break
                 else
                     summarytext="${summarytext}processor testcase $test .. FAIL ($i)
-    "
+"
                     if [ -z "$QUIET" ]
                     then
                         echo "INFO: Clock = $i"
@@ -291,7 +298,10 @@ proc()
             done
         done
     fi
-    echo "      .. done"
+    echo "      .. done
+"
+    summarytext=$"${summarytext}
+"
 }
 
 stages()
@@ -307,16 +317,17 @@ stages()
             if [ "$?" = "0" ]
             then
                 summarytext="${summarytext}$i .. PASS ($j)
-    "
+"
                 if [ -n "$VERBOSE" ]
                 then
                     echo "INFO: Clock = $j"
                     echo "$templog"
                 fi
+                echo "$templog" >> run.log
                 break
             else
                 summarytext="${summarytext}$i .. FAIL ($j)
-    "
+"
                 if [ -z "$QUIET" ]
                 then
                     echo "INFO: Clock = $j"
@@ -343,16 +354,17 @@ specific()
             if [ "$?" = "0" ]
             then
                 summarytext="${summarytext}$i .. PASS ($j)
-    "
+"
                 if [ -n "$VERBOSE" ]
                 then
                     echo "##### Testing ${i}.sv"
                     echo "$templog"
                 fi
+                echo "$templog" >> run.log
                 break
             else
                 summarytext="${summarytext}$i .. FAIL ($j)
-    "
+"
                 if [ -z "$QUIET" ]
                 then
                     echo "##### Testing ${i}.sv"
@@ -369,15 +381,17 @@ padding()
 {
     while read a
     do
+        DOTSFOUND=0
         for (( i=1; i<${#a}; i++ )); do
             if [ "${a:$i-1:1}" = "." ] && [ "${a:$i:1}" = "." ]
             then
+                DOTSFOUND=1
                 break
             fi
         done
 
         newtext="${newtext}${a:0:$i}"
-        if [ $i != "1" ]
+        if [ "$DOTSFOUND" = "1" ]
         then
             for (( j=$i; j<=21; j++ ))
             do
@@ -407,7 +421,8 @@ echo -e 'run.log
 summarytext=""
 newtext=""
 PROCLOC="test/enums.sv test/processor_tb.sv src/*.sv"
-NCARGS="+nc64bit -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
+NCDEFAULT="+nc64bit -sv -q +nctimescale+100ps/1fs -sv_lib complib.so"
+NCARGS=$NCDEFAULT
 host=`hostname`
 hind="hind.ecs.soton.ac.uk"
 main "$@"

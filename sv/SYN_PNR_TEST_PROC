@@ -31,6 +31,7 @@ init ${@}
 init()
 {
     SYNMODE="opt"
+    QUIET=0
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -42,6 +43,7 @@ while [ "$1" != "" ]; do
                      SYNMODE=$1;;
         (basic)      RUN_BASIC=1
                      SYNMODE=$1;;
+        (-q)         QUIET=1
     esac
     shift
 done
@@ -118,16 +120,26 @@ cd syn
 ./RUN_PNR clean > /dev/null
 echo "Workspace cleaned"
 echo "Beginning synthesis..."
-./RUN_SYN $TYPE $CLK_PERIOD 1 # HARD CODED. REVISIT
+if [ $QUIET -eq 1 ]
+then
+    ./RUN_SYN $TYPE $CLK_PERIOD 1 > /dev/null # HARD CODED. REVISIT
+else
+    ./RUN_SYN $TYPE $CLK_PERIOD 1
+fi
 echo "Synthesis complete"
 
 echo "Beginning place & route..."
-./RUN_PNR $TYPE $CLK_PERIOD
+if [ $QUIET -eq 1 ]
+then
+    ./RUN_PNR $TYPE $CLK_PERIOD > /dev/null
+else
+    ./RUN_PNR $TYPE $CLK_PERIOD
+fi
 echo "Place & route complete"
 echo "Running tests..."
 cd ../
 declare -i CLK_P=${CLK_PERIOD}*10 #Done to align with timeunit.
-RESULTS=$(./RUNME -pnr=${CLK_PERIOD}${TYPE} -plusargs="+clk_p=${CLK_P}")
+RESULTS=$(`./RUNME -pnr=${CLK_PERIOD}${TYPE} -plusargs="+clk_p=${CLK_P}"`)
 echo "$RESULTS"
 echo "Tests complete."
 }
