@@ -39,15 +39,9 @@ logic        [ 4:0] rs_addr    ,
                     rd_addr    ,
                     shamt      ;
 logic        [15:0] imm        ,
-                    offset     ;
-logic        [15:0] pc      = 0;
+                    offset     ,
+                    pc      = 0;
 logic signed [25:0] address    ;
-
-bit          [31:0] memRData   ,
-                    memWData   ,
-                    memAddr    ;
-bit                 memWrite   ,
-                    memRead    ;
 
 // Internal registers are signed unpacked array.
 int register[0:31];
@@ -65,11 +59,11 @@ default clocking delay @ (posedge Clock);
     output pc      ;
     output Register;
     output cAddr   ;
-    output memWrite;
-    output memRead ;
-    output memAddr ;
-    output memRData;
-    output memWData;
+    output MemRead ;
+    output MemWrite;
+    output MemAddr ;
+    output MemRData;
+    output MemWData;
 endclocking
 
 assign opcode  = e_op_code'(Instruction[31:26]);
@@ -232,18 +226,19 @@ task automatic update_memory();
     //    $error("ERROR: Address %d is out of range. Maximum address is %d.",
     //        mem_addr, mem_size);
 
-    // Clocking drives
-    delay.memRead  <= ##(mem_d  ) read                 ;
-    delay.memWrite <= ##(mem_d  ) write                ;
-    delay.memAddr  <= ##(mem_d  ) `rs + offset         ;
-    delay.memRData <= ##(mem_d+1) read  ? `mem_data : 0;
-    delay.memWData <= ##(mem_d  ) write ? `mem_data : 0;
+    // These assignments prevent an internal error in ncverilog.
+    MemRead  = MemRead ;
+    MemWrite = MemWrite;
+    MemAddr  = MemAddr ;
+    MemRData = MemRData;
+    MemWData = MemWData;
 
-    MemRData = memRData;
-    MemWData = memWData;
-    MemAddr  = memAddr ;
-    MemWrite = memWrite;
-    MemRead  = memRead ;
+    // Clocking drives
+    delay.MemRead  <= ##(mem_d  ) read                 ;
+    delay.MemWrite <= ##(mem_d  ) write                ;
+    delay.MemAddr  <= ##(mem_d  ) `rs + offset         ;
+    delay.MemRData <= ##(mem_d+1) read  ? `mem_data : 0;
+    delay.MemWData <= ##(mem_d  ) write ? `mem_data : 0;
 endtask
 
 task update_acc();
