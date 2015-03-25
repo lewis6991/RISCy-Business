@@ -12,6 +12,6 @@ module signextend(
     output logic [31:0] Out
 );
 
-    assign Out = Unsgnsel? {16'd0, In}:{{16{In[15]}}, In};
+assign Out = Unsgnsel ? In : $signed(In);
 
 endmodule

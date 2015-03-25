@@ -27,39 +27,19 @@ module IF(
                         PCAddrInc
 );
 
-    wire [31:0] progaddrout ,
-                progaddrnext,
-                progaddrinc ,
-                progaddrmout;
+    logic [31:0] progAddrOut ;
+    wire  [31:0] progAddrMOut;
 
-    pc pc0(
-        .Clock      (Clock       ),
-        .nReset     (nReset      ),
-        .ProgAddrIn (progaddrnext),
-        .ProgAddrOut(progaddrout )
-    );
+    always_ff @ (posedge Clock, negedge nReset)
+        if (~nReset)
+            progAddrOut <= #1 32'd0;
+        else
+            progAddrOut <= #1 BranchTaken ? BranchAddr : progAddrMOut;
 
-    pcinc pcinc0(
-        .In (progaddrout),
-        .Out(progaddrinc)
-    );
+    assign progAddrMOut = nStall ? progAddrOut + 32'd4 : progAddrOut;
 
-    mux muxStall(
-        .Sel(nStall      ),
-        .A  (progaddrout ),
-        .B  (progaddrinc ),
-        .Y  (progaddrmout)
-    );
-
-    mux mux0(
-        .Sel(BranchTaken ),
-        .A  (progaddrmout),
-        .B  (BranchAddr  ),
-        .Y  (progaddrnext)
-    );
-
-    assign InstrAddr = progaddrout            ;
+    assign InstrAddr = progAddrOut            ;
     assign InstrOut  = InstrMem & {32{nStall}};
-    assign PCAddrInc = progaddrmout           ;
+    assign PCAddrInc = progAddrMOut           ;
 
 endmodule

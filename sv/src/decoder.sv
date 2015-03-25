@@ -15,6 +15,7 @@
 module decoder(
     output logic [1:0] RegDst  ,
     output logic       Branch  ,
+                       ZeroB   ,
                        Jump    ,
                        MemRead ,
                        MemtoReg,
@@ -52,6 +53,7 @@ module decoder(
         Func     = 6'd0;
         MemFunc  = 3'd0;
         BRASrc   = 1'b0;
+        ZeroB    = 1'b0;
 
         case(OpCode)
             `ALU:
@@ -96,18 +98,20 @@ module decoder(
                     `BGEZ,
                     `BLTZ:
                     begin
-                        Func     = BraCode ;
-                        Branch   = 1'b1    ;
-                        BRASrc   = 1'b1    ;
+                        Func     = `SUB;
+                        Branch   = 1'b1;
+                        ZeroB    = 1'b1;
+                        BRASrc   = 1'b1;
                     end
 
                     `BGEZAL, `BLTZAL:
                     begin
-                        RegDst   = 2'b10   ;
-                        Func     = BraCode ;
-                        BRASrc   = 1'b1    ;
-                        Branch   = 1'b1    ;
-                        RegWrite = 1'b1    ;
+                        RegDst   = 2'b10;
+                        Func     = `SUB ;
+                        BRASrc   = 1'b1 ;
+                        Branch   = 1'b1 ;
+                        ZeroB    = 1'b1 ;
+                        RegWrite = 1'b1 ;
                     end
 
                     default:;
@@ -216,19 +220,27 @@ module decoder(
                 RegWrite = 1'b1 ;
             end
 
-            `BLEZ, `BGTZ, `BEQ, `BNE:
+            `BLEZ, `BGTZ:
             begin
-                Func     = OpCode;
-                Branch   = 1'b1  ;
-                BRASrc   = 1'b1  ;
+                Func   = `SUB;
+                Branch = 1'b1;
+                BRASrc = 1'b1;
+                ZeroB  = 1'b1;
+            end
+
+            `BEQ, `BNE:
+            begin
+                Func   = `SUB;
+                Branch = 1'b1;
+                BRASrc = 1'b1;
             end
 
             `J:
             begin
-                Func     = `J  ;
-                Jump     = 1'b1;
-                BRASrc   = 1'b1;
-                ImmSize  = 1'b1;
+                Func    = `J  ;
+                Jump    = 1'b1;
+                BRASrc  = 1'b1;
+                ImmSize = 1'b1;
             end
 
             `JAL:

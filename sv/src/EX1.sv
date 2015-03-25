@@ -7,12 +7,11 @@
 //------------------------------------------------------------------------------
 
 module EX1(
-    input               Clock      ,
-                        nReset     ,
-                        ALUOp      ,
+    input               ALUOp      ,
                         MULOp      ,
                         Jump       ,
                         Branch     ,
+                        ZeroB      ,
                         RegWriteIn ,
                         MemWriteIn ,
                         ALUSrc     ,
@@ -23,6 +22,9 @@ module EX1(
                         PCin       , // Program counter input.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 5:0] Func       ,
+    input        [ 5:0] ALUFunc    ,
+    input        [ 2:0] BrCode     , // 3 LSB of OpCode used to differentiate branch and jump instructions.
+    input               BrRt       , // LSB of Rt used for branch instructions.
     output logic [63:0] Out        ,
     output logic [31:0] PCout      , // Program counter output.
     output logic        C          , // Carry out flag.
@@ -46,18 +48,20 @@ module EX1(
 
     wire ALUC, ALUZ, ALUO, ALUN;
     wire MULC, MULZ, MULO, MULN;
-    wire C1  , Z1  , O1  , N1;
 
     wire MULSelB;
     wire ALUEn;
     wire BRAEn;
     wire BRAtaken;
 
+    always @ (ALUFunc)
+        $display("DEBUG: Func = %6b, ALUFunc = %6b", Func, ALUFunc);
+
     alu alu0 (
         .A       (A      ),
         .B       (Y      ),
         .Shamt   (Shamt  ),
-        .ALUfunc (Func   ),
+        .ALUfunc (ALUFunc),
         .Out     (ALUout ),
         .En      (ALUEn  ),
         .C       (ALUC   ),
@@ -66,16 +70,19 @@ module EX1(
         .N       (ALUN   )
     );
 
-    branch branch0 (
-        .Enable (BRAEn    ), // Enable branch module
-        .PCIn   (PCin     ), // Program counter input.
-        .A      (A        ), // ALU input A
-        .B      (B        ), // ALU input B
-        .Address(BRAAddr  ), // Address input
-        .Func   (Func     ),
-        .PCout  (PCout    ), // Program counter
-        .Ret    (BRAret   ), // Return address
-        .Taken  (BRAtaken )  // Branch taken
+    branch branch0(
+        .Enable (BRAEn   ), // Enable branch module
+        .ALUC   (ALUC    ),
+        .ALUZ   (ALUZ    ),
+        .ALUO   (ALUO    ),
+        .ALUN   (ALUN    ),
+        .PCIn   (PCin    ), // Program counter input.
+        .Address(BRAAddr ), // Address input
+        .BrCode (BrCode  ),
+        .BrRt   (BrRt    ),
+        .PCout  (PCout   ), // Program counter
+        .Ret    (BRAret  ), // Return address
+        .Taken  (BRAtaken)  // Branch taken
     );
 
     ex_mult ex_mult0 (
@@ -86,22 +93,12 @@ module EX1(
         .Z   (MULZ   ),
         .O   (MULO   ),
         .N   (MULN   ),
+        .Func(Func   ),
         .Out (MULout )
     );
 
-    mux mux3 (
-        .A  (A        ),
-        .B  (Immediate),
-        .Y  (BRAAddr  ),
-        .Sel(BRASrc   )
-    );
-
-    mux mux4 (
-        .A  (B        ),
-        .B  (Immediate),
-        .Y  (Y        ),
-        .Sel(ALUSrc   )
-    );
+    assign BRAAddr = BRASrc ? Immediate : A;
+    assign Y       = ZeroB ? 32'd0 : ALUSrc ? Immediate : B;
 
     ex_control ex_control0 (
         .ALUOp       (ALUOp      ),
@@ -112,7 +109,7 @@ module EX1(
         .BRAtaken    (BRAtaken   ),
         .ALUEn       (ALUEn      ),
         .MemWrite    (MemWriteIn ),
-        .Func        (Func       ),
+        .Func        (ALUFunc    ),
         .ACCEn       (ACCEn      ),
         .MULSelB     (MULSelB    ), // MUL module select
         .RegWriteOut (RegWriteOut),
@@ -123,32 +120,10 @@ module EX1(
                                     //          10: MUL
     );
 
-    mux #(.n(64)) mux5(
-        .A  ({32'd0, ALUout}),
-        .B  ({32'd0, BRAret}),
-        .Y  (Out1           ),
-        .Sel(OutSel[0]      )
-    );
+    assign Out = OutSel[1] ? MULout :
+                 OutSel[0] ? BRAret : ALUout;
 
-    mux #(.n(64)) mux6(
-        .A  (Out1     ),
-        .B  (MULout   ),
-        .Y  (Out      ),
-        .Sel(OutSel[1])
-    );
-
-    mux #(.n(4)) mux7(
-        .A  ({ALUC, ALUZ, ALUO, ALUN}),
-        .B  (4'b0                    ),
-        .Y  ({C1  , Z1  , O1  , N1  }),
-        .Sel(OutSel[0])
-    );
-
-    mux #(.n(4)) mux8(
-        .A  ({C1  , Z1  , O1  , N1  }),
-        .B  ({MULC, MULZ, MULO, MULN}),
-        .Y  ({C   , Z   , O   , N   }),
-        .Sel(OutSel[1])
-    );
+    assign {C, Z, O, N} = OutSel[1] ? {MULC, MULZ, MULO, MULN} :
+                          OutSel[0] ? 1'd0 : {ALUC, ALUZ, ALUO, ALUN};
 
 endmodule

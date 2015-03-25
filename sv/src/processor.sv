@@ -23,125 +23,137 @@ module PROCESSOR(
                         nStall
 );
 
-wire JumpD        ;
-wire JumpE1       ;
+logic JumpD        ;
+logic JumpE1       ;
 
-wire BranchD      ;
-wire BranchE1     ;
+logic BranchD      ;
+logic BranchE1     ;
 
-wire MemReadD     ;
-wire MemReadE1    ;
-wire MemReadE2    ;
-wire MemReadM     ;
+logic ZeroBD       ;
+logic ZeroBE1      ;
 
-wire MemtoRegD    ;
-wire MemtoRegE1   ;
-wire MemtoRegE2   ;
-wire MemtoRegM    ;
-wire MemtoRegW    ;
+logic MemReadD     ;
+logic MemReadE1    ;
+logic MemReadE2    ;
+logic MemReadM     ;
 
-wire MemWriteD    ;
-wire MemWriteE1   ;
-wire MemWriteE2   ;
-wire MemWriteM    ;
+logic MemtoRegD    ;
+logic MemtoRegE1   ;
+logic MemtoRegE2   ;
+logic MemtoRegM    ;
+logic MemtoRegW    ;
 
-wire ALUSrcD      ;
-wire ALUSrcE1     ;
+logic MemWriteD    ;
+logic MemWriteE1   ;
+logic MemWriteE2   ;
+logic MemWriteM    ;
 
-wire RegWriteD    ;
-wire RegWriteE1in ;
-wire RegWriteE1out;
-wire RegWriteE2   ;
-wire RegWriteM    ;
-wire RegWriteW    ;
+logic ALUSrcD      ;
+logic ALUSrcE1     ;
 
-wire ALUOpD       ;
-wire ALUOpE1      ;
+logic RegWriteD    ;
+logic RegWriteE1in ;
+wire  RegWriteE1out;
+logic RegWriteE2   ;
+logic RegWriteM    ;
+logic RegWriteW    ;
 
-wire MULOpD       ;
-wire MULOpE1      ;
+logic ALUOpD       ;
+logic ALUOpE1      ;
 
-wire BranchTaken  ;
+logic MULOpD       ;
+logic MULOpE1      ;
 
-wire ALUCE1       ;
-wire ALUCE2       ;
-wire ALUZE1       ;
-wire ALUZE2       ;
-wire ALUOE1       ;
-wire ALUOE2       ;
-wire ALUNE1       ;
-wire ALUNE2       ;
+logic BranchTaken  ;
 
-wire ACCEnE1      ;
-wire ACCEnE2      ;
+logic ALUCE1       ;
+logic ALUCE2       ;
+logic ALUZE1       ;
+logic ALUZE2       ;
+logic ALUOE1       ;
+logic ALUOE2       ;
+logic ALUNE1       ;
+logic ALUNE2       ;
 
-wire [31:0] InstructionF;
-wire [31:0] InstructionD;
+logic ACCEnE1      ;
+logic ACCEnE2      ;
 
-wire [31:0] RDataW      ;
+logic [31:0] InstructionF;
+logic [31:0] InstructionD;
 
-wire [4:0]  RAddrD      ;
-wire [4:0]  RAddrE1     ;
-wire [4:0]  RAddrE2     ;
-wire [4:0]  RAddrM      ;
-wire [4:0]  RAddrW      ;
+logic [31:0] RDataW      ;
 
-wire [4:0]  RsAddrD     ;
-wire [4:0]  RsAddrE1    ;
-wire [4:0]  RtAddrD     ;
-wire [4:0]  RtAddrE1    ;
+logic [4:0]  RAddrD      ;
+logic [4:0]  RAddrE1     ;
+logic [4:0]  RAddrE2     ;
+logic [4:0]  RAddrM      ;
+logic [4:0]  RAddrW      ;
 
-wire [31:0] ImmDataD    ;
-wire [31:0] ImmDataE1   ;
+logic [4:0]  RsAddrD     ;
+logic [4:0]  RsAddrE1    ;
+logic [4:0]  RtAddrD     ;
+logic [4:0]  RtAddrE1    ;
+logic [4:0]  RtAddrE2    ;
+logic [4:0]  RtAddrM     ;
 
-wire [31:0] RsData      ;
-wire [31:0] RsDataD     ;
-wire [31:0] RsDataE1    ;
+logic [31:0] ImmDataD    ;
+logic [31:0] ImmDataE1   ;
 
-wire [31:0] RtData      ;
-wire [31:0] RtDataD     ;
-wire [31:0] RtDataE1    ;
-wire [31:0] RtDataE2    ;
-wire [31:0] RtDataM     ;
-wire [31:0] RtDataW     ;
+logic [31:0] RsData      ;
+logic [31:0] RsDataD     ;
+logic [31:0] RsDataE1    ;
 
-wire [5:0]  ALUfuncD    ;
-wire [5:0]  ALUfuncE1   ;
-wire [5:0]  ALUfuncE2   ;
+logic [31:0] RtData      ;
+logic [31:0] RtDataD     ;
+logic [31:0] RtDataE1    ;
+logic [31:0] RtDataE2    ;
+logic [31:0] RtDataM     ;
+logic [31:0] RtDataMout  ;
+logic [31:0] RtDataW     ;
 
-wire [2:0]  MemfuncD    ;
-wire [2:0]  MemfuncE1   ;
-wire [2:0]  MemfuncE2   ;
-wire [2:0]  MemFuncM    ;
-wire [2:0]  MemfuncW    ;
+logic [5:0]  ALUfuncD    ;
+logic [5:0]  ALUfuncE1   ;
+logic [5:0]  ALUfuncE2   ;
+wire  [2:0]  BrCodeD     ;
+logic [2:0]  BrCodeE1    ;
 
-wire [4:0]  ShamtD      ;
-wire [4:0]  ShamtE1     ;
+wire  [5:0]  FuncD       ;
+logic [5:0]  FuncE1      ;
 
-wire [31:0] PCAddrInc   ;
+logic [2:0]  MemfuncD    ;
+logic [2:0]  MemfuncE1   ;
+logic [2:0]  MemfuncE2   ;
+logic [2:0]  MemFuncM    ;
+logic [2:0]  MemfuncW    ;
 
-wire [15:0] InstrAddrD  ;
-wire [31:0] InstrAddrE1 ;
+logic [4:0]  ShamtD      ;
+logic [4:0]  ShamtE1     ;
 
-wire [63:0] ALUDataE1   ;
-wire [63:0] ALUDataE2in ;
-wire [31:0] ALUDataE2out;
-wire [31:0] ALUDataM    ;
-wire [31:0] ALUDataW    ;
+logic [31:0] PCAddrInc   ;
 
-wire [ 1:0] ForwardA    ;
-wire [ 1:0] ForwardB    ;
+logic [15:0] InstrAddrD  ;
+logic [31:0] InstrAddrE1 ;
 
-wire        ForwardSrcA ;
-wire        ForwardSrcB ;
+logic [63:0] ALUDataE1   ;
+logic [63:0] ALUDataE2in ;
+wire  [31:0] ALUDataE2out;
+logic [31:0] ALUDataM    ;
+logic [31:0] ALUDataW    ;
 
-wire [31:0] A           ;
-wire [31:0] B           ;
+logic [ 1:0] ForwardA    ;
+logic [ 1:0] ForwardB    ;
 
-wire [31:0] BranchAddr  ;
+logic        ForwardSrcA ;
+logic        ForwardSrcB ;
+wire         ForwardMem  ;
 
-wire        BRASrcD     ;
-wire        BRASrcE     ;
+logic [31:0] A           ;
+logic [31:0] B           ;
+
+logic [31:0] BranchAddr  ;
+
+logic        BRASrcD     ;
+logic        BRASrcE     ;
 
 IF if0(
     .Clock      (Clock       ),
@@ -155,12 +167,11 @@ IF if0(
     .PCAddrInc  (PCAddrInc   )
 );
 
-PIPE #(.n(48)) pipe0(
-    .Clock (Clock                                   ),
-    .nReset(nReset                                  ),
-    .In    ({InstructionF, InstrAddr & {16{nStall}}}),
-    .Out   ({InstructionD, InstrAddrD}              )
-);
+always_ff @ (posedge Clock, negedge nReset)
+begin
+    InstructionD <= #1 ~nReset ? 0 : InstructionF;
+    InstrAddrD   <= #1 ~nReset ? 0 : InstrAddr & {16{nStall}};
+end
 
 DEC de0(
     .Clock       (Clock              ),
@@ -179,6 +190,7 @@ DEC de0(
     .RegData     (RegData            ),
     .RAddrOut    (RAddrD             ),
     .Branch      (BranchD            ),
+    .ZeroB       (ZeroBD             ),
     .Jump        (JumpD              ),
     .MemRead     (MemReadD           ),
     .MemtoReg    (MemtoRegD          ),
@@ -189,76 +201,58 @@ DEC de0(
     .BRASrc      (BRASrcD            ),
     .RegWriteOut (RegWriteD          ),
     .ALUfunc     (ALUfuncD           ),
+    .BrCode      (BrCodeD            ),
+    .Func        (FuncD              ),
     .Memfunc     (MemfuncD           ),
     .Shamt       (ShamtD             )
 );
 
-PIPE #(.n(167)) pipe1(
-    .Clock(Clock),
-    .nReset(nReset),
-    .In ({
-        ImmDataD     ,
-        RsAddrD      ,
-        RtAddrD      ,
-        RsDataD      ,
-        RtDataD      ,
-        {16'b0, InstrAddrD},
-        RAddrD       ,
-        BranchD      ,
-        JumpD        ,
-        MemReadD     ,
-        MemtoRegD    ,
-        ALUOpD       ,
-        MULOpD       ,
-        MemWriteD    ,
-        ALUSrcD      ,
-        BRASrcD      ,
-        RegWriteD    ,
-        ALUfuncD     ,
-        MemfuncD     ,
-        ShamtD
-    }),
-    .Out({
-        ImmDataE1   ,
-        RsAddrE1    ,
-        RtAddrE1    ,
-        RsDataE1    ,
-        RtDataE1    ,
-        InstrAddrE1 ,
-        RAddrE1     ,
-        BranchE1    ,
-        JumpE1      ,
-        MemReadE1   ,
-        MemtoRegE1  ,
-        ALUOpE1     ,
-        MULOpE1     ,
-        MemWriteE1  ,
-        ALUSrcE1    ,
-        BRASrcE     ,
-        RegWriteE1in,
-        ALUfuncE1   ,
-        MemfuncE1   ,
-        ShamtE1
-    })
-);
+always_ff @ (posedge Clock, negedge nReset)
+begin
+    ImmDataE1   <= #1 ~nReset ? 0 : ImmDataD           ;
+    RsAddrE1    <= #1 ~nReset ? 0 : RsAddrD            ;
+    RtAddrE1    <= #1 ~nReset ? 0 : RtAddrD            ;
+    RsDataE1    <= #1 ~nReset ? 0 : RsDataD            ;
+    RtDataE1    <= #1 ~nReset ? 0 : RtDataD            ;
+    InstrAddrE1 <= #1 ~nReset ? 0 : {16'b0, InstrAddrD};
+    RAddrE1     <= #1 ~nReset ? 0 : RAddrD             ;
+    BranchE1    <= #1 ~nReset ? 0 : BranchD            ;
+    JumpE1      <= #1 ~nReset ? 0 : JumpD              ;
+    MemReadE1   <= #1 ~nReset ? 0 : MemReadD           ;
+    MemtoRegE1  <= #1 ~nReset ? 0 : MemtoRegD          ;
+    ALUOpE1     <= #1 ~nReset ? 0 : ALUOpD             ;
+    MULOpE1     <= #1 ~nReset ? 0 : MULOpD             ;
+    MemWriteE1  <= #1 ~nReset ? 0 : MemWriteD          ;
+    ALUSrcE1    <= #1 ~nReset ? 0 : ALUSrcD            ;
+    BRASrcE     <= #1 ~nReset ? 0 : BRASrcD            ;
+    RegWriteE1in<= #1 ~nReset ? 0 : RegWriteD          ;
+    ALUfuncE1   <= #1 ~nReset ? 0 : ALUfuncD           ;
+    BrCodeE1    <= #1 ~nReset ? 0 : BrCodeD            ;
+    FuncE1      <= #1 ~nReset ? 0 : FuncD              ;
+    MemfuncE1   <= #1 ~nReset ? 0 : MemfuncD           ;
+    ShamtE1     <= #1 ~nReset ? 0 : ShamtD             ;
+    ZeroBE1     <= #1 ~nReset ? 0 : ZeroBD             ;
+end
 
 EX1 ex1(
-    .Clock      (Clock        ),
-    .nReset     (nReset       ),
     .ALUOp      (ALUOpE1      ),
     .MULOp      (MULOpE1      ),
     .Jump       (JumpE1       ),
     .Branch     (BranchE1     ),
+    .ZeroB      (ZeroBE1      ),
     .RegWriteIn (RegWriteE1in ),
     .MemWriteIn (MemWriteE1   ),
     .ALUSrc     (ALUSrcE1     ),
     .BRASrc     (BRASrcE      ),
-    .A          (A            ),//(RsDataE     ),//(A           ),
-    .B          (B            ),//(RtDataEin   ),//(B           ),
+    .A          (A            ),
+    .B          (B            ),
     .Immediate  (ImmDataE1    ),
     .PCin       (InstrAddrE1  ),
     .Shamt      (ShamtE1      ),
-    .Func       (ALUfuncE1    ),
+    .ALUFunc    (ALUfuncE1    ),
+    .Func       (FuncE1       ),
+    .BrCode     (BrCodeE1     ),
+    .BrRt       (RtAddrE1[0]  ),
     .Out        (ALUDataE1    ),
     .PCout      (BranchAddr   ),
     .C          (ALUCE1       ),
@@ -270,42 +264,24 @@ EX1 ex1(
     .ACCEn      (ACCEnE1      )
 );
 
-PIPE #(.n(119)) pipe2(
-    .Clock(Clock),
-    .nReset(nReset),
-    .In({
-        RegWriteE1out,
-        MemReadE1    ,
-        MemtoRegE1   ,
-        MemWriteE1   ,
-        MemfuncE1    ,
-        ALUCE1       ,
-        ALUZE1       ,
-        ALUOE1       ,
-        ALUNE1       ,
-        ACCEnE1      ,
-        B            ,
-        ALUDataE1    ,
-        RAddrE1      ,
-        ALUfuncE1
-    }),
-    .Out({
-        RegWriteE2 ,
-        MemReadE2  ,
-        MemtoRegE2 ,
-        MemWriteE2 ,
-        MemfuncE2  ,
-        ALUCE2     ,
-        ALUZE2     ,
-        ALUOE2     ,
-        ALUNE2     ,
-        ACCEnE2    ,
-        RtDataE2   ,
-        ALUDataE2in,
-        RAddrE2    ,
-        ALUfuncE2
-    })
-);
+always_ff @ (posedge Clock, negedge nReset)
+begin
+    RegWriteE2  <= #1 ~nReset ? 0 : RegWriteE1out;
+    MemReadE2   <= #1 ~nReset ? 0 : MemReadE1    ;
+    MemtoRegE2  <= #1 ~nReset ? 0 : MemtoRegE1   ;
+    MemWriteE2  <= #1 ~nReset ? 0 : MemWriteE1   ;
+    MemfuncE2   <= #1 ~nReset ? 0 : MemfuncE1    ;
+    ALUCE2      <= #1 ~nReset ? 0 : ALUCE1       ;
+    ALUZE2      <= #1 ~nReset ? 0 : ALUZE1       ;
+    ALUOE2      <= #1 ~nReset ? 0 : ALUOE1       ;
+    ALUNE2      <= #1 ~nReset ? 0 : ALUNE1       ;
+    ACCEnE2     <= #1 ~nReset ? 0 : ACCEnE1      ;
+    RtDataE2    <= #1 ~nReset ? 0 : B            ;
+    ALUDataE2in <= #1 ~nReset ? 0 : ALUDataE1    ;
+    RAddrE2     <= #1 ~nReset ? 0 : RAddrE1      ;
+    ALUfuncE2   <= #1 ~nReset ? 0 : ALUfuncE1    ;
+    RtAddrE2    <= #1 ~nReset ? 0 : RtAddrE1    ;
+end
 
 EX2 ex2(
     .Clock (Clock       ),
@@ -324,30 +300,18 @@ EX2 ex2(
     .N     (            )
 );
 
-PIPE #(.n(76)) pipe3(
-    .Clock(Clock),
-    .nReset(nReset),
-    .In({
-        ALUDataE2out,
-        RtDataE2    ,
-        RAddrE2     ,
-        MemfuncE2   ,
-        RegWriteE2  ,
-        MemReadE2   ,
-        MemtoRegE2  ,
-        MemWriteE2
-    }),
-    .Out({
-        ALUDataM ,
-        RtDataM  ,
-        RAddrM   ,
-        MemFuncM ,
-        RegWriteM,
-        MemReadM ,
-        MemtoRegM,
-        MemWriteM
-    })
-);
+always_ff @ (posedge Clock, negedge nReset)
+begin
+    ALUDataM  <= #1 ~nReset ? 0 : ALUDataE2out;
+    RtDataM   <= #1 ~nReset ? 0 : RtDataE2    ;
+    RAddrM    <= #1 ~nReset ? 0 : RAddrE2     ;
+    MemFuncM  <= #1 ~nReset ? 0 : MemfuncE2   ;
+    RegWriteM <= #1 ~nReset ? 0 : RegWriteE2  ;
+    MemReadM  <= #1 ~nReset ? 0 : MemReadE2   ;
+    MemtoRegM <= #1 ~nReset ? 0 : MemtoRegE2  ;
+    MemWriteM <= #1 ~nReset ? 0 : MemWriteE2  ;
+    RtAddrM   <= #1 ~nReset ? 0 : RtAddrE2    ;
+end
 
 MEM mem0(
     .MemfuncIn   (MemFuncM ),
@@ -357,26 +321,15 @@ MEM mem0(
     .MemWriteData(WriteData)
 );
 
-PIPE #(.n(74)) pipe4(
-    .Clock(Clock),
-    .nReset(nReset),
-    .In({
-        RegWriteM,
-        MemtoRegM,
-        MemFuncM ,
-        RAddrM   ,
-        ALUDataM ,
-        RtDataM
-    }),
-    .Out({
-        RegWriteW,
-        MemtoRegW,
-        MemfuncW ,
-        RAddrW   ,
-        ALUDataW ,
-        RtDataW
-    })
-);
+always_ff @ (posedge Clock, negedge nReset)
+begin
+    RegWriteW <= #1 ~nReset ? 0 : RegWriteM;
+    MemtoRegW <= #1 ~nReset ? 0 : MemtoRegM;
+    MemfuncW  <= #1 ~nReset ? 0 : MemFuncM ;
+    RAddrW    <= #1 ~nReset ? 0 : RAddrM   ;
+    ALUDataW  <= #1 ~nReset ? 0 : ALUDataM ;
+    RtDataW   <= #1 ~nReset ? 0 : RtDataMout  ;
+end
 
 WB wb0(
     .MemtoReg(MemtoRegW),
@@ -391,50 +344,41 @@ FU dfu0(
     .RegWriteE2 (RegWriteE2 ),
     .RegWriteM  (RegWriteM  ),
     .RegWriteW  (RegWriteW  ),
+    .Memfunc    (MemFuncM   ),
     .RAddrE2    (RAddrE2    ),
     .RAddrM     (RAddrM     ),
     .RAddrW     (RAddrW     ),
+    .RtAddrM    (RtAddrM    ),
     .RsAddrE1   (RsAddrE1   ),
     .RtAddrE1   (RtAddrE1   ),
     .RsAddrD    (RsAddrD    ),
     .RtAddrD    (RtAddrD    ),
     .ForwardSrcA(ForwardSrcA),
     .ForwardSrcB(ForwardSrcB),
+    .ForwardMem (ForwardMem ),
     .ForwardA   (ForwardA   ),
     .ForwardB   (ForwardB   )
 );
 
-muxfour m0(
-    .Sel(ForwardA         ),
-    .A  (RsDataE1         ),
-    .B  (ALUDataE2in[31:0]),
-    .C  (ALUDataM         ),
-    .D  (RDataW           ),
-    .Y  (A                )
-);
+always_comb
+case (ForwardA)
+    0: A = RsDataE1;
+    1: A = ALUDataE2in[31:0];
+    2: A = ALUDataM;
+    3: A = RDataW;
+endcase
 
-muxfour m1(
-    .Sel(ForwardB         ),
-    .A  (RtDataE1         ),
-    .B  (ALUDataE2in[31:0]),
-    .C  (ALUDataM         ),
-    .D  (RDataW           ),
-    .Y  (B                )
-);
+always_comb
+case (ForwardB)
+    0: B = RtDataE1;
+    1: B = ALUDataE2in[31:0];
+    2: B = ALUDataM;
+    3: B = RDataW;
+endcase
 
-mux m2(
-    .Sel(ForwardSrcA),
-    .A  (RsData     ),
-    .B  (RDataW     ),
-    .Y  (RsDataD    )
-);
-
-mux m3(
-    .Sel(ForwardSrcB),
-    .A  (RtData     ),
-    .B  (RDataW     ),
-    .Y  (RtDataD    )
-);
+assign RsDataD    = ForwardSrcA ? RDataW : RsData ;
+assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
+assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
     .MemReadE(MemReadE1), //Not sure
@@ -444,5 +388,9 @@ HDU hdu0(
     .RtAddrD (RtAddrD  ),
     .nStall  (nStall   )
 );
+
+assign MemWrite = MemWriteM;
+assign MemRead  = MemReadM ;
+assign MemAddr  = ALUDataM ;
 
 endmodule

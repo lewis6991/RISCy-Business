@@ -43,18 +43,11 @@ module EX2(
         .N       (ACCN  )  // Negative flag.
     );
 
-    mux mux0(
-        .A  (In[31:0]),
-        .B  (ACCout  ),
-        .Y  (Out     ),
-        .Sel(ACCEn   )
-    );
+    assign Out = ACCEn ? ACCout : In[31:0];
 
-    mux #(.n(4)) mux1(
-        .A  ({ALUC, ALUZ, ALUO, ALUN}),
-        .B  ({ACCC, ACCZ, ACCO, ACCN}),
-        .Y  ({C   , Z   , O   , N   }),
-        .Sel(ACCEn                   )
-    );
+    assign C = ACCEn ? ACCC : ALUC;
+    assign Z = ACCEn ? ACCZ : ALUZ;
+    assign O = ACCEn ? ACCO : ALUO;
+    assign N = ACCEn ? ACCN : ALUN;
 
 endmodule

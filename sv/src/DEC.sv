@@ -23,6 +23,7 @@ module DEC(
                              RsAddr      ,
                              RtAddr      ,
         output logic         Branch      ,
+                             ZeroB       ,
                              Jump        ,
                              MemRead     ,
                              MemtoReg    ,
@@ -33,7 +34,9 @@ module DEC(
                              BRASrc      ,
                              RegWriteOut ,
         output logic [5:0]   ALUfunc     ,
+                             Func        ,
         output logic [2:0]   Memfunc     ,
+                             BrCode      ,
         output logic [4:0]   Shamt
 );
 
@@ -48,10 +51,13 @@ wire [4:0]  raddrinstr;
 assign Shamt  = Instruction[10:6] ;
 assign RsAddr = Instruction[25:21];
 assign RtAddr = Instruction[20:16];
+assign BrCode = Instruction[28:26];
+assign Func   = Instruction[5:0]  ;
 
 decoder dec0 (
     .RegDst  (regdst            ),
     .Branch  (Branch            ),
+    .ZeroB   (ZeroB             ),
     .Jump    (Jump              ),
     .MemRead (MemRead           ),
     .MemtoReg(MemtoReg          ),
@@ -85,38 +91,18 @@ registers reg0(
     .RegData (RegData           )
 );
 
-signextend se0(
-    .In      (Instruction[15:0]),
-    .Unsgnsel(unsgnsel         ),
-    .Out     (instrse          )
-);
+assign instrse = unsgnsel ? Instruction[15:0] : $signed(Instruction[15:0]);
 
-mux #(.n(32)) mux1(
-    .A  (instrse                   ),
-    .B  ({Instruction[15:0], 16'd0}),
-    .Y  (instrimm                  ),
-    .Sel(shiftsel                  )
-);
+assign instrimm = shiftsel ? {Instruction[15:0], 16'd0} : instrse;
 
-mux #(.n(32)) mux2(
-    .A  (instrimm                 ),
-    .B  ({6'd0, Instruction[25:0]}),
-    .Y  (ImmData                  ),
-    .Sel(immsize                  )
-);
+assign ImmData = immsize ? {6'd0, Instruction[25:0]} : instrimm;
 
-mux #(.n(5))mux3(             // regdst = 00, RAddrOut = rt
-    .A  (Instruction[20:16]), // regdst = 01, RAddrOut = rd
-    .B  (Instruction[15:11]),
-    .Y  (raddrinstr        ),
-    .Sel(regdst[0]         )
-);
+// regdst = 00, RAddrOut = rt
+// regdst = 01, RAddrOut = rd
+assign raddrinstr = regdst[0] ? Instruction[15:11] : RtAddr;
 
-mux #(.n(5))mux4(     // regdst = 1x, RAddrOut = 31
-    .A  (raddrinstr),
-    .B  (5'd31     ), // ra = Reg 31 (return register)
-    .Y  (RAddrOut  ),
-    .Sel(regdst[1] )
-);
+// regdst = 1x, RAddrOut = 31
+// ra = Reg 31 (return register)
+assign RAddrOut = regdst[1] ? 5'd31 : raddrinstr;
 
 endmodule
