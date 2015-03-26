@@ -122,9 +122,9 @@ echo "Workspace cleaned"
 echo "Beginning synthesis..."
 if [ $QUIET -eq 1 ]
 then
-    ./RUN_SYN $TYPE $CLK_PERIOD 1 > /dev/null # HARD CODED. REVISIT
+    ./RUN_SYN $TYPE $CLK_PERIOD 0 > /dev/null # HARD CODED. REVISIT
 else
-    ./RUN_SYN $TYPE $CLK_PERIOD 1
+    ./RUN_SYN $TYPE $CLK_PERIOD 0
 fi
 echo "Synthesis complete"
 
