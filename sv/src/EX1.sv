@@ -27,6 +27,7 @@ module EX1(
     input               BrRt       , // LSB of Rt used for branch instructions.
     output logic [63:0] Out        ,
     output logic [31:0] PCout      , // Program counter output.
+                        mB  ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
@@ -54,9 +55,6 @@ module EX1(
     wire BRAEn;
     wire BRAtaken;
 
-    always @ (ALUFunc)
-        $display("DEBUG: Func = %6b, ALUFunc = %6b", Func, ALUFunc);
-
     alu alu0 (
         .A       (A      ),
         .B       (Y      ),
@@ -72,10 +70,10 @@ module EX1(
 
     branch branch0(
         .Enable (BRAEn   ), // Enable branch module
-        .ALUC   (ALUC    ),
-        .ALUZ   (ALUZ    ),
-        .ALUO   (ALUO    ),
-        .ALUN   (ALUN    ),
+        .C      (ALUC    ),
+        .Z      (ALUZ    ),
+        .O      (ALUO    ),
+        .N      (ALUN    ),
         .PCIn   (PCin    ), // Program counter input.
         .Address(BRAAddr ), // Address input
         .BrCode (BrCode  ),
@@ -94,7 +92,8 @@ module EX1(
         .O   (MULO   ),
         .N   (MULN   ),
         .Func(Func   ),
-        .Out (MULout )
+        .Out (MULout ),
+        .mB(mB)
     );
 
     assign BRAAddr = BRASrc ? Immediate : A;

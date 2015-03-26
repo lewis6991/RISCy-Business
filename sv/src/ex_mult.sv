@@ -8,19 +8,18 @@
 `include "mul_definition.sv"
 
 module ex_mult (
-    input        [31:0] A   ,
-                        B   ,
-    input               SelB, // Enable B input, else multiply by 1
+    input        [31:0] A     ,
+                        B     ,
+    input               SelB  , // Enable B input, else multiply by 1
     input        [5:0]  OpCode,
                         Func  ,
-    output logic        C   ,
-                        Z   ,
-                        O   ,
-                        N   ,
-    output logic [63:0] Out
+    output logic        C     ,
+                        Z     ,
+                        O     ,
+                        N     ,
+    output logic [63:0] Out   ,
+    output logic [31:0] mB
 );
-
-logic [31:0] mB;
 
     always_comb
     begin
@@ -99,7 +98,7 @@ logic [31:0] mB;
                     32'b11111111111111111111111111111110: Out = 31;
                     32'b11111111111111111111111111111111: Out = 32;
                 endcase
-                default: Out = A * mB;
+                default: Out = A;
         endcase
 
         C = Out[32]       ;

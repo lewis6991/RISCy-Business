@@ -63,8 +63,6 @@ create_test_protocol
 dft_drc
 insert_dft }
 
-set_optimize_reigsters
-
 if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
 } elseif {($TYPE=="opt")   && ($SCAN==0)} {

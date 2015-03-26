@@ -34,7 +34,7 @@ module ex_control(
     begin
 
         ACCEn       = 0;
-        MULSelB     = 1;
+        MULSelB     = 0;
         RegWriteOut = RegWriteIn;
         BRAEn       = Jump | Branch;
         BranchTaken = 0;
@@ -42,14 +42,14 @@ module ex_control(
 
         if (ALUOp)
             case (Func)
-                `MULT, `MULTU, `MFHI, `MFLO:
+                `MULT, `MULTU:
                 begin
+                    MULSelB     = 1;
                     ACCEn       = 1;
                     OutSel      = 2'b10;
                 end
-                `MTHI, `MTLO:
+                `MTHI, `MTLO, `MFHI, `MFLO:
                 begin
-                    MULSelB     = 0;
                     ACCEn       = 1;
                     OutSel      = 2'b10;
                 end
@@ -65,7 +65,13 @@ module ex_control(
         begin
             OutSel = 2'b10;
             case (Func)
-                `ALU_CLZ, `ALU_CLO, `MUL:;
+                `ALU_CLZ, `ALU_CLO:;
+                `MADD, `MADDU, `MSUB, `MSUBU: begin
+                    MULSelB = 1;
+                    ACCEn = 1;
+                end
+                `MUL:
+                    MULSelB = 1;
                 default: ACCEn  = 1;
             endcase
         end

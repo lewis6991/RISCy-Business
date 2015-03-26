@@ -12,10 +12,10 @@
 
 module branch(
     input               Enable , // Enable branch module
-                        ALUC   ,
-                        ALUO   ,
-                        ALUN   ,
-                        ALUZ   ,
+                        C      ,
+                        O      ,
+                        N      ,
+                        Z      ,
     input        [31:0] PCIn   , // Program counter input.
     input        [31:0] Address, // Address input
     input        [ 2:0] BrCode ,
@@ -27,30 +27,19 @@ module branch(
 
     always_comb
     begin
-        PCout = PCIn;
-        Taken = 0;
-
-        if (Enable)
-        begin
-            case (BrCode)
-                `BEQ    : Taken =  ALUZ;
-                `BNE    : Taken = ~ALUZ;
-                `BGTZ   : Taken = ~ALUZ & ~ALUN;
-                `BLEZ   : Taken = ALUZ | ALUN ;
-                `BRANCH :
-                case (BrRt)
-                    1: Taken = ALUZ | ~ALUN; // BGEZ, BGEZAL
-                    0: Taken = ALUN        ; // BLTZ, BLTZAL
-                endcase
-            endcase
-            case (BrCode)
-                `J, `JAL    : PCout = {PCIn[31:28], Address[25:0], 2'd0};
-                `ALU        : PCout = Address;
-                `BEQ , `BNE ,
-                `BGTZ, `BLEZ,
-                `BRANCH     : if (Taken) PCout = PCIn + {Address[29:0], 2'd0};
-            endcase
-        end
+        case (BrCode)
+            `BEQ   : Taken =  Z;
+            `BNE   : Taken = ~Z;
+            `BGTZ  : Taken = ~Z & ~N;
+            `BLEZ  : Taken = Z | N ;
+            `BRANCH: Taken = BrRt ? Z | ~N : N;
+            default: Taken = 0;
+        endcase
+        case (BrCode)
+            `J, `JAL: PCout = {PCIn[31:28], Address[25:0], 2'd0};
+            `ALU    : PCout = Address;
+            default : PCout = PCIn + {Address[29:0], 2'd0};
+        endcase
     end
 
     assign Ret = PCIn + 8;

@@ -6,6 +6,10 @@
 // Notes             :
 //------------------------------------------------------------------------------
 
+`define PIPE(x,y) always_ff @ (posedge Clock, negedge nReset)\
+                      if(~nReset) x <= #1 0;\
+                      else        x <= #1 y;
+
 module PROCESSOR(
     input               Clock    ,
                         nReset   ,
@@ -64,21 +68,24 @@ logic ALUOpE1      ;
 logic MULOpD       ;
 logic MULOpE1      ;
 
-logic BranchTaken  ;
-
-logic ALUCE1       ;
+wire  ALUCE1       ;
 logic ALUCE2       ;
-logic ALUZE1       ;
+logic ALUCM        ;
+wire  ALUZE1       ;
 logic ALUZE2       ;
-logic ALUOE1       ;
+logic ALUZM        ;
+wire  ALUOE1       ;
 logic ALUOE2       ;
-logic ALUNE1       ;
+logic ALUOM        ;
+wire  ALUNE1       ;
 logic ALUNE2       ;
+logic ALUNM        ;
 
-logic ACCEnE1      ;
+wire  ACCEnE1      ;
 logic ACCEnE2      ;
+logic ACCEnM       ;
 
-logic [31:0] InstructionF;
+wire  [31:0] InstructionF;
 logic [31:0] InstructionD;
 
 logic [31:0] RDataW      ;
@@ -91,6 +98,7 @@ logic [4:0]  RAddrW      ;
 
 logic [4:0]  RsAddrD     ;
 logic [4:0]  RsAddrE1    ;
+
 logic [4:0]  RtAddrD     ;
 logic [4:0]  RtAddrE1    ;
 logic [4:0]  RtAddrE2    ;
@@ -114,6 +122,8 @@ logic [31:0] RtDataW     ;
 logic [5:0]  ALUfuncD    ;
 logic [5:0]  ALUfuncE1   ;
 logic [5:0]  ALUfuncE2   ;
+logic [5:0]  ALUfuncM    ;
+
 wire  [2:0]  BrCodeD     ;
 logic [2:0]  BrCodeE1    ;
 
@@ -135,9 +145,9 @@ logic [15:0] InstrAddrD  ;
 logic [31:0] InstrAddrE1 ;
 
 logic [63:0] ALUDataE1   ;
-logic [63:0] ALUDataE2in ;
-wire  [31:0] ALUDataE2out;
-logic [31:0] ALUDataM    ;
+logic [63:0] ALUDataE2   ;
+logic [63:0] ALUDataMin  ;
+wire  [31:0] ALUDataMout ;
 logic [31:0] ALUDataW    ;
 
 logic [ 1:0] ForwardA    ;
@@ -150,28 +160,28 @@ wire         ForwardMem  ;
 logic [31:0] A           ;
 logic [31:0] B           ;
 
-logic [31:0] BranchAddr  ;
+logic [31:0] BranchAddrE1;
+logic [31:0] BranchAddrE2;
+logic        BranchTakenE2;
+logic        BranchTakenE1;
 
 logic        BRASrcD     ;
 logic        BRASrcE     ;
 
 IF if0(
-    .Clock      (Clock       ),
-    .nReset     (nReset      ),
-    .nStall     (nStall      ),
-    .BranchTaken(BranchTaken ),
-    .BranchAddr (BranchAddr  ),
-    .InstrMem   (InstrMem    ),
-    .InstrAddr  (InstrAddr   ),
-    .InstrOut   (InstructionF),
-    .PCAddrInc  (PCAddrInc   )
+    .Clock      (Clock        ),
+    .nReset     (nReset       ),
+    .nStall     (nStall       ),
+    .BranchTaken(BranchTakenE2),
+    .BranchAddr (BranchAddrE2 ),
+    .InstrMem   (InstrMem     ),
+    .InstrAddr  (InstrAddr    ),
+    .InstrOut   (InstructionF ),
+    .PCAddrInc  (PCAddrInc    )
 );
 
-always_ff @ (posedge Clock, negedge nReset)
-begin
-    InstructionD <= #1 ~nReset ? 0 : InstructionF;
-    InstrAddrD   <= #1 ~nReset ? 0 : InstrAddr & {16{nStall}};
-end
+`PIPE(InstructionD, InstructionF            )
+`PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
 
 DEC de0(
     .Clock       (Clock              ),
@@ -207,32 +217,33 @@ DEC de0(
     .Shamt       (ShamtD             )
 );
 
-always_ff @ (posedge Clock, negedge nReset)
-begin
-    ImmDataE1   <= #1 ~nReset ? 0 : ImmDataD           ;
-    RsAddrE1    <= #1 ~nReset ? 0 : RsAddrD            ;
-    RtAddrE1    <= #1 ~nReset ? 0 : RtAddrD            ;
-    RsDataE1    <= #1 ~nReset ? 0 : RsDataD            ;
-    RtDataE1    <= #1 ~nReset ? 0 : RtDataD            ;
-    InstrAddrE1 <= #1 ~nReset ? 0 : {16'b0, InstrAddrD};
-    RAddrE1     <= #1 ~nReset ? 0 : RAddrD             ;
-    BranchE1    <= #1 ~nReset ? 0 : BranchD            ;
-    JumpE1      <= #1 ~nReset ? 0 : JumpD              ;
-    MemReadE1   <= #1 ~nReset ? 0 : MemReadD           ;
-    MemtoRegE1  <= #1 ~nReset ? 0 : MemtoRegD          ;
-    ALUOpE1     <= #1 ~nReset ? 0 : ALUOpD             ;
-    MULOpE1     <= #1 ~nReset ? 0 : MULOpD             ;
-    MemWriteE1  <= #1 ~nReset ? 0 : MemWriteD          ;
-    ALUSrcE1    <= #1 ~nReset ? 0 : ALUSrcD            ;
-    BRASrcE     <= #1 ~nReset ? 0 : BRASrcD            ;
-    RegWriteE1in<= #1 ~nReset ? 0 : RegWriteD          ;
-    ALUfuncE1   <= #1 ~nReset ? 0 : ALUfuncD           ;
-    BrCodeE1    <= #1 ~nReset ? 0 : BrCodeD            ;
-    FuncE1      <= #1 ~nReset ? 0 : FuncD              ;
-    MemfuncE1   <= #1 ~nReset ? 0 : MemfuncD           ;
-    ShamtE1     <= #1 ~nReset ? 0 : ShamtD             ;
-    ZeroBE1     <= #1 ~nReset ? 0 : ZeroBD             ;
-end
+`PIPE(ImmDataE1   , ImmDataD           )
+`PIPE(RsAddrE1    , RsAddrD            )
+`PIPE(RtAddrE1    , RtAddrD            )
+`PIPE(RsDataE1    , RsDataD            )
+`PIPE(RtDataE1    , RtDataD            )
+`PIPE(InstrAddrE1 , {16'b0, InstrAddrD})
+`PIPE(RAddrE1     , RAddrD             )
+`PIPE(BranchE1    , BranchD            )
+`PIPE(JumpE1      , JumpD              )
+`PIPE(MemReadE1   , MemReadD           )
+`PIPE(MemtoRegE1  , MemtoRegD          )
+`PIPE(ALUOpE1     , ALUOpD             )
+`PIPE(MULOpE1     , MULOpD             )
+`PIPE(MemWriteE1  , MemWriteD          )
+`PIPE(ALUSrcE1    , ALUSrcD            )
+`PIPE(BRASrcE     , BRASrcD            )
+`PIPE(RegWriteE1in, RegWriteD          )
+`PIPE(ALUfuncE1   , ALUfuncD           )
+`PIPE(BrCodeE1    , BrCodeD            )
+`PIPE(FuncE1      , FuncD              )
+`PIPE(MemfuncE1   , MemfuncD           )
+`PIPE(ShamtE1     , ShamtD             )
+`PIPE(ZeroBE1     , ZeroBD             )
+
+logic [31:0] B_E1;
+logic [31:0] B_E2;
+logic [63:0] Out_E2;
 
 EX1 ex1(
     .ALUOp      (ALUOpE1      ),
@@ -254,64 +265,70 @@ EX1 ex1(
     .BrCode     (BrCodeE1     ),
     .BrRt       (RtAddrE1[0]  ),
     .Out        (ALUDataE1    ),
-    .PCout      (BranchAddr   ),
+    .PCout      (BranchAddrE1 ),
     .C          (ALUCE1       ),
     .Z          (ALUZE1       ),
     .O          (ALUOE1       ),
     .N          (ALUNE1       ),
     .RegWriteOut(RegWriteE1out),
-    .BranchTaken(BranchTaken  ),
-    .ACCEn      (ACCEnE1      )
+    .BranchTaken(BranchTakenE1),
+    .ACCEn      (ACCEnE1      ),
+    .mB         (B_E1)
 );
 
-always_ff @ (posedge Clock, negedge nReset)
-begin
-    RegWriteE2  <= #1 ~nReset ? 0 : RegWriteE1out;
-    MemReadE2   <= #1 ~nReset ? 0 : MemReadE1    ;
-    MemtoRegE2  <= #1 ~nReset ? 0 : MemtoRegE1   ;
-    MemWriteE2  <= #1 ~nReset ? 0 : MemWriteE1   ;
-    MemfuncE2   <= #1 ~nReset ? 0 : MemfuncE1    ;
-    ALUCE2      <= #1 ~nReset ? 0 : ALUCE1       ;
-    ALUZE2      <= #1 ~nReset ? 0 : ALUZE1       ;
-    ALUOE2      <= #1 ~nReset ? 0 : ALUOE1       ;
-    ALUNE2      <= #1 ~nReset ? 0 : ALUNE1       ;
-    ACCEnE2     <= #1 ~nReset ? 0 : ACCEnE1      ;
-    RtDataE2    <= #1 ~nReset ? 0 : B            ;
-    ALUDataE2in <= #1 ~nReset ? 0 : ALUDataE1    ;
-    RAddrE2     <= #1 ~nReset ? 0 : RAddrE1      ;
-    ALUfuncE2   <= #1 ~nReset ? 0 : ALUfuncE1    ;
-    RtAddrE2    <= #1 ~nReset ? 0 : RtAddrE1    ;
-end
+`PIPE(BranchTakenE2, BranchTakenE1)
+`PIPE(BranchAddrE2 , BranchAddrE1 )
+`PIPE(RegWriteE2   , RegWriteE1out)
+`PIPE(MemReadE2    , MemReadE1    )
+`PIPE(MemtoRegE2   , MemtoRegE1   )
+`PIPE(MemWriteE2   , MemWriteE1   )
+`PIPE(MemfuncE2    , MemfuncE1    )
+`PIPE(ALUCE2       , ALUCE1       )
+`PIPE(ALUZE2       , ALUZE1       )
+`PIPE(ALUOE2       , ALUOE1       )
+`PIPE(ALUNE2       , ALUNE1       )
+`PIPE(ACCEnE2      , ACCEnE1      )
+`PIPE(RtDataE2     , B            )
+`PIPE(ALUDataE2    , ALUDataE1    )
+`PIPE(RAddrE2      , RAddrE1      )
+`PIPE(ALUfuncE2    , ALUfuncE1    )
+`PIPE(RtAddrE2     , RtAddrE1     )
+`PIPE(B_E2         , B_E1         )
+
+assign Out_E2 = ALUDataE2 * B_E2;
+
+`PIPE(ALUDataMin, Out_E2    )
+`PIPE(RtDataM   , RtDataE2  )
+`PIPE(RAddrM    , RAddrE2   )
+`PIPE(MemFuncM  , MemfuncE2 )
+`PIPE(RegWriteM , RegWriteE2)
+`PIPE(MemReadM  , MemReadE2 )
+`PIPE(MemtoRegM , MemtoRegE2)
+`PIPE(MemWriteM , MemWriteE2)
+`PIPE(RtAddrM   , RtAddrE2  )
+`PIPE(ALUCM     , ALUCE2    )
+`PIPE(ALUZM     , ALUZE2    )
+`PIPE(ALUOM     , ALUOE2    )
+`PIPE(ALUNM     , ALUNE2    )
+`PIPE(ACCEnM    , ACCEnE2   )
+`PIPE(ALUfuncM  , ALUfuncE2 )
 
 EX2 ex2(
-    .Clock (Clock       ),
-    .nReset(nReset      ),
-    .ALUC  (ALUCE2      ),
-    .ALUZ  (ALUZE2      ),
-    .ALUO  (ALUOE2      ),
-    .ALUN  (ALUNE2      ),
-    .ACCEn (ACCEnE2     ),
-    .In    (ALUDataE2in ),
-    .Func  (ALUfuncE2   ),
-    .Out   (ALUDataE2out),
-    .C     (            ),
-    .Z     (            ),
-    .O     (            ),
-    .N     (            )
+    .Clock (Clock      ),
+    .nReset(nReset     ),
+    .ALUC  (ALUCM      ),
+    .ALUZ  (ALUZM      ),
+    .ALUO  (ALUOM      ),
+    .ALUN  (ALUNM      ),
+    .ACCEn (ACCEnM     ),
+    .In    (ALUDataMin ),
+    .Func  (ALUfuncM   ),
+    .Out   (ALUDataMout),
+    .C     (           ),
+    .Z     (           ),
+    .O     (           ),
+    .N     (           )
 );
-
-always_ff @ (posedge Clock, negedge nReset)
-begin
-    ALUDataM  <= #1 ~nReset ? 0 : ALUDataE2out;
-    RtDataM   <= #1 ~nReset ? 0 : RtDataE2    ;
-    RAddrM    <= #1 ~nReset ? 0 : RAddrE2     ;
-    MemFuncM  <= #1 ~nReset ? 0 : MemfuncE2   ;
-    RegWriteM <= #1 ~nReset ? 0 : RegWriteE2  ;
-    MemReadM  <= #1 ~nReset ? 0 : MemReadE2   ;
-    MemtoRegM <= #1 ~nReset ? 0 : MemtoRegE2  ;
-    MemWriteM <= #1 ~nReset ? 0 : MemWriteE2  ;
-    RtAddrM   <= #1 ~nReset ? 0 : RtAddrE2    ;
-end
 
 MEM mem0(
     .MemfuncIn   (MemFuncM ),
@@ -321,15 +338,12 @@ MEM mem0(
     .MemWriteData(WriteData)
 );
 
-always_ff @ (posedge Clock, negedge nReset)
-begin
-    RegWriteW <= #1 ~nReset ? 0 : RegWriteM;
-    MemtoRegW <= #1 ~nReset ? 0 : MemtoRegM;
-    MemfuncW  <= #1 ~nReset ? 0 : MemFuncM ;
-    RAddrW    <= #1 ~nReset ? 0 : RAddrM   ;
-    ALUDataW  <= #1 ~nReset ? 0 : ALUDataM ;
-    RtDataW   <= #1 ~nReset ? 0 : RtDataMout  ;
-end
+`PIPE(RegWriteW, RegWriteM  )
+`PIPE(MemtoRegW, MemtoRegM  )
+`PIPE(MemfuncW , MemFuncM   )
+`PIPE(RAddrW   , RAddrM     )
+`PIPE(ALUDataW , ALUDataMout)
+`PIPE(RtDataW  , RtDataMout )
 
 WB wb0(
     .MemtoReg(MemtoRegW),
@@ -363,16 +377,16 @@ FU dfu0(
 always_comb
 case (ForwardA)
     0: A = RsDataE1;
-    1: A = ALUDataE2in[31:0];
-    2: A = ALUDataM;
+    1: A = ALUDataE2[31:0];
+    2: A = ALUDataMout;
     3: A = RDataW;
 endcase
 
 always_comb
 case (ForwardB)
     0: B = RtDataE1;
-    1: B = ALUDataE2in[31:0];
-    2: B = ALUDataM;
+    1: B = ALUDataE2[31:0];
+    2: B = ALUDataMout;
     3: B = RDataW;
 endcase
 
@@ -389,8 +403,8 @@ HDU hdu0(
     .nStall  (nStall   )
 );
 
-assign MemWrite = MemWriteM;
-assign MemRead  = MemReadM ;
-assign MemAddr  = ALUDataM ;
+assign MemWrite = MemWriteM ;
+assign MemRead  = MemReadM  ;
+assign MemAddr  = ALUDataMin;
 
 endmodule
