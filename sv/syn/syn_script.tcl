@@ -89,3 +89,4 @@ write -f verilog -hierarchy -output processor_synth.v
 write_sdc design.sdc
 write_sdf -version 1.0 design.sdf
 
+exit
