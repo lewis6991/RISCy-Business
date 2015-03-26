@@ -11,7 +11,6 @@ module EX1(
                         MULOp      ,
                         Jump       ,
                         Branch     ,
-                        ZeroB      ,
                         RegWriteIn ,
                         MemWriteIn ,
                         ALUSrc     ,
@@ -20,6 +19,7 @@ module EX1(
                         B          , // ALU Input B.
                         Immediate  , // Immediate from Decode stage.
                         PCin       , // Program counter input.
+    input        [15:0] Offset     , // Offset from decode stage.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 5:0] Func       ,
     input        [ 5:0] ALUFunc    ,
@@ -27,7 +27,7 @@ module EX1(
     input               BrRt       , // LSB of Rt used for branch instructions.
     output logic [63:0] Out        ,
     output logic [31:0] PCout      , // Program counter output.
-                        mB  ,
+                        mB         ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
@@ -96,8 +96,8 @@ module EX1(
         .mB(mB)
     );
 
-    assign BRAAddr = BRASrc ? Immediate : A;
-    assign Y       = ZeroB ? 32'd0 : ALUSrc ? Immediate : B;
+    assign BRAAddr = BRASrc ? Offset    : A;
+    assign Y       = ALUSrc ? Immediate : B;
 
     ex_control ex_control0 (
         .ALUOp       (ALUOp      ),

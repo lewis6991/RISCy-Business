@@ -33,9 +33,6 @@ logic JumpE1       ;
 logic BranchD      ;
 logic BranchE1     ;
 
-logic ZeroBD       ;
-logic ZeroBE1      ;
-
 logic MemReadD     ;
 logic MemReadE1    ;
 logic MemReadE2    ;
@@ -168,6 +165,9 @@ logic        BranchTakenE1;
 logic        BRASrcD     ;
 logic        BRASrcE     ;
 
+wire  [15:0] OffsetD     ;
+logic [15:0] OffsetE1    ;
+
 IF if0(
     .Clock      (Clock        ),
     .nReset     (nReset       ),
@@ -193,6 +193,7 @@ DEC de0(
     .RAddrIn     (RAddrW             ),
     .RegAddr     (RegAddr            ),
     .ImmData     (ImmDataD           ),
+    .Offset      (OffsetD            ),
     .RsAddr      (RsAddrD            ),
     .RtAddr      (RtAddrD            ),
     .RsData      (RsData             ),
@@ -200,7 +201,6 @@ DEC de0(
     .RegData     (RegData            ),
     .RAddrOut    (RAddrD             ),
     .Branch      (BranchD            ),
-    .ZeroB       (ZeroBD             ),
     .Jump        (JumpD              ),
     .MemRead     (MemReadD           ),
     .MemtoReg    (MemtoRegD          ),
@@ -218,6 +218,7 @@ DEC de0(
 );
 
 `PIPE(ImmDataE1   , ImmDataD           )
+`PIPE(OffsetE1    , OffsetD            )
 `PIPE(RsAddrE1    , RsAddrD            )
 `PIPE(RtAddrE1    , RtAddrD            )
 `PIPE(RsDataE1    , RsDataD            )
@@ -239,7 +240,6 @@ DEC de0(
 `PIPE(FuncE1      , FuncD              )
 `PIPE(MemfuncE1   , MemfuncD           )
 `PIPE(ShamtE1     , ShamtD             )
-`PIPE(ZeroBE1     , ZeroBD             )
 
 logic [31:0] B_E1  ;
 logic [31:0] B_E2  ;
@@ -250,7 +250,6 @@ EX1 ex1(
     .MULOp      (MULOpE1      ),
     .Jump       (JumpE1       ),
     .Branch     (BranchE1     ),
-    .ZeroB      (ZeroBE1      ),
     .RegWriteIn (RegWriteE1in ),
     .MemWriteIn (MemWriteE1   ),
     .ALUSrc     (ALUSrcE1     ),
@@ -258,6 +257,7 @@ EX1 ex1(
     .A          (A            ),
     .B          (B            ),
     .Immediate  (ImmDataE1    ),
+    .Offset     (OffsetE1     ),
     .PCin       (InstrAddrE1  ),
     .Shamt      (ShamtE1      ),
     .ALUFunc    (ALUfuncE1    ),

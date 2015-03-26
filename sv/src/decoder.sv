@@ -15,7 +15,7 @@
 module decoder(
     output logic [1:0] RegDst  ,
     output logic       Branch  ,
-                       ZeroB   ,
+                       ZeroImm ,
                        Jump    ,
                        MemRead ,
                        MemtoReg,
@@ -53,7 +53,7 @@ module decoder(
         Func     = 6'd0;
         MemFunc  = 3'd0;
         BRASrc   = 1'b0;
-        ZeroB    = 1'b0;
+        ZeroImm  = 1'b0;
 
         case(OpCode)
             `ALU:
@@ -98,10 +98,10 @@ module decoder(
                     `BGEZ,
                     `BLTZ:
                     begin
-                        Func     = `SUB;
-                        Branch   = 1'b1;
-                        ZeroB    = 1'b1;
-                        BRASrc   = 1'b1;
+                        Func    = `SUB;
+                        Branch  = 1'b1;
+                        ZeroImm = 1'b1;
+                        BRASrc  = 1'b1;
                     end
 
                     `BGEZAL, `BLTZAL:
@@ -110,7 +110,7 @@ module decoder(
                         Func     = `SUB ;
                         BRASrc   = 1'b1 ;
                         Branch   = 1'b1 ;
-                        ZeroB    = 1'b1 ;
+                        ZeroImm  = 1'b1 ;
                         RegWrite = 1'b1 ;
                     end
 
@@ -222,10 +222,10 @@ module decoder(
 
             `BLEZ, `BGTZ:
             begin
-                Func   = `SUB;
-                Branch = 1'b1;
-                BRASrc = 1'b1;
-                ZeroB  = 1'b1;
+                Func    = `SUB;
+                Branch  = 1'b1;
+                BRASrc  = 1'b1;
+                ZeroImm = 1'b1;
             end
 
             `BEQ, `BNE:

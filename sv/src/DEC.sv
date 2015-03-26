@@ -19,11 +19,11 @@ module DEC(
                              RtData      ,
                              InstrAddrOut,
                              RegData     ,
+        output logic [15:0]  Offset      ,
         output logic [4:0]   RAddrOut    ,
                              RsAddr      ,
                              RtAddr      ,
         output logic         Branch      ,
-                             ZeroB       ,
                              Jump        ,
                              MemRead     ,
                              MemtoReg    ,
@@ -40,13 +40,15 @@ module DEC(
         output logic [4:0]   Shamt
 );
 
-wire [31:0] instrse;
-wire [31:0] instrimm;
-wire        shiftsel,
-            unsgnsel,
-            immsize;
-wire [1:0]  regdst;
-wire [4:0]  raddrinstr;
+wire [31:0] instrse    ;
+wire [31:0] instrimm   ;
+wire        shiftsel   ,
+            unsgnsel   ,
+            immsize    ;
+wire [1:0]  regdst     ;
+wire [4:0]  raddrinstr ;
+wire        zeroImm    ;
+wire        aluSrc     ;
 
 assign Shamt  = Instruction[10:6] ;
 assign RsAddr = Instruction[25:21];
@@ -54,17 +56,19 @@ assign RtAddr = Instruction[20:16];
 assign BrCode = Instruction[28:26];
 assign Func   = Instruction[5:0]  ;
 
+assign ALUSrc = zeroImm | aluSrc;
+
 decoder dec0 (
     .RegDst  (regdst            ),
     .Branch  (Branch            ),
-    .ZeroB   (ZeroB             ),
+    .ZeroImm (zeroImm           ),
     .Jump    (Jump              ),
     .MemRead (MemRead           ),
     .MemtoReg(MemtoReg          ),
     .ALUOp   (ALUOp             ),
     .MULOp   (MULOp             ),
     .MemWrite(MemWrite          ),
-    .ALUSrc  (ALUSrc            ),
+    .ALUSrc  (aluSrc            ),
     .BRASrc  (BRASrc            ),
     .RegWrite(RegWriteOut       ),
     .ShiftSel(shiftsel          ),
@@ -95,7 +99,8 @@ assign instrse = unsgnsel ? Instruction[15:0] : $signed(Instruction[15:0]);
 
 assign instrimm = shiftsel ? {Instruction[15:0], 16'd0} : instrse;
 
-assign ImmData = immsize ? {6'd0, Instruction[25:0]} : instrimm;
+assign ImmData = zeroImm ? 32'd0 : immsize ? {6'd0, Instruction[25:0]} : instrimm;
+assign Offset  = Instruction[15:0];
 
 // regdst = 00, RAddrOut = rt
 // regdst = 01, RAddrOut = rd
