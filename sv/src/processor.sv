@@ -160,8 +160,8 @@ wire         ForwardMem  ;
 logic [31:0] A           ;
 logic [31:0] B           ;
 
-logic [31:0] BranchAddrE1;
-logic [31:0] BranchAddrE2;
+logic [31:0] BranchAddrE1 ;
+logic [31:0] BranchAddrE2 ;
 logic        BranchTakenE2;
 logic        BranchTakenE1;
 
@@ -241,8 +241,8 @@ DEC de0(
 `PIPE(ShamtE1     , ShamtD             )
 `PIPE(ZeroBE1     , ZeroBD             )
 
-logic [31:0] B_E1;
-logic [31:0] B_E2;
+logic [31:0] B_E1  ;
+logic [31:0] B_E2  ;
 logic [63:0] Out_E2;
 
 EX1 ex1(
@@ -273,7 +273,7 @@ EX1 ex1(
     .RegWriteOut(RegWriteE1out),
     .BranchTaken(BranchTakenE1),
     .ACCEn      (ACCEnE1      ),
-    .mB         (B_E1)
+    .mB         (B_E1         )
 );
 
 `PIPE(BranchTakenE2, BranchTakenE1)
@@ -376,18 +376,18 @@ FU dfu0(
 
 always_comb
 case (ForwardA)
-    0: A = RsDataE1;
+    0: A = RsDataE1       ;
     1: A = ALUDataE2[31:0];
-    2: A = ALUDataMout;
-    3: A = RDataW;
+    2: A = ALUDataMout    ;
+    3: A = RDataW         ;
 endcase
 
 always_comb
 case (ForwardB)
-    0: B = RtDataE1;
+    0: B = RtDataE1       ;
     1: B = ALUDataE2[31:0];
-    2: B = ALUDataMout;
-    3: B = RDataW;
+    2: B = ALUDataMout    ;
+    3: B = RDataW         ;
 endcase
 
 assign RsDataD    = ForwardSrcA ? RDataW : RsData ;
@@ -395,7 +395,7 @@ assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
 assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
-    .MemReadE(MemReadE1), //Not sure
+    .MemReadE(MemReadE1),
     .Clock   (Clock    ),
     .RtAddrE (RtAddrE1 ),
     .RsAddrD (RsAddrD  ),
