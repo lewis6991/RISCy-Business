@@ -145,6 +145,7 @@ logic [31:0] InstrAddrE1 ;
 
 logic [63:0] ALUDataE1   ;
 logic [63:0] ALUDataE2   ;
+logic [31:0] ALUDataM    ;
 logic [63:0] ALUDataMin  ;
 wire  [31:0] ALUDataMout ;
 logic [31:0] ALUDataW    ;
@@ -290,6 +291,29 @@ EX1 ex1(
     .mB         (B_E1         )
 );
 
+wire  [31:0] SubOut0_E1;
+wire  [31:0] SubOut1_E1;
+wire  [31:0] SubOut2_E1;
+wire  [31:0] SubOut3_E1;
+logic [31:0] SubOut0_E2;
+logic [31:0] SubOut1_E2;
+logic [31:0] SubOut2_E2;
+logic [31:0] SubOut3_E2;
+
+mult1 mult1_inst(
+    .A      (MULOutE1  ),
+    .B      (B_E1      ),
+    .SubOut0(SubOut0_E1),
+    .SubOut1(SubOut1_E1),
+    .SubOut2(SubOut2_E1),
+    .SubOut3(SubOut3_E1)
+);
+
+`PIPE(SubOut0_E2, SubOut0_E1)
+`PIPE(SubOut1_E2, SubOut1_E1)
+`PIPE(SubOut2_E2, SubOut2_E1)
+`PIPE(SubOut3_E2, SubOut3_E1)
+
 `PIPE(MULOpE2      , MULOpE1      )
 `PIPE(MULOpM       , MULOpE2      )
 `PIPE(MULOutE2     , MULOutE1     )
@@ -312,9 +336,9 @@ EX1 ex1(
 `PIPE(RtAddrE2     , RtAddrE1     )
 `PIPE(B_E2         , B_E1         )
 
-assign Out_E2 = MULOutE2 * B_E2;
+// Shift and Add sub results from the multipliers.
+assign Out_E2 = (SubOut0_E2 << 32) + ((SubOut1_E2 + SubOut2_E2) << 16) + SubOut3_E2;
 
-logic [31:0] ALUDataM;
 `PIPE(ALUDataM, ALUDataE2)
 
 `PIPE(ALUDataMin, Out_E2    )
