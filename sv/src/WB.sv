@@ -8,9 +8,6 @@
 //                     - Warning: Names have no meaning yet, hence have been
 //                       arbitrarily chosen.
 //------------------------------------------------------------------------------
-
-`include "mem_func.sv"
-
 module WB(
     input               MemtoReg,
     input        [31:0] ALUData ,

@@ -12,7 +12,6 @@ module EX1(
                         Jump       ,
                         Branch     ,
                         RegWriteIn ,
-                        MemWriteIn ,
                         ALUSrc     ,
                         BRASrc     ,
                         MULSelB    ,
@@ -45,7 +44,6 @@ module EX1(
     wire [31:0] BRAret ;
 
     wire ALUC, ALUZ, ALUO, ALUN;
-    wire MULC, MULZ, MULO, MULN;
 
     wire brTaken ;
 
@@ -79,10 +77,6 @@ module EX1(
         .A   (A      ),
         .B   (Y      ),
         .SelB(MULSelB), // MUL module select
-        .C   (MULC   ),
-        .Z   (MULZ   ),
-        .O   (MULO   ),
-        .N   (MULN   ),
         .Func(Func   ),
         .Out (MULOut ),
         .mB  (mB     )
@@ -98,7 +92,6 @@ module EX1(
     assign Out = OutSel[1] ? MULOut :
                  OutSel[0] ? BRAret : ALUout;
 
-    assign {C, Z, O, N} = OutSel[1] ? {MULC, MULZ, MULO, MULN} :
-                          OutSel[0] ? 1'd0 : {ALUC, ALUZ, ALUO, ALUN};
+    assign {C, Z, O, N} = OutSel[0] ? 1'd0 : {ALUC, ALUZ, ALUO, ALUN};
 
 endmodule

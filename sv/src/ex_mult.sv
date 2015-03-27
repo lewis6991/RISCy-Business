@@ -9,14 +9,9 @@ module ex_mult (
     input        [31:0] A     ,
                         B     ,
     input               SelB  , // Enable B input, else multiply by 1
-    input        [5:0]  OpCode,
-                        Func  ,
-    output logic        C     ,
-                        Z     ,
-                        O     ,
-                        N     ,
-    output logic [63:0] Out   ,
-    output logic [31:0] mB
+    input        [ 5:0] Func  ,
+    output logic [31:0] Out   ,
+                        mB
 );
 
     always_comb
@@ -98,12 +93,6 @@ module ex_mult (
                 endcase
                 default: Out = A;
         endcase
-
-        C = Out[32]       ;
-        Z = Out[31:0] == 0;
-        O = Out[32]       ;
-        N = Out[31]       ;
-
     end
 
 endmodule

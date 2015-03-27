@@ -263,7 +263,6 @@ EX1 ex1(
     .Jump       (JumpE1       ),
     .Branch     (BranchE1     ),
     .RegWriteIn (RegWriteE1in ),
-    .MemWriteIn (MemWriteE1   ),
     .ALUSrc     (ALUSrcE1     ),
     .BRASrc     (BRASrcE      ),
     .MULSelB    (MULSelBE1    ),

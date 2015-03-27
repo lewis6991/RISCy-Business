@@ -17,7 +17,6 @@ module DEC(
     output logic [31:0]  ImmData     ,
                          RsData      ,
                          RtData      ,
-                         InstrAddrOut,
                          RegData     ,
     output logic [15:0]  Offset      ,
     output logic [ 4:0]  RAddrOut    ,
@@ -37,14 +36,11 @@ module DEC(
                          ACCEn       ,
                          MULSelB     ,
     output logic [ 5:0]  ALUfunc     ,
-                         Func        ,
     output logic [ 2:0]  Memfunc     ,
                          BrCode      ,
     output logic [ 1:0]  OutSel
 );
 
-wire [31:0] instrse   ,
-            instrimm  ;
 wire        shiftsel  ,
             unsgnsel  ,
             immsize   ;
@@ -52,13 +48,14 @@ wire [1:0]  regdst    ;
 wire [4:0]  raddrinstr;
 wire        zeroImm   ;
 wire        aluSrc    ;
+wire [5:0]  func      ;
 
 assign Shamt  = Instruction[10: 6];
 assign RsAddr = Instruction[25:21];
 assign RtAddr = Instruction[20:16];
 assign BrCode = Instruction[28:26];
 assign Offset = Instruction[15: 0];
-assign Func   = Instruction[ 5: 0];
+assign func   = Instruction[ 5: 0];
 
 assign ALUSrc = zeroImm | aluSrc;
 
@@ -81,33 +78,32 @@ decoder dec0 (
     .ACCEn   (ACCEn             ),
     .MULSelB (MULSelB           ),
     .OutSel  (OutSel            ),
-    .Func    (ALUfunc           ),
+    .FuncOut (ALUfunc           ),
     .MemFunc (Memfunc           ),
     .OpCode  (Instruction[31:26]),
-    .FuncCode(Instruction[ 5: 0]),
-    .BraCode (Instruction[20:16])
+    .FuncIn  (func              ),
+    .BrLink  (RtAddr[4]         )
 );
 
 registers reg0(
-    .Clock   (Clock             ),
-    .nReset  (nReset            ),
-    .RegWrite(RegWriteIn        ),
-    .RegAddr (RegAddr           ),
-    .RdAddr  (RAddrIn           ),
-    .RsAddr  (Instruction[25:21]),
-    .RtAddr  (Instruction[20:16]),
-    .RdData  (RData             ),
-    .RsData  (RsData            ),
-    .RtData  (RtData            ),
-    .RegData (RegData           )
+    .Clock   (Clock     ),
+    .nReset  (nReset    ),
+    .RegWrite(RegWriteIn),
+    .RegAddr (RegAddr   ),
+    .RdAddr  (RAddrIn   ),
+    .RsAddr  (RsAddr    ),
+    .RtAddr  (RtAddr    ),
+    .RdData  (RData     ),
+    .RsData  (RsData    ),
+    .RtData  (RtData    ),
+    .RegData (RegData   )
 );
 
-assign instrse = unsgnsel ? Offset : $signed(Offset);
-
-assign instrimm = shiftsel ? {Offset, 16'd0} : instrse;
-
-assign ImmData = zeroImm ? 32'd0             :
-                 immsize ? Instruction[25:0] : instrimm;
+assign ImmData = zeroImm  ? 32'd0             :
+                 immsize  ? Instruction[25:0] :
+                 shiftsel ? {Offset, 16'd0}   :
+                 unsgnsel ? Offset            :
+                            $signed(Offset)   ;
 
 // regdst = 00, RAddrOut = rt
 // regdst = 01, RAddrOut = rd

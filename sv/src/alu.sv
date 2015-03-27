@@ -12,7 +12,7 @@ module alu(
     input        [ 4:0] Shamt,
     input        [ 5:0] Func ,
     output logic [31:0] Out  ,
-                        C    , // Carry out flag.
+    output logic        C    , // Carry out flag.
                         Z    , // Zero output flag.
                         O    , // Overflow flag.
                         N      // Negative output flag.
