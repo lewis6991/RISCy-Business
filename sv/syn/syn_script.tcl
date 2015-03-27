@@ -13,8 +13,6 @@ analyze -format sverilog {
 ../../src/registers.sv
 ../../src/processor.sv
 ../../src/op_definition.sv
-../../src/nleftshift.sv
-../../src/mult.sv
 ../../src/mul_definition.sv
 ../../src/mem_func.sv
 ../../src/ex_mult.sv
