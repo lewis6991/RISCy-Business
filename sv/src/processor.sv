@@ -108,10 +108,12 @@ logic [31:0] ImmDataD    ;
 logic [31:0] ImmDataE1   ;
 
 logic [31:0] RsData      ;
+logic [31:0] RsDataIn    ;
 logic [31:0] RsDataD     ;
 logic [31:0] RsDataE1    ;
 
 logic [31:0] RtData      ;
+logic [31:0] RtDataIn    ;
 logic [31:0] RtDataD     ;
 logic [31:0] RtDataE1    ;
 logic [31:0] RtDataE2    ;
@@ -229,8 +231,8 @@ DEC de0(
 `PIPE(OffsetE1    , OffsetD            )
 `PIPE(RsAddrE1    , RsAddrD            )
 `PIPE(RtAddrE1    , RtAddrD            )
-`PIPE(RsDataE1    , RsDataD            )
-`PIPE(RtDataE1    , RtDataD            )
+`PIPE(RsDataE1    , RsDataIn           )
+`PIPE(RtDataE1    , RtDataIn           )
 `PIPE(InstrAddrE1 , {16'b0, InstrAddrD})
 `PIPE(RAddrE1     , RAddrD             )
 `PIPE(BranchE1    , BranchD            )
@@ -267,8 +269,8 @@ EX1 ex1(
     .BRASrc     (BRASrcE      ),
     .MULSelB    (MULSelBE1    ),
     .OutSel     (OutSelE1     ),
-    .A          (A            ),
-    .B          (B            ),
+    .A          (RsDataE1     ),
+    .B          (RtDataE1     ),
     .Immediate  (ImmDataE1    ),
     .Offset     (OffsetE1     ),
     .PCin       (InstrAddrE1  ),
@@ -303,7 +305,7 @@ EX1 ex1(
 `PIPE(ALUOE2       , ALUOE1       )
 `PIPE(ALUNE2       , ALUNE1       )
 `PIPE(ACCEnE2      , ACCEnE1      )
-`PIPE(RtDataE2     , B            )
+`PIPE(RtDataE2     , RtDataE1     )
 `PIPE(ALUDataE2    , ALUDataE1    )
 `PIPE(RAddrE2      , RAddrE1      )
 `PIPE(FuncE2       , FuncE1       )
@@ -375,39 +377,41 @@ WB wb0(
 );
 
 FU dfu0(
-    .RegWriteE2 (RegWriteE2 ),
-    .RegWriteM  (RegWriteM  ),
-    .RegWriteW  (RegWriteW  ),
-    .Memfunc    (MemFuncM   ),
-    .RAddrE2    (RAddrE2    ),
-    .RAddrM     (RAddrM     ),
-    .RAddrW     (RAddrW     ),
-    .RtAddrM    (RtAddrM    ),
-    .RsAddrE1   (RsAddrE1   ),
-    .RtAddrE1   (RtAddrE1   ),
-    .RsAddrD    (RsAddrD    ),
-    .RtAddrD    (RtAddrD    ),
-    .ForwardSrcA(ForwardSrcA),
-    .ForwardSrcB(ForwardSrcB),
-    .ForwardMem (ForwardMem ),
-    .ForwardA   (ForwardA   ),
-    .ForwardB   (ForwardB   )
+    .RegWriteE2 (RegWriteE2   ),
+    .RegWriteE1 (RegWriteE1out),
+    .RegWriteM  (RegWriteM    ),
+    .RegWriteW  (RegWriteW    ),
+    .Memfunc    (MemFuncM     ),
+    .RAddrE2    (RAddrE2      ),
+    .RAddrE1    (RAddrE1      ),
+    .RAddrM     (RAddrM       ),
+    .RAddrW     (RAddrW       ),
+    .RtAddrM    (RtAddrM      ),
+    .RsAddrE1   (RsAddrE1     ),
+    .RtAddrE1   (RtAddrE1     ),
+    .RsAddrD    (RsAddrD      ),
+    .RtAddrD    (RtAddrD      ),
+    .ForwardSrcA(ForwardSrcA  ),
+    .ForwardSrcB(ForwardSrcB  ),
+    .ForwardMem (ForwardMem   ),
+    .ForwardA   (ForwardA     ),
+    .ForwardB   (ForwardB     )
 );
 
 always_comb
 case (ForwardA)
-    0: A = RsDataE1       ;
-    1: A = ALUDataE2[31:0];
-    2: A = ALUDataMout    ;
-    3: A = RDataW         ;
+    0: RsDataIn = RsDataD        ;
+    1: RsDataIn = ALUDataE1[31:0];
+    2: RsDataIn = ALUDataE2[31:0];
+    3: RsDataIn = ALUDataMout    ;
 endcase
 
 always_comb
 case (ForwardB)
-    0: B = RtDataE1       ;
-    1: B = ALUDataE2[31:0];
-    2: B = ALUDataMout    ;
-    3: B = RDataW         ;
+    0: RtDataIn = RtDataD        ;
+    1: RtDataIn = ALUDataE1[31:0];
+    2: RtDataIn = ALUDataE2[31:0];
+    3: RtDataIn = ALUDataMout    ;
 endcase
 
 assign RsDataD    = ForwardSrcA ? RDataW : RsData ;
@@ -423,8 +427,8 @@ HDU hdu0(
     .nStall  (nStall   )
 );
 
-assign MemWrite = MemWriteM ;
-assign MemRead  = MemReadM  ;
-assign MemAddr  = ALUDataMin;
+assign MemWrite = MemWriteM  ;
+assign MemRead  = MemReadM   ;
+assign MemAddr  = ALUDataMout;
 
 endmodule
