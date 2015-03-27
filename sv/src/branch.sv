@@ -11,8 +11,7 @@
 `include "branch_definition.sv"
 
 module branch(
-    input               Enable , // Enable branch module
-                        C      ,
+    input               C      ,
                         O      ,
                         N      ,
                         Z      ,

@@ -5,8 +5,6 @@
 // Other Contributors:
 // Notes             :
 //------------------------------------------------------------------------------
-`include "mul_definition.sv"
-
 module ex_mult (
     input        [31:0] A     ,
                         B     ,

@@ -14,7 +14,9 @@ module EX2(
                         ALUO       ,
                         ALUN       ,
                         ACCEn      ,
-    input        [63:0] In         , // ACC input
+                        MULOp      ,
+    input        [31:0] ALUIn      , // Input from ALU
+    input        [63:0] MULIn      , // Input from MUL
     input        [ 5:0] Func       ,
     output logic [31:0] Out        ,
     output logic        C          , // Carry out flag.
@@ -24,18 +26,21 @@ module EX2(
 );
 
     wire [31:0] ACCout;
+    wire [63:0] in;
 
     wire ACCO;
     wire ACCZ;
     wire ACCN;
     wire ACCC;
 
+    assign in = MULOp ? MULIn : ALUIn;
+
     acc_control acc_control0 (
         .Clock   (Clock ),
         .nReset  (nReset),
         .ACCEn   (ACCEn ),
         .MULfunc (Func  ),
-        .In      (In    ),
+        .In      (in    ),
         .Out     (ACCout),
         .C       (ACCC  ), // Carry flag.
         .Z       (ACCZ  ), // Zero flag.
@@ -43,7 +48,7 @@ module EX2(
         .N       (ACCN  )  // Negative flag.
     );
 
-    assign Out = ACCEn ? ACCout : In[31:0];
+    assign Out = ACCEn ? ACCout : in[31:0];
 
     assign C = ACCEn ? ACCC : ALUC;
     assign Z = ACCEn ? ACCZ : ALUZ;

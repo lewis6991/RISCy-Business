@@ -3,7 +3,7 @@
 // Description       : ALU instruction codes
 // Primary Author    : Dhanushan Raveendran
 // Other Contributors: Ethan Bishop Lewis Russell
-// Notes             : 
+// Notes             :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -60,6 +60,4 @@
 `define SLT     6'b101010
 `define SLTU    6'b101011
 
-`define ALU_CLZ 6'b110000
-`define ALU_CLO 6'b110001
 

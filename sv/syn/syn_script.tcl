@@ -67,6 +67,7 @@ if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
 } elseif {($TYPE=="opt")   && ($SCAN==0)} {
 	compile_ultra -retime -timing_high_effort_script
+	#compile_ultra -timing_high_effort_script
 } elseif {($TYPE=="basic") && ($SCAN==1)} {
 	compile -scan
 } elseif {($TYPE=="basic") && ($SCAN==0)} {

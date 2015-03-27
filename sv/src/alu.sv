@@ -7,16 +7,15 @@
 //----------------------------------------------------------------------------
 
 module alu(
-    input        [31:0] A      ,
-                        B      ,
-    input        [ 4:0] Shamt  ,
-    input        [ 5:0] ALUfunc,
-    output logic [31:0] Out    ,
-    output logic        En     ,
-                        C      , // Carry out flag.
-                        Z      , // Zero output flag.
-                        O      , // Overflow flag.
-                        N        // Negative output flag.
+    input        [31:0] A    ,
+                        B    ,
+    input        [ 4:0] Shamt,
+    input        [ 5:0] Func ,
+    output logic [31:0] Out  ,
+                        C    , // Carry out flag.
+                        Z    , // Zero output flag.
+                        O    , // Overflow flag.
+                        N      // Negative output flag.
 );
 
     assign N = Out[31]   ;
@@ -24,12 +23,11 @@ module alu(
 
     always_comb
     begin
-        Out = 0         ;
-        En  = 1         ;
-        C   = 0         ;
-        O   = 0         ;
+        Out = 0;
+        C   = 0;
+        O   = 0;
 
-        case (ALUfunc)
+        case (Func)
             `ADD:
             begin
                 {C, Out} = A + B;
@@ -67,17 +65,8 @@ module alu(
             `OR  : Out = A | B      ;
             `XOR : Out = A ^ B      ;
 
-            `MOVN:
-            begin
-                Out = A;
-                En = (B != 0);
-            end
-
-            `MOVZ:
-            begin
-                Out = A;
-                En = (B == 0);
-            end
+            `MOVN,
+            `MOVZ: Out = A;
 
             `SLT:
                 if (int'(A) < int'(B))

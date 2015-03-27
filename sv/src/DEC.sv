@@ -6,55 +6,59 @@
 // Notes:
 //----------------------------------------
 module DEC(
-        input                Clock       ,
-                             nReset      ,
-                             RegWriteIn  ,
-        input        [31:0]  Instruction ,
-                             RData       ,
-                             InstrAddrIn ,
-        input        [4:0]   RAddrIn     ,
-                             RegAddr     ,
-        output logic [31:0]  ImmData     ,
-                             RsData      ,
-                             RtData      ,
-                             InstrAddrOut,
-                             RegData     ,
-        output logic [15:0]  Offset      ,
-        output logic [4:0]   RAddrOut    ,
-                             RsAddr      ,
-                             RtAddr      ,
-        output logic         Branch      ,
-                             Jump        ,
-                             MemRead     ,
-                             MemtoReg    ,
-                             ALUOp       ,
-                             MULOp       ,
-                             MemWrite    ,
-                             ALUSrc      ,
-                             BRASrc      ,
-                             RegWriteOut ,
-        output logic [5:0]   ALUfunc     ,
-                             Func        ,
-        output logic [2:0]   Memfunc     ,
-                             BrCode      ,
-        output logic [4:0]   Shamt
+    input                Clock       ,
+                         nReset      ,
+                         RegWriteIn  ,
+    input        [31:0]  Instruction ,
+                         RData       ,
+                         InstrAddrIn ,
+    input        [ 4:0]  RAddrIn     ,
+                         RegAddr     ,
+    output logic [31:0]  ImmData     ,
+                         RsData      ,
+                         RtData      ,
+                         InstrAddrOut,
+                         RegData     ,
+    output logic [15:0]  Offset      ,
+    output logic [ 4:0]  RAddrOut    ,
+                         RsAddr      ,
+                         RtAddr      ,
+                         Shamt       ,
+    output logic         Branch      ,
+                         Jump        ,
+                         MemRead     ,
+                         MemtoReg    ,
+                         ALUOp       ,
+                         MULOp       ,
+                         MemWrite    ,
+                         ALUSrc      ,
+                         BRASrc      ,
+                         RegWriteOut ,
+                         ACCEn       ,
+                         MULSelB     ,
+    output logic [ 5:0]  ALUfunc     ,
+                         Func        ,
+    output logic [ 2:0]  Memfunc     ,
+                         BrCode      ,
+    output logic [ 1:0]  OutSel
 );
 
-wire [31:0] instrse    ;
-wire [31:0] instrimm   ;
-wire        shiftsel   ,
-            unsgnsel   ,
-            immsize    ;
-wire [1:0]  regdst     ;
-wire [4:0]  raddrinstr ;
-wire        zeroImm    ;
-wire        aluSrc     ;
+wire [31:0] instrse   ,
+            instrimm  ;
+wire        shiftsel  ,
+            unsgnsel  ,
+            immsize   ;
+wire [1:0]  regdst    ;
+wire [4:0]  raddrinstr;
+wire        zeroImm   ;
+wire        aluSrc    ;
 
-assign Shamt  = Instruction[10:6] ;
+assign Shamt  = Instruction[10: 6];
 assign RsAddr = Instruction[25:21];
 assign RtAddr = Instruction[20:16];
 assign BrCode = Instruction[28:26];
-assign Func   = Instruction[5:0]  ;
+assign Offset = Instruction[15: 0];
+assign Func   = Instruction[ 5: 0];
 
 assign ALUSrc = zeroImm | aluSrc;
 
@@ -74,10 +78,13 @@ decoder dec0 (
     .ShiftSel(shiftsel          ),
     .ImmSize (immsize           ),
     .Unsgnsel(unsgnsel          ),
+    .ACCEn   (ACCEn             ),
+    .MULSelB (MULSelB           ),
+    .OutSel  (OutSel            ),
     .Func    (ALUfunc           ),
     .MemFunc (Memfunc           ),
     .OpCode  (Instruction[31:26]),
-    .FuncCode(Instruction[5:0]  ),
+    .FuncCode(Instruction[ 5: 0]),
     .BraCode (Instruction[20:16])
 );
 
@@ -95,12 +102,12 @@ registers reg0(
     .RegData (RegData           )
 );
 
-assign instrse = unsgnsel ? Instruction[15:0] : $signed(Instruction[15:0]);
+assign instrse = unsgnsel ? Offset : $signed(Offset);
 
-assign instrimm = shiftsel ? {Instruction[15:0], 16'd0} : instrse;
+assign instrimm = shiftsel ? {Offset, 16'd0} : instrse;
 
-assign ImmData = zeroImm ? 32'd0 : immsize ? {6'd0, Instruction[25:0]} : instrimm;
-assign Offset  = Instruction[15:0];
+assign ImmData = zeroImm ? 32'd0             :
+                 immsize ? Instruction[25:0] : instrimm;
 
 // regdst = 00, RAddrOut = rt
 // regdst = 01, RAddrOut = rd

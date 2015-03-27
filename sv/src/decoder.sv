@@ -28,8 +28,11 @@ module decoder(
                        ShiftSel,
                        ImmSize ,
                        Unsgnsel,
+                       ACCEn   ,
+                       MULSelB ,
     output logic [5:0] Func    ,
     output logic [2:0] MemFunc ,
+    output logic [1:0] OutSel  ,
     input        [5:0] OpCode  ,
                        FuncCode,
     input        [4:0] BraCode
@@ -54,98 +57,106 @@ module decoder(
         MemFunc  = 3'd0;
         BRASrc   = 1'b0;
         ZeroImm  = 1'b0;
+        ACCEn    = 1'b0;
+        MULSelB  = 1'b0;
+        OutSel   = 2'd0;
 
         case(OpCode)
             `ALU:
+            begin
+                Func = FuncCode;
                 case(FuncCode)
-                    `ADD, `ADDU, `SUB , `SUBU,
-                    `SLL, `SLLV, `SRA , `SRAV,
-                    `SRL, `SRLV, `AND , `NOR ,
-                    `OR , `XOR , `MOVN, `MOVZ,
-                    `SLT, `SLTU, `MFHI, `MFLO:
+                    `MULT, `MULTU: MULOp = 1'b1;
+                endcase
+                case(FuncCode)
+                    `ADD , `ADDU, `SUB , `SUBU, `SLL ,
+                    `SLLV, `SRA , `SRAV, `SRL , `SRLV,
+                    `AND , `NOR , `OR  , `XOR , `MOVN,
+                    `MOVZ, `SLT , `SLTU:
                     begin
-                        RegDst   = 2'b01    ;
-                        Func     = FuncCode;
-                        ALUOp    = 1'b1    ;
-                        RegWrite = 1'b1    ;
+                        RegDst   = 2'b01;
+                        ALUOp    = 1'b1 ;
+                        RegWrite = 1'b1 ;
                     end
 
-                    `MULT, `MULTU, `MTHI, `MTLO:
+                    `MFHI, `MFLO:
                     begin
-                        Func  = FuncCode;
-                        ALUOp = 1'b1    ;
+                        RegDst   = 2'b01;
+                        ALUOp    = 1'b1 ;
+                        RegWrite = 1'b1 ;
+                        ACCEn    = 1'b1 ;
+                        OutSel   = 2'b10;
+                    end
+
+                    `MULT, `MULTU:
+                    begin
+                        ALUOp   = 1'b1  ;
+                        ACCEn   = 1'b1  ;
+                        MULSelB = 1'b1  ;
+                        OutSel   = 2'b10;
+                    end
+
+                    `MTHI, `MTLO:
+                    begin
+                        ALUOp  = 1'b1 ;
+                        ACCEn  = 1'b1 ;
+                        OutSel = 2'b10;
                     end
 
                     `JALR:
                     begin
                         RegDst   = 2'b01;
-                        Func     = `JALR;
-                        Jump     = 1'b1;
-                        RegWrite = 1'b1;
+                        Jump     = 1'b1 ;
+                        RegWrite = 1'b1 ;
+                        OutSel   = 2'b01;
                     end
 
                     `JR:
                     begin
-                        Func     = `JR  ;
-                        Jump     = 1'b1;
+                        Jump   = 1'b1 ;
+                        OutSel = 2'b01;
                     end
-
-                    default:;
                 endcase
+            end
 
             `BRANCH:
-                case(BraCode)
-                    `BGEZ,
-                    `BLTZ:
-                    begin
-                        Func    = `SUB;
-                        Branch  = 1'b1;
-                        ZeroImm = 1'b1;
-                        BRASrc  = 1'b1;
-                    end
-
-                    `BGEZAL, `BLTZAL:
-                    begin
-                        RegDst   = 2'b10;
-                        Func     = `SUB ;
-                        BRASrc   = 1'b1 ;
-                        Branch   = 1'b1 ;
-                        ZeroImm  = 1'b1 ;
-                        RegWrite = 1'b1 ;
-                    end
-
-                    default:;
-                endcase
+            begin
+                Func    = `SUB;
+                Branch  = 1'b1;
+                ZeroImm = 1'b1;
+                BRASrc  = 1'b1;
+                OutSel  = 2'b01;
+                if (BraCode inside { `BGEZAL, `BLTZAL })
+                begin
+                    RegWrite = 1'b1 ;
+                    RegDst   = 2'b10;
+                end
+            end
 
             `MULL:
             begin
-                MULOp = 1'b1;
-
-                case(FuncCode)
-                    `CLO:
+                MULOp  = 1'b1    ;
+                OutSel = 2'b10   ;
+                Func   = FuncCode;
+                case (FuncCode)
+                    `CLO, `CLZ:
                     begin
-                        RegDst   = 2'b01    ;
-                        Func     = `ALU_CLO;
-                        RegWrite = 1'b1    ;
+                        RegDst   = 2'b01;
+                        RegWrite = 1'b1 ;
                     end
-                    `CLZ:
-                    begin
-                        RegDst   = 2'b01    ;
-                        Func     = `ALU_CLZ;
-                        RegWrite = 1'b1    ;
-                    end
-
-                    `MADD, `MADDU, `MSUB, `MSUBU:
-                        Func  = FuncCode;
 
                     `MUL:
                     begin
                         RegDst   = 2'b01;
-                        Func     = `MUL;
-                        RegWrite = 1'b1;
+                        RegWrite = 1'b1 ;
+                        MULSelB  = 1'b1 ;
                     end
 
-                    default:;
+                    `MADD, `MADDU, `MSUB, `MSUBU:
+                    begin
+                        ACCEn   = 1'b1;
+                        MULSelB  = 1'b1 ;
+                    end
                 endcase
             end
 
@@ -155,16 +166,15 @@ module decoder(
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
-
             end
 
             `ADDIU:
             begin
-                Unsgnsel = 1'b1 ;
                 Func     = `ADDU;
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
+                Unsgnsel = 1'b1 ;
             end
 
             `LUI:
@@ -172,35 +182,35 @@ module decoder(
                 Func     = `ADD;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
-                ShiftSel = 1'b1;
                 RegWrite = 1'b1;
+                ShiftSel = 1'b1;
             end
 
             `ANDI:
             begin
-                Unsgnsel = 1'b1;
                 Func     = `AND;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
+                Unsgnsel = 1'b1;
             end
 
             `ORI:
             begin
-                Unsgnsel = 1'b1;
                 Func     = `OR ;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
+                Unsgnsel = 1'b1;
             end
 
             `XORI:
             begin
-                Unsgnsel = 1'b1;
                 Func     = `XOR;
                 ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
+                Unsgnsel = 1'b1;
             end
 
             `SLTI:
@@ -213,19 +223,20 @@ module decoder(
 
             `SLTIU:
             begin
-                Unsgnsel = 1'b1 ;
                 Func     = `SLTU;
                 ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
+                Unsgnsel = 1'b1 ;
             end
 
             `BLEZ, `BGTZ:
             begin
-                Func    = `SUB;
-                Branch  = 1'b1;
-                BRASrc  = 1'b1;
-                ZeroImm = 1'b1;
+                Func    = `SUB ;
+                Branch  = 1'b1 ;
+                BRASrc  = 1'b1 ;
+                ZeroImm = 1'b1 ;
+                OutSel  = 2'b01;
             end
 
             `BEQ, `BNE:
@@ -233,14 +244,16 @@ module decoder(
                 Func   = `SUB;
                 Branch = 1'b1;
                 BRASrc = 1'b1;
+                OutSel  = 2'b01;
             end
 
             `J:
             begin
-                Func    = `J  ;
-                Jump    = 1'b1;
-                BRASrc  = 1'b1;
-                ImmSize = 1'b1;
+                Func    = `J   ;
+                Jump    = 1'b1 ;
+                BRASrc  = 1'b1 ;
+                ImmSize = 1'b1 ;
+                OutSel  = 2'b01;
             end
 
             `JAL:
@@ -251,10 +264,10 @@ module decoder(
                 BRASrc   = 1'b1 ;
                 ImmSize  = 1'b1 ;
                 RegWrite = 1'b1 ;
+                OutSel   = 2'b01;
             end
 
-            `LB , `LBU, `LH, `LHU, `LW,
-            `LWL, `LWR:
+            `LB, `LBU, `LH, `LHU, `LW, `LWL, `LWR:
             begin
                 Func     = `ADD       ;
                 MemFunc  = OpCode[2:0];
@@ -265,7 +278,7 @@ module decoder(
                 RegWrite = 1'b1       ;
             end
 
-            `SB , `SH, `SW, `SWL , `SWR:
+            `SB , `SH, `SW, `SWL, `SWR:
             begin
                 Func     = `ADD;
                 ALUOp    = 1'b1       ;
@@ -295,7 +308,6 @@ module decoder(
                 MemtoReg = 1'b1       ;
                 RegWrite = 1'b1       ;
             end
-            default:;
         endcase
     end
 endmodule

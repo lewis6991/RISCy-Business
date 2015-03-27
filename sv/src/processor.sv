@@ -64,6 +64,8 @@ logic ALUOpE1      ;
 
 logic MULOpD       ;
 logic MULOpE1      ;
+logic MULOpE2      ;
+logic MULOpM       ;
 
 wire  ALUCE1       ;
 logic ALUCE2       ;
@@ -78,7 +80,8 @@ wire  ALUNE1       ;
 logic ALUNE2       ;
 logic ALUNM        ;
 
-wire  ACCEnE1      ;
+logic ACCEnD       ;
+logic ACCEnE1      ;
 logic ACCEnE2      ;
 logic ACCEnM       ;
 
@@ -116,16 +119,13 @@ logic [31:0] RtDataM     ;
 logic [31:0] RtDataMout  ;
 logic [31:0] RtDataW     ;
 
-logic [5:0]  ALUfuncD    ;
-logic [5:0]  ALUfuncE1   ;
-logic [5:0]  ALUfuncE2   ;
-logic [5:0]  ALUfuncM    ;
+logic [5:0]  FuncD       ;
+logic [5:0]  FuncE1      ;
+logic [5:0]  FuncE2      ;
+logic [5:0]  FuncM       ;
 
 wire  [2:0]  BrCodeD     ;
 logic [2:0]  BrCodeE1    ;
-
-wire  [5:0]  FuncD       ;
-logic [5:0]  FuncE1      ;
 
 logic [2:0]  MemfuncD    ;
 logic [2:0]  MemfuncE1   ;
@@ -164,6 +164,12 @@ logic        BranchTakenE1;
 
 logic        BRASrcD     ;
 logic        BRASrcE     ;
+
+logic        MULSelBD    ;
+logic        MULSelBE1   ;
+
+logic [ 1:0] OutSelD     ;
+logic [ 1:0] OutSelE1    ;
 
 wire  [15:0] OffsetD     ;
 logic [15:0] OffsetE1    ;
@@ -210,9 +216,11 @@ DEC de0(
     .ALUSrc      (ALUSrcD            ),
     .BRASrc      (BRASrcD            ),
     .RegWriteOut (RegWriteD          ),
-    .ALUfunc     (ALUfuncD           ),
+    .ACCEn       (ACCEnD             ),
+    .MULSelB     (MULSelBD           ),
+    .OutSel      (OutSelD            ),
+    .ALUfunc     (FuncD              ),
     .BrCode      (BrCodeD            ),
-    .Func        (FuncD              ),
     .Memfunc     (MemfuncD           ),
     .Shamt       (ShamtD             )
 );
@@ -235,15 +243,19 @@ DEC de0(
 `PIPE(ALUSrcE1    , ALUSrcD            )
 `PIPE(BRASrcE     , BRASrcD            )
 `PIPE(RegWriteE1in, RegWriteD          )
-`PIPE(ALUfuncE1   , ALUfuncD           )
-`PIPE(BrCodeE1    , BrCodeD            )
+`PIPE(ACCEnE1     , ACCEnD             )
+`PIPE(MULSelBE1   , MULSelBD           )
+`PIPE(OutSelE1    , OutSelD            )
 `PIPE(FuncE1      , FuncD              )
+`PIPE(BrCodeE1    , BrCodeD            )
 `PIPE(MemfuncE1   , MemfuncD           )
 `PIPE(ShamtE1     , ShamtD             )
 
 logic [31:0] B_E1  ;
 logic [31:0] B_E2  ;
 logic [63:0] Out_E2;
+wire  [31:0] MULOutE1;
+logic [31:0] MULOutE2;
 
 EX1 ex1(
     .ALUOp      (ALUOpE1      ),
@@ -254,17 +266,19 @@ EX1 ex1(
     .MemWriteIn (MemWriteE1   ),
     .ALUSrc     (ALUSrcE1     ),
     .BRASrc     (BRASrcE      ),
+    .MULSelB    (MULSelBE1    ),
+    .OutSel     (OutSelE1     ),
     .A          (A            ),
     .B          (B            ),
     .Immediate  (ImmDataE1    ),
     .Offset     (OffsetE1     ),
     .PCin       (InstrAddrE1  ),
     .Shamt      (ShamtE1      ),
-    .ALUFunc    (ALUfuncE1    ),
     .Func       (FuncE1       ),
     .BrCode     (BrCodeE1     ),
     .BrRt       (RtAddrE1[0]  ),
     .Out        (ALUDataE1    ),
+    .MULOut     (MULOutE1     ),
     .PCout      (BranchAddrE1 ),
     .C          (ALUCE1       ),
     .Z          (ALUZE1       ),
@@ -272,10 +286,12 @@ EX1 ex1(
     .N          (ALUNE1       ),
     .RegWriteOut(RegWriteE1out),
     .BranchTaken(BranchTakenE1),
-    .ACCEn      (ACCEnE1      ),
     .mB         (B_E1         )
 );
 
+`PIPE(MULOpE2      , MULOpE1      )
+`PIPE(MULOpM       , MULOpE2      )
+`PIPE(MULOutE2     , MULOutE1     )
 `PIPE(BranchTakenE2, BranchTakenE1)
 `PIPE(BranchAddrE2 , BranchAddrE1 )
 `PIPE(RegWriteE2   , RegWriteE1out)
@@ -291,11 +307,14 @@ EX1 ex1(
 `PIPE(RtDataE2     , B            )
 `PIPE(ALUDataE2    , ALUDataE1    )
 `PIPE(RAddrE2      , RAddrE1      )
-`PIPE(ALUfuncE2    , ALUfuncE1    )
+`PIPE(FuncE2       , FuncE1       )
 `PIPE(RtAddrE2     , RtAddrE1     )
 `PIPE(B_E2         , B_E1         )
 
-assign Out_E2 = ALUDataE2 * B_E2;
+assign Out_E2 = MULOutE2 * B_E2;
+
+logic [31:0] ALUDataM;
+`PIPE(ALUDataM, ALUDataE2)
 
 `PIPE(ALUDataMin, Out_E2    )
 `PIPE(RtDataM   , RtDataE2  )
@@ -311,7 +330,7 @@ assign Out_E2 = ALUDataE2 * B_E2;
 `PIPE(ALUOM     , ALUOE2    )
 `PIPE(ALUNM     , ALUNE2    )
 `PIPE(ACCEnM    , ACCEnE2   )
-`PIPE(ALUfuncM  , ALUfuncE2 )
+`PIPE(FuncM     , FuncE2    )
 
 EX2 ex2(
     .Clock (Clock      ),
@@ -321,8 +340,10 @@ EX2 ex2(
     .ALUO  (ALUOM      ),
     .ALUN  (ALUNM      ),
     .ACCEn (ACCEnM     ),
-    .In    (ALUDataMin ),
-    .Func  (ALUfuncM   ),
+    .MULOp (MULOpM     ),
+    .ALUIn (ALUDataM   ),
+    .MULIn (ALUDataMin ),
+    .Func  (FuncM      ),
     .Out   (ALUDataMout),
     .C     (           ),
     .Z     (           ),
