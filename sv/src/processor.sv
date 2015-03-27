@@ -423,8 +423,8 @@ HDU hdu0(
     .nStall  (nStall   )
 );
 
-assign MemWrite = MemWriteM ;
-assign MemRead  = MemReadM  ;
-assign MemAddr  = ALUDataMin;
+assign MemWrite = MemWriteM  ;
+assign MemRead  = MemReadM   ;
+assign MemAddr  = ALUDataMout;
 
 endmodule
