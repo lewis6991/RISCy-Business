@@ -38,7 +38,7 @@ setNanoRouteMode -quiet -drouteEndIteration default
 setNanoRouteMode -quiet -routeWithTimingDriven true
 setNanoRouteMode -quiet -routeWithSiDriven false
 routeDesign -globalDetail
-optDesign -
+optDesign -postRoute
 getFillerMode -quiet
 findCoreFillerCells
 addFiller -cell FILL1 FILL2 FILL5 FILL10 FILL25 -prefix FILLER -markFixed
