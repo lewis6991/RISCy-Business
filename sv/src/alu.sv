@@ -18,8 +18,14 @@ module alu(
                         N      // Negative output flag.
 );
 
+    logic [32:0] Sum;
+    logic [32:0] Sub;
+
     assign N = Out[31]   ;
     assign Z = (Out == 0);
+
+    assign Sum = A + B;
+    assign Sub = A - B;
 
     always_comb
     begin
@@ -30,28 +36,32 @@ module alu(
         case (Func)
             `ADD:
             begin
-                {C, Out} = A + B;
+                Out = Sum[31:0];
+                C = Sum[32];
                 if (A[31] == B[31])
                     O = (A[31] ^ N);
             end
 
             `ADDU:
             begin
-                {C, Out} = A + B;
-                O = C;
+                Out = Sum[31:0];
+                C = Sum[32];
+                O = Sum[32];
             end
 
             `SUB:
             begin
-                {C, Out} = A - B;
+                Out = Sub[31:0];
+                C = Sub[32];
                 if (A[31] == B[31])
                     O = (A[31] ^ N);
             end
 
             `SUBU:
             begin
-                {C, Out} = A - B;
-                O = C;
+                Out = Sub[31:0];
+                C = Sub[32];
+                O = Sub[32];
             end
 
             `SLL : Out = B <<  Shamt;
