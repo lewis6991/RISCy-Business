@@ -8,7 +8,6 @@
 
 module HDU(
     input        MemReadE,
-                 Clock   ,
     input [4:0]  RtAddrE ,
                  RsAddrD ,
                  RtAddrD ,

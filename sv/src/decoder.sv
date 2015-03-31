@@ -25,7 +25,6 @@ module decoder(
                        Jump    ,
                        MemRead ,
                        MemtoReg,
-                       ALUOp   ,
                        MULOp   ,
                        MemWrite,
                        ALUSrc  ,
@@ -45,7 +44,6 @@ module decoder(
         Jump     = 1'b0;
         MemRead  = 1'b0;
         MemtoReg = 1'b0;
-        ALUOp    = 1'b0;
         MULOp    = 1'b0;
         MemWrite = 1'b0;
         ALUSrc   = 1'b0;
@@ -70,14 +68,12 @@ module decoder(
                     `MOVZ, `SLT , `SLTU:
                     begin
                         RegDst   = 2'b01;
-                        ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
                     end
 
                     `MFHI, `MFLO:
                     begin
                         RegDst   = 2'b01;
-                        ALUOp    = 1'b1 ;
                         RegWrite = 1'b1 ;
                         ACCEn    = 1'b1 ;
                         OutSel   = 2'b10;
@@ -85,7 +81,6 @@ module decoder(
 
                     `MULT, `MULTU:
                     begin
-                        ALUOp   = 1'b1 ;
                         ACCEn   = 1'b1 ;
                         MULSelB = 1'b1 ;
                         OutSel  = 2'b10;
@@ -94,7 +89,6 @@ module decoder(
 
                     `MTHI, `MTLO:
                     begin
-                        ALUOp  = 1'b1 ;
                         ACCEn  = 1'b1 ;
                         OutSel = 2'b10;
                     end
@@ -157,7 +151,6 @@ module decoder(
             `ADDI:
             begin
                 FuncOut  = `ADD;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
             end
@@ -165,7 +158,6 @@ module decoder(
             `ADDIU:
             begin
                 FuncOut  = `ADDU;
-                ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
                 Unsgnsel = 1'b1 ;
@@ -174,7 +166,6 @@ module decoder(
             `LUI:
             begin
                 FuncOut  = `ADD;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
                 ShiftSel = 1'b1;
@@ -183,7 +174,6 @@ module decoder(
             `ANDI:
             begin
                 FuncOut  = `AND;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
                 Unsgnsel = 1'b1;
@@ -192,7 +182,6 @@ module decoder(
             `ORI:
             begin
                 FuncOut  = `OR ;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
                 Unsgnsel = 1'b1;
@@ -201,7 +190,6 @@ module decoder(
             `XORI:
             begin
                 FuncOut  = `XOR;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
                 Unsgnsel = 1'b1;
@@ -210,7 +198,6 @@ module decoder(
             `SLTI:
             begin
                 FuncOut  = `SLT;
-                ALUOp    = 1'b1;
                 ALUSrc   = 1'b1;
                 RegWrite = 1'b1;
             end
@@ -218,7 +205,6 @@ module decoder(
             `SLTIU:
             begin
                 FuncOut  = `SLTU;
-                ALUOp    = 1'b1 ;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
                 Unsgnsel = 1'b1 ;
@@ -263,7 +249,6 @@ module decoder(
             begin
                 FuncOut  = `ADD       ;
                 MemFunc  = OpCode[2:0];
-                ALUOp    = 1'b1       ;
                 ALUSrc   = 1'b1       ;
                 MemRead  = 1'b1       ;
                 MemtoReg = 1'b1       ;
@@ -273,7 +258,6 @@ module decoder(
             `SB , `SH, `SW, `SWL, `SWR:
             begin
                 FuncOut  = `ADD       ;
-                ALUOp    = 1'b1       ;
                 MemFunc  = OpCode[2:0];
                 ALUSrc   = 1'b1       ;
                 MemWrite = 1'b1       ;
@@ -283,7 +267,6 @@ module decoder(
             begin
                 FuncOut  = `ADD       ;
                 MemFunc  = `WD        ;
-                ALUOp    = 1'b1       ;
                 ALUSrc   = 1'b1       ;
                 MemRead  = 1'b1       ;
                 MemtoReg = 1'b1       ;
@@ -294,7 +277,6 @@ module decoder(
             begin
                 FuncOut  = `ADD       ;
                 MemFunc  = OpCode[5:3];
-                ALUOp    = 1'b1       ;
                 ALUSrc   = 1'b1       ;
                 MemRead  = 1'b1       ;
                 MemtoReg = 1'b1       ;

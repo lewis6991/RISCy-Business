@@ -8,16 +8,11 @@
 module ex_mult (
     input        [31:0] A     ,
                         B     ,
-    input               SelB  , // Enable B input, else multiply by 1
     input        [ 5:0] Func  ,
-    output logic [31:0] Out   ,
-                        mB
+    output logic [31:0] Out
 );
 
     always_comb
-    begin
-        mB = SelB ? B : 32'd1;
-
         case (Func)
             `CLZ:
                 casez (A)
@@ -93,6 +88,5 @@ module ex_mult (
                 endcase
                 default: Out = A;
         endcase
-    end
 
 endmodule

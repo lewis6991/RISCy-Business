@@ -7,91 +7,39 @@
 //------------------------------------------------------------------------------
 
 module EX1(
-    input               ALUOp      ,
-                        MULOp      ,
-                        Jump       ,
-                        Branch     ,
-                        RegWriteIn ,
-                        ALUSrc     ,
-                        BRASrc     ,
-                        MULSelB    ,
+    input               MULSelB    ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
-                        Immediate  , // Immediate from Decode stage.
-                        PCin       , // Program counter input.
     input        [15:0] Offset     , // Offset from decode stage.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 5:0] Func       ,
-    input        [ 2:0] BrCode     , // 3 LSB of OpCode used to differentiate branch and jump instructions.
-    input        [ 1:0] OutSel     , // 00: ALU, 01: BRA, 10: MUL
-    input               BrRt       , // LSB of Rt used for branch instructions.
-    output logic [63:0] Out        ,
+    output logic [31:0] ALUOut     ,
     output logic [31:0] MULOut     ,
-    output logic [31:0] PCout      , // Program counter output.
-                        mB         ,
     output logic        C          , // Carry out flag.
                         Z          , // Output zero flag.
                         O          , // Overflow flag.
-                        N          , // Output negative flag.
-                        RegWriteOut,
-                        BranchTaken
+                        N            // Output negative flag.
 );
-
-    wire [31:0] Y      ;
-
-    wire [31:0] ALUout ;
-    wire [31:0] brAddr ;
-    wire [31:0] BRAret ;
-
-    wire ALUC, ALUZ, ALUO, ALUN;
-
-    wire brTaken ;
 
     alu alu0(
         .A    (A     ),
-        .B    (Y     ),
+        .B    (B     ),
         .Shamt(Shamt ),
         .Func (Func  ),
-        .Out  (ALUout),
-        .C    (ALUC  ),
-        .Z    (ALUZ  ),
-        .O    (ALUO  ),
-        .N    (ALUN  )
-    );
-
-    branch branch0(
-        .C      (ALUC   ),
-        .Z      (ALUZ   ),
-        .O      (ALUO   ),
-        .N      (ALUN   ),
-        .PCIn   (PCin   ), // Program counter input.
-        .Address(brAddr ), // Address input
-        .BrCode (BrCode ),
-        .BrRt   (BrRt   ),
-        .PCout  (PCout  ), // Program counter
-        .Ret    (BRAret ), // Return address
-        .Taken  (brTaken)  // Branch taken
+        .Out  (ALUOut),
+        .C    (C     ),
+        .Z    (Z     ),
+        .O    (O     ),
+        .N    (N     )
     );
 
     ex_mult ex_mult0(
         .A   (A      ),
-        .B   (Y      ),
-        .SelB(MULSelB), // MUL module select
+        .B   (B      ),
         .Func(Func   ),
-        .Out (MULOut ),
-        .mB  (mB     )
+        .Out (MULOut )
     );
 
-    assign brAddr = BRASrc ? Offset    : A;
-    assign Y      = ALUSrc ? Immediate : B;
-
-    assign RegWriteOut = Branch ? RegWriteIn & brTaken : RegWriteIn;
-
-    assign BranchTaken = Jump | Branch & brTaken ;
-
-    assign Out = OutSel[1] ? MULOut :
-                 OutSel[0] ? BRAret : ALUout;
-
-    assign {C, Z, O, N} = OutSel[0] ? 1'd0 : {ALUC, ALUZ, ALUO, ALUN};
+      assign mB = B;
 
 endmodule

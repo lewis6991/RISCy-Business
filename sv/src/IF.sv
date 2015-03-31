@@ -23,8 +23,7 @@ module IF(
     input        [31:0] BranchAddr ,
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
-    output logic [31:0] InstrOut   ,
-                        PCAddrInc
+    output logic [31:0] InstrOut
 );
 
     logic [31:0] progAddrOut ;
@@ -40,6 +39,5 @@ module IF(
 
     assign InstrAddr = progAddrOut            ;
     assign InstrOut  = InstrMem & {32{nStall}};
-    assign PCAddrInc = progAddrMOut           ;
 
 endmodule
