@@ -10,16 +10,16 @@
 source ../library_Setup
 
 analyze -format sverilog {
-../../src/registers.sv
-../../src/processor.sv
+../../src/alu_definition.sv
 ../../src/op_definition.sv
 ../../src/mul_definition.sv
+../../src/branch_definition.sv
 ../../src/mem_func.sv
+../../src/registers.sv
+../../src/mult1.sv
 ../../src/ex_mult.sv
 ../../src/decoder.sv
-../../src/branch_definition.sv
 ../../src/branch.sv
-../../src/alu_definition.sv
 ../../src/alu.sv
 ../../src/acc_control.sv
 ../../src/WB.sv
@@ -30,6 +30,7 @@ analyze -format sverilog {
 ../../src/EX1.sv
 ../../src/EX2.sv
 ../../src/DEC.sv
+../../src/processor.sv
 }
 
 elaborate PROCESSOR -architecture verilog -library DEFAULT
@@ -53,15 +54,20 @@ create_test_protocol
 dft_drc
 insert_dft }
 
+set_dont_touch_network [all_clocks]
+
+set_dont_touch_network nReset
+
+set_output_delay -clock Clock [expr $CLK_PERIOD/8] [all_outputs]
+
 if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
 } elseif {($TYPE=="opt")   && ($SCAN==0)} {
-	compile_ultra -retime -timing_high_effort_script
-	#compile_ultra -timing_high_effort_script
+	compile_ultra -timing_high_effort_script
 } elseif {($TYPE=="basic") && ($SCAN==1)} {
 	compile -scan
 } elseif {($TYPE=="basic") && ($SCAN==0)} {
-compile
+    compile -map_effort high
 }
 
 report_design > ../logs_${CLK_PERIOD}${TYPE}/synth_design_${CLK_PERIOD}${TYPE}.rpt
@@ -79,5 +85,7 @@ write -f verilog -hierarchy -output processor_synth.v
 
 write_sdc design.sdc
 write_sdf -version 1.0 design.sdf
+
+report_timing
 
 exit
