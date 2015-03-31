@@ -33,35 +33,35 @@ module memory #(
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
             for (int i = 0; i < (1 << AddressSize); ++i)
-                memory[i] <= #20 0;
+                memory[i] <= #1 0;
         else if(WriteEn)
             begin
                 if(WriteL)
-                    begin
-                       memory[Address + 3] <= #20 WriteData[31:24];
-                       memory[Address + 2] <= #20 WriteData[23:16]; 
-                    end
+                begin
+                    memory[Address + 3] <= #1 WriteData[31:24];
+                    memory[Address + 2] <= #1 WriteData[23:16];
+                end
                 else if(WriteR)
-                    begin
-                       memory[Address + 1] <= #20 WriteData[15: 8];
-                       memory[Address    ] <= #20 WriteData[ 7: 0]; 
-                    end
+                begin
+                    memory[Address + 1] <= #1 WriteData[15: 8];
+                    memory[Address    ] <= #1 WriteData[ 7: 0];
+                end
                 else
-                    begin
-                        memory[Address + 3] <= #20 WriteData[31:24];
-                        memory[Address + 2] <= #20 WriteData[23:16];
-                        memory[Address + 1] <= #20 WriteData[15: 8];
-                        memory[Address    ] <= #20 WriteData[ 7: 0];
-                    end
+                begin
+                    memory[Address + 3] <= #1 WriteData[31:24];
+                    memory[Address + 2] <= #1 WriteData[23:16];
+                    memory[Address + 1] <= #1 WriteData[15: 8];
+                    memory[Address    ] <= #1 WriteData[ 7: 0];
+                end
             end
 
     // Read block
     always @ (posedge Clock, negedge nReset)
         if (~nReset)
-            ReadData <= #20 0;
+            ReadData <= #1 0;
         else if(ReadEn)
-                ReadData <= #20 {memory[Address + 3], memory[Address + 2], memory[Address + 1], memory[Address]};
+            ReadData <= #1 {memory[Address + 3], memory[Address + 2], memory[Address + 1], memory[Address]};
         else
-            ReadData <= #20 0;
+            ReadData <= #1 0;
 
 endmodule
