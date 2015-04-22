@@ -6,10 +6,11 @@
 #-------------------------------------------------------------------------------
 
 user=`whoami`
-out="${1%.s}.int"
+out="${1%.c}"
+out="${out%.s}.int"
 
 rm -rf $out
-mips-elf-gcc -Wa,-adhln -c -O -mips32 -o /dev/null $1 > $out
+mips-elf-gcc -Wa,-adhln -c -O -nostartfiles -mips32 -o /dev/null $1 > $out
 
 # Remove all lines that are labels
 #sed -i '/:/d' $out

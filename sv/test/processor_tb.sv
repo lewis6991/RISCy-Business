@@ -14,7 +14,7 @@ module processor_tb;
 
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
-import "DPI-C" function void compile_asm(string arg);
+import "DPI-C" function void compile_test(string arg);
 import "DPI-C" function int  get_instruction_count();
 import "DPI-C" function int  get_instruction(int index);
 
@@ -172,8 +172,8 @@ begin
         // script if we ever need.
         set_compile_script("../sw/compile2int");
 
-        // Compile the asm file so we can fetch instructions.
-        compile_asm($sformatf("../sw/testcase%0d", test_no));
+        // Compile the test file so we can fetch instructions.
+        compile_test($sformatf("../sw/testcase%0d", test_no));
 
         // Get the amount of instructions in the testcase so we can set a finish
         // point.
@@ -218,7 +218,7 @@ task run_testcase();
         @ (posedge Clock)
         if(rtlPC[15:2] < inst_count)
             instrData <= #50 get_instruction(rtlPC[15:2]);
-        else if(rtlPC[15:2] == inst_count + 10)
+        else if(rtlPC[15:2] >= inst_count + 10)
             finish_test();
         else
             instrData <= #50 0;
