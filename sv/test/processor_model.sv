@@ -140,15 +140,16 @@ endtask
 
 task update_registers();
     case (opcode)
-        ADDI       : `rt = `rs + signed'(imm);
-        ADDIU      : `rt = `rs + imm;
-        LUI        : `rt = imm << 16;
-        ANDI       : `rt = `rs & imm;
-        ORI        : `rt = `rs | imm;
-        XORI       : `rt = `rs ^ imm;
-        SLTI, SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
-        JAL        : `ra =  pc + 8;
-        ALU   :
+        ADDI : `rt = `rs + signed'(imm);
+        ADDIU: `rt = `rs + imm;
+        LUI  : `rt = imm << 16;
+        ANDI : `rt = `rs & imm;
+        ORI  : `rt = `rs | imm;
+        XORI : `rt = `rs ^ imm;
+        SLTI : `rt = `rs < signed'(imm) ? 32'b1 : 32'b0;
+        SLTIU: `rt = `rs < imm ? 32'b1 : 32'b0;
+        JAL  : `ra =  pc + 8;
+        ALU  :
         case (func)
             `SLL : `rd = `rt <<  shamt;
             `SLLV: `rd = `rt <<  `rs  ;
@@ -169,8 +170,8 @@ task update_registers();
             `NOR : `rd = ~(`rs | `rt);
             `OR  : `rd = `rs | `rt;
             `XOR : `rd = `rs ^ `rt;
-            `SLT ,
-            `SLTU: `rd = `rs < `rt ? 32'b1 : 32'b0;
+            `SLTU: `rd = unsigned'(`rs) < unsigned'(`rt) ? 32'b1 : 32'b0;
+            `SLT : `rd = `rs < `rt ? 32'b1 : 32'b0;
             `JALR: `rd = pc + 8;
             0:;//NOP
         endcase

@@ -48,13 +48,18 @@ wire [4:0]  raddrinstr;
 wire        zeroImm   ;
 wire        aluSrc    ;
 wire [5:0]  func      ;
+wire [15:0] offset    ;
+
+logic signed [31:0] signed_offset;
 
 assign Shamt  = Instruction[10: 6];
 assign RsAddr = Instruction[25:21];
 assign RtAddr = Instruction[20:16];
 assign BrCode = Instruction[28:26];
-assign Offset = Instruction[15: 0];
+assign offset = Instruction[15: 0];
 assign func   = Instruction[ 5: 0];
+
+assign Offset = offset;
 
 assign ALUSrc = zeroImm | aluSrc;
 
@@ -97,11 +102,13 @@ registers reg0(
     .RegData (RegData   )
 );
 
+assign signed_offset = $signed(offset);
+
 assign ImmData = zeroImm  ? 32'd0             :
                  immsize  ? Instruction[25:0] :
-                 shiftsel ? {Offset, 16'd0}   :
-                 unsgnsel ? Offset            :
-                            $signed(Offset)   ;
+                 shiftsel ? {offset, 16'd0}   :
+                 unsgnsel ? offset            :
+                            signed_offset     ;
 
 // regdst = 00, RAddrOut = rt
 // regdst = 01, RAddrOut = rd

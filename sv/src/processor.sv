@@ -273,7 +273,6 @@ EX1 ex1(
     .MULSelB(MULSelBE1                      ),
     .A      (RsDataE1                       ),
     .B      (ALUSrcE1 ? ImmDataE1 : RtDataE1),
-    .Offset (OffsetE1                       ),
     .Shamt  (ShamtE1                        ),
     .Func   (FuncE1                         ),
     .ALUOut (ALUDataE1                      ),
@@ -359,7 +358,7 @@ branch branch0(
 assign BranchTakenE2 = JumpE2 | BranchE2 & brTakenE2;
 
 assign ALUDataE2out = OutSelE2[1] ? RsDataE2 :
-                      OutSelE2[0] ? BRAret : ALUDataE2;
+                      OutSelE2[0] ? BRAret   : ALUDataE2;
 
 assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 // ------------------------------------------------
@@ -451,7 +450,7 @@ always_comb
 case (ForwardA)
     0: RsDataIn = RsDataD    ;
     1: RsDataIn = ALUDataE1  ;
-    2: RsDataIn = ALUDataE2  ;
+    2: RsDataIn = ALUDataE2out;
     3: RsDataIn = ALUDataMout;
 endcase
 
@@ -459,7 +458,7 @@ always_comb
 case (ForwardB)
     0: RtDataIn = RtDataD    ;
     1: RtDataIn = ALUDataE1  ;
-    2: RtDataIn = ALUDataE2  ;
+    2: RtDataIn = ALUDataE2out;
     3: RtDataIn = ALUDataMout;
 endcase
 

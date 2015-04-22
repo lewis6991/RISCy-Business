@@ -10,7 +10,6 @@ module EX1(
     input               MULSelB    ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
-    input        [15:0] Offset     , // Offset from decode stage.
     input        [ 4:0] Shamt      , // Shift amount.
     input        [ 5:0] Func       ,
     output logic [31:0] ALUOut     ,
