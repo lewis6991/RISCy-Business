@@ -33,6 +33,7 @@ module DEC(
                          BRASrc      ,
                          RegWriteOut ,
                          ACCEn       ,
+                         ALUEn       ,
                          MULSelB     ,
     output logic [ 5:0]  ALUfunc     ,
     output logic [ 2:0]  Memfunc     ,
@@ -85,7 +86,8 @@ decoder dec0 (
     .MemFunc (Memfunc           ),
     .OpCode  (Instruction[31:26]),
     .FuncIn  (func              ),
-    .BrLink  (RtAddr[4]         )
+    .BrLink  (RtAddr[4]         ),
+    .ALUEn   (ALUEn             )
 );
 
 registers reg0(

@@ -56,6 +56,7 @@ logic ALUSrcE1     ;
 
 logic RegWriteD    ;
 logic RegWriteE1   ;
+logic RegWriteE1Out;
 logic RegWriteE2   ;
 logic RegWriteE2Out;
 logic RegWriteM    ;
@@ -83,6 +84,10 @@ logic ACCEnD       ;
 logic ACCEnE1      ;
 logic ACCEnE2      ;
 logic ACCEnM       ;
+
+logic ALUEnD       ;
+logic ALUEnE1      ;
+logic ALUEnE2      ;
 
 wire  [31:0] InstructionF;
 logic [31:0] InstructionD;
@@ -233,6 +238,7 @@ DEC de0(
     .BRASrc     (BRASrcD            ),
     .RegWriteOut(RegWriteD          ),
     .ACCEn      (ACCEnD             ),
+    .ALUEn      (ALUEnD             ),
     .MULSelB    (MULSelBD           ),
     .OutSel     (OutSelD            ),
     .ALUfunc    (FuncD              ),
@@ -259,6 +265,7 @@ DEC de0(
 `PIPE(BRASrcE1   , BRASrcD            )
 `PIPE(RegWriteE1 , RegWriteD          )
 `PIPE(ACCEnE1    , ACCEnD             )
+`PIPE(ALUEnE1    , ALUEnD             )
 `PIPE(MULSelBE1  , MULSelBD           )
 `PIPE(OutSelE1   , OutSelD            )
 `PIPE(FuncE1     , FuncD              )
@@ -296,7 +303,7 @@ mult1 mult1_inst(
 `PIPE(CLDataE2   , CLDataE1   )
 `PIPE(MULOpE2    , MULOpE1    )
 `PIPE(MULOpM     , MULOpE2    )
-`PIPE(RegWriteE2 , RegWriteE1 )
+`PIPE(RegWriteE2 , RegWriteE1Out )
 `PIPE(MemReadE2  , MemReadE1  )
 `PIPE(MemtoRegE2 , MemtoRegE1 )
 `PIPE(MemWriteE2 , MemWriteE1 )
@@ -310,6 +317,7 @@ mult1 mult1_inst(
 `PIPE(RtDataE2   , RtDataE1   )
 `PIPE(ALUDataE2  , ALUDataE1  )
 `PIPE(RAddrE2    , RAddrE1    )
+`PIPE(ALUEnE2    , ALUEnE1    )
 `PIPE(FuncE2     , FuncE1     )
 `PIPE(RtAddrE2   , RtAddrE1   )
 `PIPE(OffsetE2   , OffsetE1   )
@@ -361,6 +369,16 @@ assign ALUDataE2out = OutSelE2[1] ? RsDataE2 :
                       OutSelE2[0] ? BRAret   : ALUDataE2;
 
 assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
+
+always_comb
+begin
+    if((FuncE1 == `MOVN) && (ALUEnE1 == 1'b1))
+        RegWriteE1Out = (RtDataE1 != 0)   ;
+    else if((FuncE1 == `MOVZ) && (ALUEnE1 == 1'b1))
+        RegWriteE1Out = (RtDataE1 == 0)    ;
+    else
+        RegWriteE1Out = RegWriteE1;
+end
 // ------------------------------------------------
 
 `PIPE(ALUDataM, ALUDataE2out)

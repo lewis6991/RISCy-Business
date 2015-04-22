@@ -34,8 +34,11 @@ module decoder(
                        ImmSize ,
                        Unsgnsel,
                        ACCEn   ,
-                       MULSelB
+                       MULSelB ,
+                       ALUEn  
 );
+
+assign ALUEn = (OpCode == 0);
 
     always_comb
     begin
@@ -64,11 +67,16 @@ module decoder(
                 case(FuncIn)
                     `ADD , `ADDU, `SUB , `SUBU, `SLL ,
                     `SLLV, `SRA , `SRAV, `SRL , `SRLV,
-                    `AND , `NOR , `OR  , `XOR , `MOVN,
-                    `MOVZ, `SLT , `SLTU:
+                    `AND , `NOR , `OR  , `XOR , `SLT , 
+                    `SLTU:
                     begin
                         RegDst   = 2'b01;
                         RegWrite = 1'b1 ;
+                    end
+
+                    `MOVN, MOVZ:
+                    begin
+                        RegDst   = 2'b01;
                     end
 
                     `MFHI, `MFLO:
