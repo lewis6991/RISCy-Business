@@ -20,6 +20,7 @@ analyze -format sverilog {
 ../../src/ex_mult.sv
 ../../src/decoder.sv
 ../../src/branch.sv
+../../src/addrcalc.sv
 ../../src/alu.sv
 ../../src/acc_control.sv
 ../../src/WB.sv

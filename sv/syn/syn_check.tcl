@@ -8,18 +8,17 @@
 source ../library_Setup
 
 analyze -format sverilog {
-../../src/registers.sv
-../../src/processor.sv
+../../src/alu_definition.sv
 ../../src/op_definition.sv
-../../src/nleftshift.sv
-../../src/mult.sv
 ../../src/mul_definition.sv
+../../src/branch_definition.sv
 ../../src/mem_func.sv
+../../src/registers.sv
+../../src/mult1.sv
 ../../src/ex_mult.sv
 ../../src/decoder.sv
-../../src/branch_definition.sv
 ../../src/branch.sv
-../../src/alu_definition.sv
+../../src/addrcalc.sv
 ../../src/alu.sv
 ../../src/acc_control.sv
 ../../src/WB.sv
@@ -30,6 +29,7 @@ analyze -format sverilog {
 ../../src/EX1.sv
 ../../src/EX2.sv
 ../../src/DEC.sv
+../../src/processor.sv
 }
 
 elaborate PROCESSOR -architecture verilog -library DEFAULT
