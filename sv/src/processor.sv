@@ -249,7 +249,10 @@ DEC de0(
     .Shamt      (ShamtD             )
 );
 
+logic [5:0] OpCodeE1;
+
 `PIPE(ImmDataE1  , ImmDataD           )
+`PIPE(OpCodeE1   , InstructionD[31:26])
 `PIPE(OffsetE1   , OffsetD            )
 `PIPE(RsAddrE1   , RsAddrD            )
 `PIPE(RtAddrE1   , RtAddrD            )
@@ -493,6 +496,7 @@ assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
     .MemReadE(MemReadE1),
+    .OpCodeE (OpCodeE1 ),
     .RtAddrE (RtAddrE1 ),
     .RsAddrD (RsAddrD  ),
     .RtAddrD (RtAddrD  ),

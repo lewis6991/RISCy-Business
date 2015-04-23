@@ -6,8 +6,11 @@
 // Notes             :
 //-----------------------------------------------------------------------------------------------
 
+`include "op_definition.sv"
+
 module HDU(
     input        MemReadE,
+    input [5:0]  OpCodeE ,
     input [4:0]  RtAddrE ,
                  RsAddrD ,
                  RtAddrD ,
@@ -15,7 +18,7 @@ module HDU(
 );
 
 always_comb
-    if (MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD))
+    if ((MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD)) || (OpCodeE == `MULL))
         nStall <= 1'b0;
     else
         nStall <= 1'b1;
