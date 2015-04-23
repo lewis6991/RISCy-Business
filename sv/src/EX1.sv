@@ -32,13 +32,11 @@ module EX1(
         .N    (N     )
     );
 
-    ex_mult ex_mult0(
-        .A   (A      ),
-        .B   (B      ),
-        .Func(Func   ),
-        .Out (MULOut )
+    clu clu0(
+        .A   (A     ),
+        .B   (B     ),
+        .Func(Func  ),
+        .Out (MULOut)
     );
-
-      assign mB = B;
 
 endmodule
