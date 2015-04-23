@@ -189,9 +189,9 @@ end
 task run_random();
     Instruction new_inst;
 
-    repeat(1000)
+    repeat(5000)
     begin
-        @ (posedge Clock)
+        @ (rtlPC)
         #20
         new_inst = new();
         void'(new_inst.randomize());

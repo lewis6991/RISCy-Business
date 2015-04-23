@@ -35,7 +35,7 @@ module decoder(
                        Unsgnsel,
                        ACCEn   ,
                        MULSelB ,
-                       ALUEn  
+                       ALUEn
 );
 
 assign ALUEn = (OpCode == 0);
@@ -67,17 +67,15 @@ assign ALUEn = (OpCode == 0);
                 case(FuncIn)
                     `ADD , `ADDU, `SUB , `SUBU, `SLL ,
                     `SLLV, `SRA , `SRAV, `SRL , `SRLV,
-                    `AND , `NOR , `OR  , `XOR , `SLT , 
+                    `AND , `NOR , `OR  , `XOR , `SLT ,
                     `SLTU:
                     begin
                         RegDst   = 2'b01;
                         RegWrite = 1'b1 ;
                     end
 
-                    `MOVN, MOVZ:
-                    begin
-                        RegDst   = 2'b01;
-                    end
+                    `MOVN, `MOVZ:
+                        RegDst  = 2'b01;
 
                     `MFHI, `MFLO:
                     begin
