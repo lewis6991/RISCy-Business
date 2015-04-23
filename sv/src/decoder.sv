@@ -74,7 +74,7 @@ assign ALUEn = (OpCode == 0);
                         RegWrite = 1'b1 ;
                     end
 
-                    `MOVN, MOVZ:
+                    `MOVN, `MOVZ:
                         RegDst   = 2'b01;
 
                     `MFHI, `MFLO:
