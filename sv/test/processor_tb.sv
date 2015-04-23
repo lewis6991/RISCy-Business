@@ -189,7 +189,7 @@ end
 task run_random();
     Instruction new_inst;
 
-    repeat(1000)
+    repeat(5000)
     begin
         @ (posedge Clock)
         #20

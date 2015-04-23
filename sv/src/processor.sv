@@ -169,6 +169,7 @@ wire         ForwardMem  ;
 logic [31:0] A           ;
 logic [31:0] B           ;
 
+logic [31:0] BranchAddrE1 ;
 logic [31:0] BranchAddrE2 ;
 logic        BranchTakenE2;
 
@@ -290,6 +291,16 @@ EX1 ex1(
     .N      (ALUNE1                         )
 );
 
+wire [31:0] LinkAddr;
+
+addrcalc addrcalc_inst(
+    .PCIn   (InstrAddrE1                   ),
+    .BrCode (BrCodeE1                      ),
+    .Address(BRASrcE1 ? OffsetE1 : RsDataE1), // Address input
+    .PCout  (BranchAddrE1                  ),
+    .Ret    (LinkAddr                      )
+);
+
 mult1 mult1_inst(
     .A      (RsDataE1  ),
     .B      (RtDataE1  ),
@@ -298,6 +309,10 @@ mult1 mult1_inst(
     .SubOut2(SubOut2_E1),
     .SubOut3(SubOut3_E1)
 );
+
+logic [31:0] ALUDataE1Out;
+
+assign ALUDataE1Out = OutSelE1[0] ? LinkAddr  : ALUDataE1;
 
 `PIPE(MULSelBE2  , MULSelBE1  )
 `PIPE(CLDataE2   , CLDataE1   )
@@ -315,7 +330,7 @@ mult1 mult1_inst(
 `PIPE(ACCEnE2    , ACCEnE1    )
 `PIPE(RsDataE2   , RsDataE1   )
 `PIPE(RtDataE2   , RtDataE1   )
-`PIPE(ALUDataE2  , ALUDataE1  )
+`PIPE(ALUDataE2  , ALUDataE1Out)
 `PIPE(RAddrE2    , RAddrE1    )
 `PIPE(ALUEnE2    , ALUEnE1    )
 `PIPE(FuncE2     , FuncE1     )
@@ -332,6 +347,11 @@ mult1 mult1_inst(
 `PIPE(SubOut2_E2 , SubOut2_E1 )
 `PIPE(SubOut3_E2 , SubOut3_E1 )
 
+`PIPE(BranchAddrE2, BranchAddrE1)
+
+logic [31:0] BRAret ;
+
+`PIPE(BRAret, LinkAddr)
 
 always_comb
 case (FuncE2)
@@ -347,7 +367,6 @@ case (FuncE2)
 endcase
 
 // Branch stuff ----------------------------------
-wire [31:0] BRAret ;
 wire brTakenE2;
 
 branch branch0(
@@ -355,14 +374,11 @@ branch branch0(
     .Z      (ALUZE2                        ),
     .O      (ALUOE2                        ),
     .N      (ALUNE2                        ),
-    .PCIn   (InstrAddrE2                   ), // Program counter input.
-    .Address(BRASrcE2 ? OffsetE2 : RsDataE2), // Address input
     .BrCode (BrCodeE2                      ),
     .BrRt   (RtAddrE2[0]                   ),
-    .PCout  (BranchAddrE2                  ), // Program counter
-    .Ret    (BRAret                        ), //, // Return address
     .Taken  (brTakenE2                     )  // Branch taken
 );
+
 assign BranchTakenE2 = JumpE2 | BranchE2 & brTakenE2;
 
 assign ALUDataE2out = OutSelE2[1] ? RsDataE2 :
@@ -467,7 +483,7 @@ FU dfu0(
 always_comb
 case (ForwardA)
     0: RsDataIn = RsDataD    ;
-    1: RsDataIn = ALUDataE1  ;
+    1: RsDataIn = ALUDataE1Out;
     2: RsDataIn = ALUDataE2out;
     3: RsDataIn = ALUDataMout;
 endcase
@@ -475,7 +491,7 @@ endcase
 always_comb
 case (ForwardB)
     0: RtDataIn = RtDataD    ;
-    1: RtDataIn = ALUDataE1  ;
+    1: RtDataIn = ALUDataE1Out;
     2: RtDataIn = ALUDataE2out;
     3: RtDataIn = ALUDataMout;
 endcase
