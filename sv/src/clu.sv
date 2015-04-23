@@ -1,11 +1,11 @@
 //------------------------------------------------------------------------------
-// File              : ex_mult.sv
-// Description       : MULT module for execute stage
+// File              : clu.sv
+// Description       : Count leading digits unit.
 // Primary Author    : Ethan Bishop
-// Other Contributors:
+// Other Contributors: Lewis Russell
 // Notes             :
 //------------------------------------------------------------------------------
-module ex_mult (
+module clu(
     input        [31:0] A     ,
                         B     ,
     input        [ 5:0] Func  ,
