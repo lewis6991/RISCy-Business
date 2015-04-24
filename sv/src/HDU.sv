@@ -10,7 +10,7 @@
 
 module HDU(
     input        MemReadE      ,
-    input        BranchNotTaken,
+    input        IncorrectBranch,
     input        MULOp         ,
     input [5:0]  Func          ,  
     input [4:0]  RtAddrE       ,
@@ -27,7 +27,7 @@ else
     Stall <= 1'b0;
 
 always_comb
-if(BranchNotTaken)
+if(IncorrectBranch)
     nFlush = 0;
 else
     nFlush = 1;

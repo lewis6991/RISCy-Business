@@ -516,7 +516,7 @@ assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
     .MemReadE      (MemReadE1            ),
-    .BranchNotTaken(~brTakenE2 & BranchE2),
+    .IncorrectBranch(~brTakenE2 & BranchE2),
     .MULOp         (MULOpD               ),
     .Func          (InstructionD[5:0]    ),
     .RtAddrE       (RtAddrE1             ),
