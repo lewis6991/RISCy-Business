@@ -26,10 +26,12 @@ placeDesign -prePlaceOpt
 checkPlace processor.checkPlace
 setDrawView place
 optDesign -preCTS
+optDesign -preCTS -incr
 addCTSCellList {BUF2 INV2}
 clockDesign -genSpecOnly Clock.ctstch
 clockDesign -specFile Clock.ctstch -outDir clock_report -fixedInstBeforeCTS
 optDesign -postCTS
+optDesign -postCTS -incr
 setNanoRouteMode -quiet -routeWithTimingDriven true
 setNanoRouteMode -quiet -routeTdrEffort 10
 setNanoRouteMode -quiet -routeTopRoutingLayer default
@@ -39,10 +41,11 @@ setNanoRouteMode -quiet -routeWithTimingDriven true
 setNanoRouteMode -quiet -routeWithSiDriven false
 routeDesign -globalDetail
 optDesign -postRoute
+optDesign -postRoute -incr
 getFillerMode -quiet
 findCoreFillerCells
 addFiller -cell FILL1 FILL2 FILL5 FILL10 FILL25 -prefix FILLER -markFixed
-verifyConnectivity -type all -error 1000 -warning 50
+verifyConnectivity -type all
 verifyGeometry
 streamOut processorlayout.gds -mapFile streamOut.map -libName DesignLib -stripes 1 -units 1000 -mode ALL
 saveNetlist "processor_net.v"
