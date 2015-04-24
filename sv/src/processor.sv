@@ -27,9 +27,9 @@ module PROCESSOR(
                         nStall
 );
 
-logic Stall2;
-logic Stall1;
-logic nFlush;
+logic Stall2      ;
+logic Stall1      ;
+logic nFlush      ;
 
 logic JumpD        ;
 logic JumpE1       ;
@@ -207,7 +207,7 @@ logic [31:0] SubOut1_E2  ;
 logic [31:0] SubOut2_E2  ;
 logic [31:0] SubOut3_E2  ;
 
-assign nStall = ~Stall1 & ~Stall2;
+assign nStall = (~Stall1 & ~Stall2) & ~BranchD;
 
 IF if0(
     .Clock      (Clock        ),
@@ -506,15 +506,15 @@ assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
 assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
-    .MemReadE      (MemReadE1            ),
+    .MemReadE       (MemReadE1            ),
     .IncorrectBranch(~brTakenE2 & BranchE2),
-    .MULOp         (MULOpD               ),
-    .Func          (InstructionD[5:0]    ),
-    .RtAddrE       (RtAddrE1             ),
-    .RsAddrD       (RsAddrD              ),
-    .RtAddrD       (RtAddrD              ),
-    .Stall         (Stall1               ),
-    .nFlush        (nFlush               )
+    .MULOp          (MULOpD               ),
+    .Func           (InstructionD[5:0]    ),
+    .RtAddrE        (RtAddrE1             ),
+    .RsAddrD        (RsAddrD              ),
+    .RtAddrD        (RtAddrD              ),
+    .Stall          (Stall1               ),
+    .nFlush         (nFlush               )
 );
 
 assign MemWrite = MemWriteM  ;

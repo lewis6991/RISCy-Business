@@ -9,19 +9,19 @@
 `include "mul_definition.sv"
 
 module HDU(
-    input        MemReadE      ,
+    input        MemReadE       ,
     input        IncorrectBranch,
-    input        MULOp         ,
-    input [5:0]  Func          ,  
-    input [4:0]  RtAddrE       ,
-                 RsAddrD       ,
-                 RtAddrD       ,
-    output logic Stall         ,
+    input        MULOp          ,
+    input [5:0]  Func           ,  
+    input [4:0]  RtAddrE        ,
+                 RsAddrD        ,
+                 RtAddrD        ,
+    output logic Stall          ,
     output logic nFlush
 );
 
 always_comb
-if ((MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD)) || Func inside {`MUL, `CLO, `CLZ} && MULOp)
+if ((MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD)) || (Func inside {`MUL, `CLO, `CLZ} && MULOp))
     Stall <= 1'b1;
 else
     Stall <= 1'b0;
