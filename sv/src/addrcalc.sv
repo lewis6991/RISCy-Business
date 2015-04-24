@@ -10,17 +10,13 @@ module addrcalc(
     input        [31:0] PCIn   , // Program counter input.
     input        [ 2:0] BrCode ,
     input        [31:0] Address, // Address input
-    output logic [31:0] PCout  , // Program counter
-                        Ret      // Return address
+    output logic [31:0] PCout
 );
 
 always_comb
     case (BrCode)
         `J, `JAL: PCout = {PCIn[31:28], Address[25:0], 2'd0};
-        `ALU    : PCout = Address                           ;
         default : PCout = PCIn + {Address[29:0], 2'd0}      ;
     endcase
-
-assign Ret = PCIn + 8;
 
 endmodule
