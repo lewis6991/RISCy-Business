@@ -25,7 +25,8 @@ program processor_model(
                             MemRead
 );
 
-parameter br_d  = 3; // Delay for branches to occur.
+parameter br_d  = 1; // Delay for branches to occur.
+parameter jp_d  = 2; // Delay for jumps to occur.
 parameter reg_d = 5; // Delay for reg writes to occur.
 parameter mem_d = 3; // Delay for memory operations to occur.
 
@@ -267,10 +268,10 @@ task update_pc();
         BGTZ  : if (`rs >  0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         BLEZ  : if (`rs <= 0  ) delay.pc <= ##(br_d) pc + (offset << 2);
         BNE   : if (`rs != `rt) delay.pc <= ##(br_d) pc + (offset << 2);
-        J, JAL: delay.pc <= ##(br_d) (address << 2);
+        J, JAL: delay.pc <= ##(jp_d) (address << 2);
         ALU   :
         case (func)
-            `JR, `JALR: delay.pc <= ##(br_d) `rs;
+            `JR, `JALR: delay.pc <= ##(jp_d) `rs;
         endcase
         BRANCH:
         case (rt_addr)

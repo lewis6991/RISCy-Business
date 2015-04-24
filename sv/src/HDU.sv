@@ -17,7 +17,7 @@ module HDU(
                  RsAddrD        ,
                  RtAddrD        ,
     output logic Stall          ,
-    output logic nFlush
+    output logic Flush
 );
 
 always_comb
@@ -28,8 +28,8 @@ else
 
 always_comb
 if(IncorrectBranch)
-    nFlush = 0;
+    Flush = 1;
 else
-    nFlush = 1;
+    Flush = 0;
 
 endmodule

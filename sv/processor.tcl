@@ -25,7 +25,7 @@ simvision {
     waveform add -signals processor_tb.pmodel0.imm
     waveform add -signals processor_tb.pmodel0.shamt
     waveform add -signals processor_tb.pmodel0.address
-    waveform add -signals processor_tb.pmodel0.stall
+    waveform add -signals processor_tb.pmodel0.Stall
     group new -name Memory -contents {
         processor_tb.memAddr
         processor_tb.memAddrM

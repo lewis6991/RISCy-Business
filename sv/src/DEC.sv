@@ -11,7 +11,6 @@ module DEC(
                          RegWriteIn  ,
     input        [31:0]  Instruction ,
                          RData       ,
-                         InstrAddrIn ,
     input        [ 4:0]  RAddrIn     ,
                          RegAddr     ,
     output logic [31:0]  ImmData     ,

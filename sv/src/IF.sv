@@ -20,7 +20,11 @@ module IF(
                         nReset     ,
                         nStall     ,
                         BranchTaken,
+                        Jump       ,
+                        RevBranch  ,
     input        [31:0] BranchAddr ,
+                        RevBranchAddr,
+                        JumpAddr   ,
                  [31:0] InstrMem   ,
     output logic [15:0] InstrAddr  ,
     output logic [31:0] InstrOut
@@ -33,7 +37,9 @@ module IF(
         if (~nReset)
             progAddrOut <= #1 32'd0;
         else
-            progAddrOut <= #1 BranchTaken ? BranchAddr : progAddrMOut;
+            progAddrOut <= #1 RevBranch   ? RevBranchAddr :
+                              BranchTaken ? BranchAddr    :
+                              Jump        ? JumpAddr      : progAddrMOut;
 
     assign progAddrMOut = nStall ? progAddrOut + 32'd4 : progAddrOut;
 
