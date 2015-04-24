@@ -189,7 +189,7 @@ end
 task run_random();
     Instruction new_inst;
 
-    repeat(5000)
+    repeat(10000000)
     begin
         @ (rtlPC)
         #20
@@ -206,7 +206,7 @@ always begin
 
     // Timeout mechanism.
     ++cycles;
-    TIMEOUT_CTRL: assert (cycles < 10000)
+    TIMEOUT_CTRL: assert (cycles < 100000000)
     else
         $fatal(1, "FATAL: Timeout");
 end
