@@ -206,10 +206,6 @@ logic [31:0] SubOut1_E2  ;
 logic [31:0] SubOut2_E2  ;
 logic [31:0] SubOut3_E2  ;
 
-logic [31:0] LinkAddrIF  ;
-logic [31:0] LinkAddrD   ;
-logic [31:0] LinkAddrE1  ;
-
 assign nStall = ~Stall1 & ~Stall2;
 
 IF if0(
@@ -230,13 +226,10 @@ addrcalc addrcalc1(
     .PCout  (BranchAddrD        )
 );
 
-assign LinkAddrD = InstrAddrD + 8;
-
 `PIPE(Stall2, Stall1)
 
 `PIPE(InstructionD, InstructionF            )
 `PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
-
 
 DEC de0(
     .Clock      (Clock              ),
@@ -302,7 +295,6 @@ logic [5:0] MULFuncE1;
 `PIPE(BrCodeE1    , BrCodeD            )
 `PIPE(MemfuncE1   , MemfuncD           )
 `PIPE(ShamtE1     , ShamtD             )
-`PIPE(LinkAddrE1  , LinkAddrD          )
 `PIPE(BranchAddrE1, BranchAddrD        )
 
 logic [63:0] MULDataE2;
@@ -341,7 +333,7 @@ always_comb
     else
         RegWriteE1Out = RegWriteE1;
 
-assign ALUDataE1Out = OutSelE1[0] ? LinkAddrE1 : ALUDataE1;
+assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 
 `PIPE(MULSelBE2   , MULSelBE1      )
 `PIPE(CLDataE2    , CLDataE1       )
@@ -410,23 +402,22 @@ assign ALUDataE2Out = OutSelE2[1] ? RsDataE2 : ALUDataE2;
 assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 // ------------------------------------------------
 
-`PIPE(ALUDataM, ALUDataE2Out)
-
-`PIPE(MULDataM, MULDataE2    )
-`PIPE(RtDataM   , RtDataE2  )
-`PIPE(RAddrM    , RAddrE2   )
-`PIPE(MemFuncM  , MemfuncE2 )
-`PIPE(RegWriteM , RegWriteE2Out)
-`PIPE(MemReadM  , MemReadE2 )
-`PIPE(MemtoRegM , MemtoRegE2)
-`PIPE(MemWriteM , MemWriteE2)
-`PIPE(RtAddrM   , RtAddrE2  )
-`PIPE(ALUCM     , ALUCE2    )
-`PIPE(ALUZM     , ALUZE2    )
-`PIPE(ALUOM     , ALUOE2    )
-`PIPE(ALUNM     , ALUNE2    )
-`PIPE(ACCEnM    , ACCEnE2   )
-`PIPE(FuncM     , FuncE2    )
+`PIPE(ALUDataM , ALUDataE2Out )
+`PIPE(MULDataM , MULDataE2    )
+`PIPE(RtDataM  , RtDataE2     )
+`PIPE(RAddrM   , RAddrE2      )
+`PIPE(MemFuncM , MemfuncE2    )
+`PIPE(RegWriteM, RegWriteE2Out)
+`PIPE(MemReadM , MemReadE2    )
+`PIPE(MemtoRegM, MemtoRegE2   )
+`PIPE(MemWriteM, MemWriteE2   )
+`PIPE(RtAddrM  , RtAddrE2     )
+`PIPE(ALUCM    , ALUCE2       )
+`PIPE(ALUZM    , ALUZE2       )
+`PIPE(ALUOM    , ALUOE2       )
+`PIPE(ALUNM    , ALUNE2       )
+`PIPE(ACCEnM   , ACCEnE2      )
+`PIPE(FuncM    , FuncE2       )
 
 EX2 ex2(
     .Clock (Clock      ),
@@ -472,25 +463,25 @@ WB wb0(
 );
 
 FU dfu0(
-    .RegWriteE2 (RegWriteE2 ),
-    .RegWriteE1 (RegWriteE1Out ),
-    .RegWriteM  (RegWriteM  ),
-    .RegWriteW  (RegWriteW  ),
-    .Memfunc    (MemFuncM   ),
-    .RAddrE2    (RAddrE2    ),
-    .RAddrE1    (RAddrE1    ),
-    .RAddrM     (RAddrM     ),
-    .RAddrW     (RAddrW     ),
-    .RtAddrM    (RtAddrM    ),
-    .RsAddrE1   (RsAddrE1   ),
-    .RtAddrE1   (RtAddrE1   ),
-    .RsAddrD    (RsAddrD    ),
-    .RtAddrD    (RtAddrD    ),
-    .ForwardSrcA(ForwardSrcA),
-    .ForwardSrcB(ForwardSrcB),
-    .ForwardMem (ForwardMem ),
-    .ForwardA   (ForwardA   ),
-    .ForwardB   (ForwardB   )
+    .RegWriteE2 (RegWriteE2   ),
+    .RegWriteE1 (RegWriteE1Out),
+    .RegWriteM  (RegWriteM    ),
+    .RegWriteW  (RegWriteW    ),
+    .Memfunc    (MemFuncM     ),
+    .RAddrE2    (RAddrE2      ),
+    .RAddrE1    (RAddrE1      ),
+    .RAddrM     (RAddrM       ),
+    .RAddrW     (RAddrW       ),
+    .RtAddrM    (RtAddrM      ),
+    .RsAddrE1   (RsAddrE1     ),
+    .RtAddrE1   (RtAddrE1     ),
+    .RsAddrD    (RsAddrD      ),
+    .RtAddrD    (RtAddrD      ),
+    .ForwardSrcA(ForwardSrcA  ),
+    .ForwardSrcB(ForwardSrcB  ),
+    .ForwardMem (ForwardMem   ),
+    .ForwardA   (ForwardA     ),
+    .ForwardB   (ForwardB     )
 );
 
 always_comb
@@ -514,13 +505,13 @@ assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
 assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
-    .MemReadE(MemReadE1),
-    .MULOp   (MULOpD   ),
-    .Func    (InstructionD[5:0] ),
-    .RtAddrE (RtAddrE1 ),
-    .RsAddrD (RsAddrD  ),
-    .RtAddrD (RtAddrD  ),
-    .Stall   (Stall1   )
+    .MemReadE(MemReadE1        ),
+    .MULOp   (MULOpD           ),
+    .Func    (InstructionD[5:0]),
+    .RtAddrE (RtAddrE1         ),
+    .RsAddrD (RsAddrD          ),
+    .RtAddrD (RtAddrD          ),
+    .Stall   (Stall1           )
 );
 
 assign MemWrite = MemWriteM  ;
