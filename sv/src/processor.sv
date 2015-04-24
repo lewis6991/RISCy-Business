@@ -220,7 +220,7 @@ IF if0(
     .InstrOut   (InstructionF )
 );
 
-addrcalc addrcalc1(
+addrcalc addrcalc0(
     .PCIn   ({16'b0, InstrAddrD}),
     .BrCode (BrCodeD            ),
     .Address({16'b0, OffsetD}   ),
@@ -232,7 +232,7 @@ addrcalc addrcalc1(
 `PIPE(InstructionD, InstructionF            )
 `PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
 
-DEC de0(
+DEC dec0(
     .Clock      (Clock              ),
     .nReset     (nReset             ),
     .RegWriteIn (RegWriteW          ),
@@ -463,7 +463,7 @@ WB wb0(
     .WBData  (RDataW   )
 );
 
-FU dfu0(
+FU fu0(
     .RegWriteE2 (RegWriteE2   ),
     .RegWriteE1 (RegWriteE1Out),
     .RegWriteM  (RegWriteM    ),
