@@ -207,10 +207,6 @@ logic [31:0] SubOut1_E2  ;
 logic [31:0] SubOut2_E2  ;
 logic [31:0] SubOut3_E2  ;
 
-logic [31:0] LinkAddrIF  ;
-logic [31:0] LinkAddrD   ;
-logic [31:0] LinkAddrE1  ;
-
 assign nStall = ~Stall1 & ~Stall2;
 
 IF if0(
@@ -231,13 +227,10 @@ addrcalc addrcalc1(
     .PCout  (BranchAddrD        )
 );
 
-assign LinkAddrD = InstrAddrD + 8;
-
 `PIPE(Stall2, Stall1)
 
 `PIPE(InstructionD, InstructionF            )
 `PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
-
 
 DEC de0(
     .Clock      (Clock              ),
@@ -303,7 +296,6 @@ logic [5:0] MULFuncE1;
 `PIPE(BrCodeE1    , BrCodeD            )
 `PIPE(MemfuncE1   , MemfuncD           )
 `PIPE(ShamtE1     , ShamtD             )
-`PIPE(LinkAddrE1  , LinkAddrD          )
 `PIPE(BranchAddrE1, BranchAddrD        )
 
 logic [63:0] MULDataE2;
@@ -342,41 +334,41 @@ always_comb
     else
         RegWriteE1Out = RegWriteE1;
 
-assign ALUDataE1Out = OutSelE1[0] ? LinkAddrE1 : ALUDataE1;
+assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 
-`PIPE(MULSelBE2   , MULSelBE1      )
-`PIPE(CLDataE2    , CLDataE1       )
-`PIPE(MULOpE2     , MULOpE1        )
-`PIPE(MULOpM      , MULOpE2        )
-`PIPE(RegWriteE2  , RegWriteE1Out & nFlush  )
-`PIPE(MemReadE2   , MemReadE1      )
-`PIPE(MemtoRegE2  , MemtoRegE1     )
-`PIPE(MemWriteE2  , MemWriteE1 & nFlush     )
-`PIPE(MemfuncE2   , MemfuncE1      )
-`PIPE(ALUCE2      , ALUCE1         )
-`PIPE(ALUZE2      , ALUZE1         )
-`PIPE(ALUOE2      , ALUOE1         )
-`PIPE(ALUNE2      , ALUNE1         )
-`PIPE(ACCEnE2     , ACCEnE1 & nFlush        )
-`PIPE(RsDataE2    , RsDataE1       )
-`PIPE(RtDataE2    , RtDataE1       )
-`PIPE(ALUDataE2   , ALUDataE1Out   )
-`PIPE(RAddrE2     , RAddrE1        )
-`PIPE(ALUEnE2     , ALUEnE1        )
-`PIPE(FuncE2      , FuncE1         )
-`PIPE(RtAddrE2    , RtAddrE1       )
-`PIPE(OffsetE2    , OffsetE1       )
-`PIPE(RegJumpE2   , RegJumpE1      )
-`PIPE(InstrAddrE2 , InstrAddrE1    )
-`PIPE(BrCodeE2    , BrCodeE1       )
-`PIPE(OutSelE2    , OutSelE1       )
-`PIPE(JumpE2      , JumpE1         )
-`PIPE(BranchE2    , BranchE1       )
-`PIPE(SubOut0_E2  , SubOut0_E1     )
-`PIPE(SubOut1_E2  , SubOut1_E1     )
-`PIPE(SubOut2_E2  , SubOut2_E1     )
-`PIPE(SubOut3_E2  , SubOut3_E1     )
-`PIPE(BranchAddrE2, BranchAddrE1Out)
+`PIPE(MULSelBE2   , MULSelBE1             )
+`PIPE(CLDataE2    , CLDataE1              )
+`PIPE(MULOpE2     , MULOpE1               )
+`PIPE(MULOpM      , MULOpE2               )
+`PIPE(RegWriteE2  , RegWriteE1Out & nFlush)
+`PIPE(MemReadE2   , MemReadE1             )
+`PIPE(MemtoRegE2  , MemtoRegE1            )
+`PIPE(MemWriteE2  , MemWriteE1 & nFlush   )
+`PIPE(MemfuncE2   , MemfuncE1             )
+`PIPE(ALUCE2      , ALUCE1                )
+`PIPE(ALUZE2      , ALUZE1                )
+`PIPE(ALUOE2      , ALUOE1                )
+`PIPE(ALUNE2      , ALUNE1                )
+`PIPE(ACCEnE2     , ACCEnE1 & nFlush      )
+`PIPE(RsDataE2    , RsDataE1              )
+`PIPE(RtDataE2    , RtDataE1              )
+`PIPE(ALUDataE2   , ALUDataE1Out          )
+`PIPE(RAddrE2     , RAddrE1               )
+`PIPE(ALUEnE2     , ALUEnE1               )
+`PIPE(FuncE2      , FuncE1                )
+`PIPE(RtAddrE2    , RtAddrE1              )
+`PIPE(OffsetE2    , OffsetE1              )
+`PIPE(RegJumpE2   , RegJumpE1             )
+`PIPE(InstrAddrE2 , InstrAddrE1           )
+`PIPE(BrCodeE2    , BrCodeE1              )
+`PIPE(OutSelE2    , OutSelE1              )
+`PIPE(JumpE2      , JumpE1                )
+`PIPE(BranchE2    , BranchE1              )
+`PIPE(SubOut0_E2  , SubOut0_E1            )
+`PIPE(SubOut1_E2  , SubOut1_E1            )
+`PIPE(SubOut2_E2  , SubOut2_E1            )
+`PIPE(SubOut3_E2  , SubOut3_E1            )
+`PIPE(BranchAddrE2, BranchAddrE1Out       )
 
 always_comb
 case (FuncE2)
@@ -411,23 +403,22 @@ assign ALUDataE2Out = OutSelE2[1] ? RsDataE2 : ALUDataE2;
 assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 // ------------------------------------------------
 
-`PIPE(ALUDataM, ALUDataE2Out)
-
-`PIPE(MULDataM  , MULDataE2             )
-`PIPE(RtDataM   , RtDataE2              )
-`PIPE(RAddrM    , RAddrE2               )
-`PIPE(MemFuncM  , MemfuncE2             )
-`PIPE(RegWriteM , RegWriteE2Out & nFlush)
-`PIPE(MemReadM  , MemReadE2             )
-`PIPE(MemtoRegM , MemtoRegE2            )
-`PIPE(MemWriteM , MemWriteE2 & nFlush   )
-`PIPE(RtAddrM   , RtAddrE2              )
-`PIPE(ALUCM     , ALUCE2                )
-`PIPE(ALUZM     , ALUZE2                )
-`PIPE(ALUOM     , ALUOE2                )
-`PIPE(ALUNM     , ALUNE2                )
-`PIPE(ACCEnM    , ACCEnE2 & nFlush      )
-`PIPE(FuncM     , FuncE2                )
+`PIPE(ALUDataM , ALUDataE2Out          )
+`PIPE(MULDataM , MULDataE2             )
+`PIPE(RtDataM  , RtDataE2              )
+`PIPE(RAddrM   , RAddrE2               )
+`PIPE(MemFuncM , MemfuncE2             )
+`PIPE(RegWriteM, RegWriteE2Out & nFlush)
+`PIPE(MemReadM , MemReadE2             )
+`PIPE(MemtoRegM, MemtoRegE2            )
+`PIPE(MemWriteM, MemWriteE2 & nFlush   )
+`PIPE(RtAddrM  , RtAddrE2              )
+`PIPE(ALUCM    , ALUCE2                )
+`PIPE(ALUZM    , ALUZE2                )
+`PIPE(ALUOM    , ALUOE2                )
+`PIPE(ALUNM    , ALUNE2                )
+`PIPE(ACCEnM   , ACCEnE2 & nFlush      )
+`PIPE(FuncM    , FuncE2                )
 
 EX2 ex2(
     .Clock (Clock      ),
@@ -473,25 +464,25 @@ WB wb0(
 );
 
 FU dfu0(
-    .RegWriteE2 (RegWriteE2 ),
-    .RegWriteE1 (RegWriteE1Out ),
-    .RegWriteM  (RegWriteM  ),
-    .RegWriteW  (RegWriteW  ),
-    .Memfunc    (MemFuncM   ),
-    .RAddrE2    (RAddrE2    ),
-    .RAddrE1    (RAddrE1    ),
-    .RAddrM     (RAddrM     ),
-    .RAddrW     (RAddrW     ),
-    .RtAddrM    (RtAddrM    ),
-    .RsAddrE1   (RsAddrE1   ),
-    .RtAddrE1   (RtAddrE1   ),
-    .RsAddrD    (RsAddrD    ),
-    .RtAddrD    (RtAddrD    ),
-    .ForwardSrcA(ForwardSrcA),
-    .ForwardSrcB(ForwardSrcB),
-    .ForwardMem (ForwardMem ),
-    .ForwardA   (ForwardA   ),
-    .ForwardB   (ForwardB   )
+    .RegWriteE2 (RegWriteE2   ),
+    .RegWriteE1 (RegWriteE1Out),
+    .RegWriteM  (RegWriteM    ),
+    .RegWriteW  (RegWriteW    ),
+    .Memfunc    (MemFuncM     ),
+    .RAddrE2    (RAddrE2      ),
+    .RAddrE1    (RAddrE1      ),
+    .RAddrM     (RAddrM       ),
+    .RAddrW     (RAddrW       ),
+    .RtAddrM    (RtAddrM      ),
+    .RsAddrE1   (RsAddrE1     ),
+    .RtAddrE1   (RtAddrE1     ),
+    .RsAddrD    (RsAddrD      ),
+    .RtAddrD    (RtAddrD      ),
+    .ForwardSrcA(ForwardSrcA  ),
+    .ForwardSrcB(ForwardSrcB  ),
+    .ForwardMem (ForwardMem   ),
+    .ForwardA   (ForwardA     ),
+    .ForwardB   (ForwardB     )
 );
 
 always_comb
