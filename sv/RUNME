@@ -95,7 +95,7 @@ main()
                     then
                         CLKARGS[2]="1"
                     fi
-                    
+
                 fi
 
                 CLOCK=""
@@ -217,9 +217,9 @@ usage()
 
     -clk=\"L\"           Used to set the clock period. If not set, a default
         =\"L-U\"         value of 10ns is chosen. A range can be set by
-        =\"L-U,I\"       specifying the lowest (L) to the highest (H) clock 
-                       period, and the increment (I). If no increment is 
-                       given, the code will attempt to run test for 10 
+        =\"L-U,I\"       specifying the lowest (L) to the highest (H) clock
+                       period, and the increment (I). If no increment is
+                       given, the code will attempt to run test for 10
                        different periods.
                        NOTE: Specify in terms of 100ps i.e. 100 = 10ns
 
@@ -247,7 +247,7 @@ proc()
             ncverilog $NCARGS $GUI_VAR "+incdir+src/+test/" $PLUSARGS "+clk_p=$i" $PROCLOC > temp.log
             if [ "$?" = "0" ]
             then
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i) 
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. PASS ($i)
 "
                 if [ -n "$VERBOSE" ]
                 then
@@ -257,7 +257,7 @@ proc()
                 echo "$(cat temp.log)" >> run.log
                 break
             else
-                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. FAIL ($i) 
+                summarytext=$"${summarytext}processor testcase ${PLUSARGS/+test=/}: .. FAIL ($i)
 "
                 if [ -z "$QUIET" ]
                 then
@@ -268,7 +268,7 @@ proc()
             echo "$(cat temp.log)" >> run.log
         done
     else
-        for test in {1..7}
+        for test in {1..8}
         do
             #PUT EACH CLOCK CASE HERE
             for i in "${CLOCK[@]}"
