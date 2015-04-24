@@ -28,7 +28,7 @@ module decoder(
                        MULOp   ,
                        MemWrite,
                        ALUSrc  ,
-                       BRASrc  ,
+                       RegJump  ,
                        RegWrite,
                        ShiftSel,
                        ImmSize ,
@@ -55,7 +55,7 @@ assign ALUEn = (OpCode == 0);
         ImmSize  = 1'b0;
         Unsgnsel = 1'b0;
         MemFunc  = 3'd0;
-        BRASrc   = 1'b0;
+        RegJump  = 1'b0;
         ZeroImm  = 1'b0;
         ACCEn    = 1'b0;
         MULSelB  = 1'b0;
@@ -104,12 +104,14 @@ assign ALUEn = (OpCode == 0);
                         RegDst   = 2'b01;
                         Jump     = 1'b1 ;
                         RegWrite = 1'b1 ;
+                        RegJump = 1'b1;
                         OutSel   = 2'b01;
                     end
 
                     `JR:
                     begin
                         Jump   = 1'b1 ;
+                        RegJump = 1'b1;
                         OutSel = 2'b01;
                     end
                 endcase
@@ -119,7 +121,6 @@ assign ALUEn = (OpCode == 0);
                 FuncOut = `SUB;
                 Branch  = 1'b1;
                 ZeroImm = 1'b1;
-                BRASrc  = 1'b1;
                 OutSel  = 2'b01;
                 if (BrLink)
                 begin
@@ -220,7 +221,6 @@ assign ALUEn = (OpCode == 0);
             begin
                 FuncOut = `SUB ;
                 Branch  = 1'b1 ;
-                BRASrc  = 1'b1 ;
                 ZeroImm = 1'b1 ;
                 OutSel  = 2'b01;
             end
@@ -229,14 +229,12 @@ assign ALUEn = (OpCode == 0);
             begin
                 FuncOut = `SUB ;
                 Branch  = 1'b1 ;
-                BRASrc  = 1'b1 ;
                 OutSel  = 2'b01;
             end
 
             `J:
             begin
                 Jump    = 1'b1 ;
-                BRASrc  = 1'b1 ;
                 ImmSize = 1'b1 ;
                 OutSel  = 2'b01;
             end
@@ -245,7 +243,6 @@ assign ALUEn = (OpCode == 0);
             begin
                 RegDst   = 2'b10;
                 Jump     = 1'b1 ;
-                BRASrc   = 1'b1 ;
                 ImmSize  = 1'b1 ;
                 RegWrite = 1'b1 ;
                 OutSel   = 2'b01;
