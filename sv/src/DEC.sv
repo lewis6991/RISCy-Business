@@ -5,7 +5,7 @@
 // Other Contributors: Dhanushan Raveendran
 // Notes:
 //----------------------------------------
-`ifdef
+`ifdef no_check
 module DEC(
     input                Clock       ,
                          nReset      ,
