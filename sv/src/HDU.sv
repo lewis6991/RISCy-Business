@@ -12,6 +12,7 @@
 module HDU(
     input        MemReadE,
     input        MULOp   ,
+    input        Branch  ,
     input [5:0]  Func    ,
     input [4:0]  RtAddrE ,
                  RsAddrD ,
@@ -21,7 +22,7 @@ module HDU(
 
 always_comb
 if (MemReadE && (RtAddrE == RsAddrD || RtAddrE == RtAddrD)
-        || Func inside {`MUL, `CLO, `CLZ} && MULOp)
+|| (Func inside {`MUL, `CLO, `CLZ} && MULOp) || Branch)
     Stall <= 1'b1;
 else
     Stall <= 1'b0;
