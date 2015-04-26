@@ -25,11 +25,12 @@ program processor_model(
                             MemRead
 );
 
-parameter br_d  = 1; // Delay for branches to occur.
-parameter rbr_d = 3; // Delay for reverser branches to occur.
-parameter jp_d  = 2; // Delay for jumps to occur.
-parameter reg_d = 5; // Delay for reg writes to occur.
-parameter mem_d = 3; // Delay for memory operations to occur.
+parameter br_d    = 1; // Delay for branches to occur.
+parameter rbr_d   = 3; // Delay for reverser branches to occur.
+parameter jp_d    = 2; // Delay for jumps to occur.
+parameter reg_d   = 5; // Delay for reg writes to occur.
+parameter mem_d   = 3; // Delay for memory operations to occur.
+parameter block_d = 5; // Cycles for instructions to be blocked.
 
 parameter mem_size = 4096;
 
@@ -45,8 +46,7 @@ logic        [15:0] imm        ,
                     pc      = 0;
 logic signed [25:0] address    ;
 
-bit block_instruction1;
-bit block_instruction2;
+int block_counter;
 
 // Internal registers are signed unpacked array.
 int register[0:31];
@@ -96,12 +96,21 @@ begin
     if (~nReset) begin
         acc = 0;
         pc = 0;
+        block_counter = 0;
         foreach(register[i])
             register[i] = 0;
     end
     else
     begin
-        if (~Stall && ~block_instruction1 && ~block_instruction2)
+        if (block_counter > 0)
+            --block_counter;
+
+        if (block_counter > 0)
+        begin
+            if (~Stall)
+                pc <= pc + 4;
+        end
+        else if (~Stall)
         begin
             update_caddr();
             update_acc();
@@ -267,11 +276,6 @@ endtask
 task update_pc();
     pc <= pc + 4;
 
-    if(~block_instruction1)
-        block_instruction2 = 0;
-
-    block_instruction1 = 0;
-
     // Branch prediction
     case (opcode)
         BEQ , BGTZ, BLEZ, BNE : delay.pc <= ##(br_d) pc + (offset << 2);
@@ -285,23 +289,19 @@ task update_pc();
     case (opcode)
         BEQ   : if (~(`rs == `rt)) begin
             delay.pc <= ##(rbr_d) pc;
-            block_instruction1 = 1;
-            block_instruction2 = 1;
+            block_counter = block_d;
         end
         BGTZ  : if (~(`rs >  0  )) begin
             delay.pc <= ##(rbr_d) pc;
-            block_instruction1 = 1;
-            block_instruction2 = 1;
+            block_counter = block_d;
         end
         BLEZ  : if (~(`rs <= 0  )) begin
             delay.pc <= ##(rbr_d) pc;
-            block_instruction1 = 1;
-            block_instruction2 = 1;
+            block_counter = block_d;
         end
         BNE   : if (~(`rs != `rt)) begin
             delay.pc <= ##(rbr_d) pc;
-            block_instruction1 = 1;
-            block_instruction2 = 1;
+            block_counter = block_d;
         end
         J, JAL: delay.pc <= ##(jp_d) (address << 2);
         ALU   :
@@ -312,13 +312,11 @@ task update_pc();
         case (rt_addr)
             `BGEZ, `BGEZAL: if (~(`rs >= 0)) begin
                 delay.pc <= ##(rbr_d) pc;
-                block_instruction1 = 1;
-                block_instruction2 = 1;
+                block_counter = block_d;
             end
             `BLTZ, `BLTZAL: if (~(`rs <  0)) begin
                 delay.pc <= ##(rbr_d) pc;
-                block_instruction1 = 1;
-                block_instruction2 = 1;
+                block_counter = block_d;
             end
         endcase
     endcase

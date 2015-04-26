@@ -10,7 +10,6 @@
                       if(~nReset) x <= #1 0;\
                       else        x <= #1 y;
 
-`ifdef no_check
 module PROCESSOR(
     input               Clock    ,
                         nReset   ,
@@ -19,30 +18,16 @@ module PROCESSOR(
     output logic [31:0] WriteData,
     output logic [15:0] InstrAddr,
                         MemAddr  ,
-    output logic        MemWrite ,
-                        MemRead  ,
-                        WriteL   ,
-                        WriteR   ,
-                        nStall
-);
-`else
-module PROCESSOR(
-    input               Clock    ,
-                        nReset   ,
-    input        [31:0] InstrMem ,
-                        MemData  ,
+`ifndef no_check
     input        [ 4:0] RegAddr  ,
-    output logic [31:0] WriteData,
-                        RegData  ,
-    output logic [15:0] InstrAddr,
-                        MemAddr  ,
+    output logic [31:0] RegData  ,
+`endif
     output logic        MemWrite ,
                         MemRead  ,
                         WriteL   ,
                         WriteR   ,
                         nStall
 );
-`endif
 
 logic Stall2      ;
 logic Stall1      ;
@@ -227,38 +212,38 @@ logic [31:0] SubOut3_E2  ;
 
 wire brTakenE2;
 
-assign nStall = (~Stall1 & ~Stall2) & ~BranchD;
+assign nStall = (~Stall1 & ~Stall2);
 assign  Flush = (~Flush1 & ~Flush2 & ~Flush3);
 
 `PIPE(Flush2, Flush1)
 `PIPE(Flush3, Flush2)
 
 IF if0(
-    .Clock      (Clock          ),
-    .nReset     (nReset         ),
-    .nStall     (nStall         ),
-    .BranchTaken(BranchD        ),
-    .Jump       (JumpE1         ),
+    .Clock        (Clock          ),
+    .nReset       (nReset         ),
+    .nStall       (nStall         ),
+    .BranchTaken  (BranchD        ),
+    .Jump         (JumpE1         ),
     .RevBranchAddr(InstrAddrE2    ),
-    .RevBranch  (~brTakenE2 & BranchE2),
-    .BranchAddr (BranchAddrD    ),
-    .JumpAddr   (BranchAddrE1Out),
-    .InstrMem   (InstrMem       ),
-    .InstrAddr  (InstrAddr      ),
-    .InstrOut   (InstructionF   )
+    .RevBranch    (Flush1         ),
+    .BranchAddr   (BranchAddrD + 4),
+    .JumpAddr     (BranchAddrE1Out),
+    .InstrMem     (InstrMem       ),
+    .InstrAddr    (InstrAddr      ),
+    .InstrOut     (InstructionF   )
 );
 
 addrcalc addrcalc0(
-    .PCIn   ({16'b0, InstrAddrD}),
-    .BrCode (BrCodeD            ),
-    .Address({16'b0, OffsetD}   ),
-    .PCout  (BranchAddrD        )
+    .PCIn   (InstrAddrE1     ),
+    .BrCode (BrCodeD         ),
+    .Address($signed(OffsetD)),
+    .PCout  (BranchAddrD     )
 );
 
 `PIPE(Stall2, Stall1)
 
-`PIPE(InstructionD, InstructionF            )
-`PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
+`PIPE(InstructionD, InstructionF)
+`PIPE(InstrAddrD  , InstrAddr   )
 
 `ifdef no_check
 DEC dec0(
@@ -350,7 +335,7 @@ logic [5:0] MULFuncE1;
 `PIPE(ALUSrcE1    , ALUSrcD            )
 `PIPE(RegJumpE1   , RegJumpD           )
 `PIPE(RegWriteE1  , RegWriteD & Flush  )
-`PIPE(ACCEnE1     , ACCEnD & Flush     )
+`PIPE(ACCEnE1     , ACCEnD    & Flush  )
 `PIPE(ALUEnE1     , ALUEnD             )
 `PIPE(MULSelBE1   , MULSelBD           )
 `PIPE(OutSelE1    , OutSelD            )
@@ -398,7 +383,6 @@ always_comb
 
 assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 
-
 `PIPE(MULSelBE2   , MULSelBE1            )
 `PIPE(CLDataE2    , CLDataE1             )
 `PIPE(MULOpE2     , MULOpE1              )
@@ -406,13 +390,13 @@ assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 `PIPE(RegWriteE2  , RegWriteE1Out & Flush)
 `PIPE(MemReadE2   , MemReadE1            )
 `PIPE(MemtoRegE2  , MemtoRegE1           )
-`PIPE(MemWriteE2  , MemWriteE1 & Flush   )
+`PIPE(MemWriteE2  , MemWriteE1    & Flush)
 `PIPE(MemfuncE2   , MemfuncE1            )
 `PIPE(ALUCE2      , ALUCE1               )
 `PIPE(ALUZE2      , ALUZE1               )
 `PIPE(ALUOE2      , ALUOE1               )
 `PIPE(ALUNE2      , ALUNE1               )
-`PIPE(ACCEnE2     , ACCEnE1 & Flush      )
+`PIPE(ACCEnE2     , ACCEnE1       & Flush)
 `PIPE(RsDataE2    , RsDataE1             )
 `PIPE(RtDataE2    , RtDataE1             )
 `PIPE(ALUDataE2   , ALUDataE1Out         )
@@ -445,7 +429,6 @@ case (FuncE2)
 endcase
 
 // Branch stuff ----------------------------------
-
 
 branch branch0(
     .C     (ALUCE2     ),
@@ -573,6 +556,7 @@ HDU hdu0(
     .RtAddrE (RtAddrE1         ),
     .RsAddrD (RsAddrD          ),
     .RtAddrD (RtAddrD          ),
+    .Branch  (BranchD          ),
     .Stall   (Stall1           )
 );
 
