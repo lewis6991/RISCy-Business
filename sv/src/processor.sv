@@ -567,16 +567,16 @@ assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
 assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
 
 HDU hdu0(
-    .MemReadE       (MemReadE1            ),
-    .IncorrectBranch(~brTakenE2 & BranchE2),
-    .MULOp          (MULOpD               ),
-    .Func           (InstructionD[5:0]    ),
-    .RtAddrE        (RtAddrE1             ),
-    .RsAddrD        (RsAddrD              ),
-    .RtAddrD        (RtAddrD              ),
-    .Stall          (Stall1               ),
-    .Flush          (Flush1               )
+    .MemReadE(MemReadE1        ),
+    .MULOp   (MULOpD           ),
+    .Func    (InstructionD[5:0]),
+    .RtAddrE (RtAddrE1         ),
+    .RsAddrD (RsAddrD          ),
+    .RtAddrD (RtAddrD          ),
+    .Stall   (Stall1           )
 );
+
+assign Flush1 = ~brTakenE2 & BranchE2;
 
 assign MemWrite = MemWriteM  ;
 assign MemRead  = MemReadM   ;
