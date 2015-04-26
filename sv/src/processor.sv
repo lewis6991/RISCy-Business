@@ -227,7 +227,7 @@ IF if0(
     .Jump         (JumpE1         ),
     .RevBranchAddr(InstrAddrE2    ),
     .RevBranch    (Flush1         ),
-    .BranchAddr   (BranchAddrD + 4),
+    .BranchAddr   (BranchAddrD    ),
     .JumpAddr     (BranchAddrE1Out),
     .InstrMem     (InstrMem       ),
     .InstrAddr    (InstrAddr      ),
@@ -235,10 +235,10 @@ IF if0(
 );
 
 addrcalc addrcalc0(
-    .PCIn   (InstrAddrE1     ),
-    .BrCode (BrCodeD         ),
-    .Address($signed(OffsetD)),
-    .PCout  (BranchAddrD     )
+    .PCIn   ({16'b0, InstrAddrD}),
+    .BrCode (BrCodeD            ),
+    .Address($signed(OffsetD)   ),
+    .PCout  (BranchAddrD        )
 );
 
 `PIPE(Stall2, Stall1)
