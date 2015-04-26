@@ -17,8 +17,8 @@ analyze -format sverilog {
 ../../src/mem_func.sv
 ../../src/registers.sv
 ../../src/mult1.sv
-../../src/ex_mult.sv
 ../../src/decoder.sv
+../../src/clu.sv
 ../../src/branch.sv
 ../../src/addrcalc.sv
 ../../src/alu.sv
