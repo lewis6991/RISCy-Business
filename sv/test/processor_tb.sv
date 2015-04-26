@@ -228,7 +228,7 @@ always begin
 
     // Timeout mechanism.
     ++cycles;
-    TIMEOUT_CTRL: assert (cycles < 100000000)
+    TIMEOUT_CTRL: assert (cycles < 100000)
     else
         $fatal(1, "FATAL: Timeout");
 end
