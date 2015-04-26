@@ -134,10 +134,10 @@ REG0_ASSERT: assert property (p_reg0_data)
 else
     $error("ERROR: Reg $0 contains a non-zero value(%8h).", register[0]);
 
-/*PC_ASSERT: assert property (p_pc_value)
+PC_ASSERT: assert property (p_pc_value)
 else
     $error("ERROR: program counter mismatch. rtlPC = %d, modelPC = %d.",
-        rtlPC, modelPC);*/
+        rtlPC, modelPC);
 //-------------------------------------------------------------------------------
 
 // Always block to verify every register change.
