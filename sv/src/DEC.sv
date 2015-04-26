@@ -5,6 +5,40 @@
 // Other Contributors: Dhanushan Raveendran
 // Notes:
 //----------------------------------------
+`ifdef no_check
+module DEC(
+    input                Clock       ,
+                         nReset      ,
+                         RegWriteIn  ,
+    input        [31:0]  Instruction ,
+                         RData       ,
+    input        [ 4:0]  RAddrIn     ,
+    output logic [31:0]  ImmData     ,
+                         RsData      ,
+                         RtData      ,
+    output logic [15:0]  Offset      ,
+    output logic [ 4:0]  RAddrOut    ,
+                         RsAddr      ,
+                         RtAddr      ,
+                         Shamt       ,
+    output logic         Branch      ,
+                         Jump        ,
+                         MemRead     ,
+                         MemtoReg    ,
+                         MULOp       ,
+                         MemWrite    ,
+                         ALUSrc      ,
+                         RegJump     ,
+                         RegWriteOut ,
+                         ACCEn       ,
+                         ALUEn       ,
+                         MULSelB     ,
+    output logic [ 5:0]  ALUfunc     ,
+    output logic [ 2:0]  Memfunc     ,
+                         BrCode      ,
+    output logic [ 1:0]  OutSel
+);
+`else
 module DEC(
     input                Clock       ,
                          nReset      ,
@@ -39,6 +73,7 @@ module DEC(
                          BrCode      ,
     output logic [ 1:0]  OutSel
 );
+`endif
 
 wire        shiftsel  ,
             unsgnsel  ,

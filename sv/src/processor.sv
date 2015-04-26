@@ -213,7 +213,8 @@ logic [31:0] SubOut3_E2  ;
 wire brTakenE2;
 
 assign nStall = (~Stall1 & ~Stall2);
-assign  Flush = (~Flush1 & ~Flush2 & ~Flush3);
+
+assign Flush = (~Flush1 & ~Flush2 & ~Flush3);
 
 `PIPE(Flush2, Flush1)
 `PIPE(Flush3, Flush2)
