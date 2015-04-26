@@ -10,6 +10,22 @@
                       if(~nReset) x <= #1 0;\
                       else        x <= #1 y;
 
+`ifdef no_check
+module PROCESSOR(
+    input               Clock    ,
+                        nReset   ,
+    input        [31:0] InstrMem ,
+                        MemData  ,
+    output logic [31:0] WriteData,
+    output logic [15:0] InstrAddr,
+                        MemAddr  ,
+    output logic        MemWrite ,
+                        MemRead  ,
+                        WriteL   ,
+                        WriteR   ,
+                        nStall
+);
+`else
 module PROCESSOR(
     input               Clock    ,
                         nReset   ,
@@ -26,6 +42,7 @@ module PROCESSOR(
                         WriteR   ,
                         nStall
 );
+`endif
 
 logic Stall2      ;
 logic Stall1      ;
@@ -243,6 +260,40 @@ addrcalc addrcalc0(
 `PIPE(InstructionD, InstructionF            )
 `PIPE(InstrAddrD  , InstrAddr & {16{nStall}})
 
+`ifdef no_check
+DEC dec0(
+    .Clock      (Clock              ),
+    .nReset     (nReset             ),
+    .RegWriteIn (RegWriteW          ),
+    .Instruction(InstructionD       ),
+    .RData      (RDataW             ),
+    .RAddrIn    (RAddrW             ),
+    .ImmData    (ImmDataD           ),
+    .Offset     (OffsetD            ),
+    .RsData     (RsData             ),
+    .RtData     (RtData             ),
+    .RAddrOut   (RAddrD             ),
+    .Branch     (BranchD            ),
+    .Jump       (JumpD              ),
+    .MemRead    (MemReadD           ),
+    .MemtoReg   (MemtoRegD          ),
+    .MULOp      (MULOpD             ),
+    .MemWrite   (MemWriteD          ),
+    .ALUSrc     (ALUSrcD            ),
+    .RegJump    (RegJumpD           ),
+    .RegWriteOut(RegWriteD          ),
+    .ACCEn      (ACCEnD             ),
+    .ALUEn      (ALUEnD             ),
+    .MULSelB    (MULSelBD           ),
+    .OutSel     (OutSelD            ),
+    .ALUfunc    (FuncD              ),
+    .Memfunc    (MemfuncD           ),
+    .RsAddr     (RsAddrD            ),
+    .RtAddr     (RtAddrD            ),
+    .BrCode     (BrCodeD            ),
+    .Shamt      (ShamtD             )
+);
+`else
 DEC dec0(
     .Clock      (Clock              ),
     .nReset     (nReset             ),
@@ -277,6 +328,7 @@ DEC dec0(
     .BrCode     (BrCodeD            ),
     .Shamt      (ShamtD             )
 );
+`endif
 
 logic [5:0] MULFuncE1;
 
