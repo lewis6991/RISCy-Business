@@ -89,6 +89,19 @@ decoder dec0 (
     .ALUEn   (ALUEn             )
 );
 
+`ifdef no_check
+registers reg0(
+    .Clock   (Clock     ),
+    .nReset  (nReset    ),
+    .RegWrite(RegWriteIn),
+    .RdAddr  (RAddrIn   ),
+    .RsAddr  (RsAddr    ),
+    .RtAddr  (RtAddr    ),
+    .RdData  (RData     ),
+    .RsData  (RsData    ),
+    .RtData  (RtData    )
+);
+`else
 registers reg0(
     .Clock   (Clock     ),
     .nReset  (nReset    ),
@@ -102,6 +115,7 @@ registers reg0(
     .RtData  (RtData    ),
     .RegData (RegData   )
 );
+`endif
 
 assign signed_offset = $signed(offset);
 

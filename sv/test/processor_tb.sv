@@ -12,6 +12,8 @@
 
 module processor_tb;
 
+//`define no_check;
+
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
 import "DPI-C" function void compile_test(string arg);
@@ -67,6 +69,22 @@ processor_model pmodel0(
     .Stall      (~nStall    )
 );
 
+`ifdef no_check
+PROCESSOR prcsr0 (
+    .Clock    (Clock     ),
+    .nReset   (nReset    ),
+    .InstrMem (instrData ),
+    .InstrAddr(rtlPC     ),
+    .MemData  (memRData  ),
+    .WriteData(memWData  ),
+    .MemAddr  (memAddr   ),
+    .MemWrite (memWriteEn),
+    .MemRead  (memReadEn ),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
+    .nStall   (nStall    )
+);
+`else
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
@@ -83,6 +101,7 @@ PROCESSOR prcsr0 (
     .RegData  (regData   ),
     .nStall   (nStall    )
 );
+`endif
 
 memory memory0 (
     .Clock    (Clock     ),
@@ -129,7 +148,10 @@ begin
     regAddr = cAddr;
 
     fork
-        check_register(regAddr, register[regAddr]);
+        `ifdef no_check
+        `else
+             check_register(regAddr, register[regAddr]);
+        `endif
     join_none
 end
 
