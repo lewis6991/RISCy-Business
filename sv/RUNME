@@ -13,7 +13,7 @@ main()
     if [ $host != $hind ]
     then
         echo "Error: This script requires hind CAD server. Exiting..."
-    exit 1
+    #exit 1
     fi
 
     if [ ${#} = "0" ]
@@ -51,6 +51,7 @@ main()
                             SYNARGS=$1;;
             (-pnr*)         RUN_PNR=1
                             PNRARGS=$1;;
+            (-no_check)     NCARGS="$NCARGS +define+no_check";;
             (-*)            echo "Unknown argument. Try --help for information";;
             (*)             echo "No arguments defined";;
         esac
@@ -213,6 +214,7 @@ usage()
                        Default case shows errors within module tests
     -syn               Runs the test cases on the synthesised design
     -pnr               Runs the test cases on the placed and routed design
+    -no_check          Disables the checking of registers
      NO ARGUMENT       Runs the top level processor test (Without GUI)
 
     -clk=\"L\"           Used to set the clock period. If not set, a default
