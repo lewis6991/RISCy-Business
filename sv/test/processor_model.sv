@@ -30,7 +30,7 @@ parameter rbr_d   = 3; // Delay for reverser branches to occur.
 parameter jp_d    = 2; // Delay for jumps to occur.
 parameter reg_d   = 5; // Delay for reg writes to occur.
 parameter mem_d   = 3; // Delay for memory operations to occur.
-parameter block_d = 5; // Cycles for instructions to be blocked.
+parameter block_d = 4; // Cycles for instructions to be blocked.
 
 parameter mem_size = 4096;
 
@@ -103,10 +103,8 @@ begin
     else
     begin
         if (block_counter > 0)
-            --block_counter;
-
-        if (block_counter > 0)
         begin
+            --block_counter;
             if (~Stall)
                 pc <= pc + 4;
         end
@@ -135,17 +133,13 @@ task automatic update_caddr();
         new_caddr = 31;
     else
         case(opcode)
-            ADDI, ADDIU,
-            LUI , ANDI ,
-            ORI , XORI ,
-            LB  , LBU  ,
-            LH  , LHU  ,
-            LW  , LWL  ,
-            LWR , LL, SC,
-            SLTI, SLTIU: new_caddr = rt_addr;
-            JAL        : new_caddr = 31     ;
-            ALU , MULL : new_caddr = rd_addr;
-            default    : update    = 0      ;
+            ADDI, ADDIU, LUI , ANDI  ,
+            ORI , XORI , LB  , LBU   ,
+            LH  , LHU  , LW  , LWL   ,
+            LWR , LL, SC, SLTI, SLTIU: new_caddr = rt_addr;
+            JAL                      : new_caddr = 31     ;
+            ALU , MULL               : new_caddr = rd_addr;
+            default                  : update    = 0      ;
         endcase
 
     if (update)
