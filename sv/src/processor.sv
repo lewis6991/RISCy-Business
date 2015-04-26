@@ -246,53 +246,21 @@ addrcalc addrcalc0(
 `PIPE(InstructionD, InstructionF)
 `PIPE(InstrAddrD  , InstrAddr   )
 
-`ifdef no_check
 DEC dec0(
     .Clock      (Clock              ),
     .nReset     (nReset             ),
-    .RegWriteIn (RegWriteW          ),
-    .Instruction(InstructionD       ),
-    .RData      (RDataW             ),
-    .RAddrIn    (RAddrW             ),
-    .ImmData    (ImmDataD           ),
-    .Offset     (OffsetD            ),
-    .RsData     (RsData             ),
-    .RtData     (RtData             ),
-    .RAddrOut   (RAddrD             ),
-    .Branch     (BranchD            ),
-    .Jump       (JumpD              ),
-    .MemRead    (MemReadD           ),
-    .MemtoReg   (MemtoRegD          ),
-    .MULOp      (MULOpD             ),
-    .MemWrite   (MemWriteD          ),
-    .ALUSrc     (ALUSrcD            ),
-    .RegJump    (RegJumpD           ),
-    .RegWriteOut(RegWriteD          ),
-    .ACCEn      (ACCEnD             ),
-    .ALUEn      (ALUEnD             ),
-    .MULSelB    (MULSelBD           ),
-    .OutSel     (OutSelD            ),
-    .ALUfunc    (FuncD              ),
-    .Memfunc    (MemfuncD           ),
-    .RsAddr     (RsAddrD            ),
-    .RtAddr     (RtAddrD            ),
-    .BrCode     (BrCodeD            ),
-    .Shamt      (ShamtD             )
-);
-`else
-DEC dec0(
-    .Clock      (Clock              ),
-    .nReset     (nReset             ),
-    .RegWriteIn (RegWriteW          ),
-    .Instruction(InstructionD       ),
-    .RData      (RDataW             ),
-    .RAddrIn    (RAddrW             ),
+`ifndef no_check
     .RegAddr    (RegAddr            ),
+    .RegData    (RegData            ),
+`endif
+    .RegWriteIn (RegWriteW          ),
+    .Instruction(InstructionD       ),
+    .RData      (RDataW             ),
+    .RAddrIn    (RAddrW             ),
     .ImmData    (ImmDataD           ),
     .Offset     (OffsetD            ),
     .RsData     (RsData             ),
     .RtData     (RtData             ),
-    .RegData    (RegData            ),
     .RAddrOut   (RAddrD             ),
     .Branch     (BranchD            ),
     .Jump       (JumpD              ),
@@ -314,7 +282,6 @@ DEC dec0(
     .BrCode     (BrCodeD            ),
     .Shamt      (ShamtD             )
 );
-`endif
 
 logic [5:0] MULFuncE1;
 
@@ -456,13 +423,13 @@ assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 `PIPE(RegWriteM, RegWriteE2Out & Flush)
 `PIPE(MemReadM , MemReadE2            )
 `PIPE(MemtoRegM, MemtoRegE2           )
-`PIPE(MemWriteM, MemWriteE2 & Flush   )
+`PIPE(MemWriteM, MemWriteE2    & Flush)
 `PIPE(RtAddrM  , RtAddrE2             )
 `PIPE(ALUCM    , ALUCE2               )
 `PIPE(ALUZM    , ALUZE2               )
 `PIPE(ALUOM    , ALUOE2               )
 `PIPE(ALUNM    , ALUNE2               )
-`PIPE(ACCEnM   , ACCEnE2 & Flush      )
+`PIPE(ACCEnM   , ACCEnE2       & Flush)
 `PIPE(FuncM    , FuncE2               )
 
 EX2 ex2(
