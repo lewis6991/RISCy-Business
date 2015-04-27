@@ -51,7 +51,7 @@ main()
                             SYNARGS=$1;;
             (-pnr*)         RUN_PNR=1
                             PNRARGS=$1;;
-            (-no_check)     NCARGS="$NCARGS +define+no_check";;
+            (-no_check)     NCDEFAULT="$NCDEFAULT +define+no_check=1";;
             (-*)            echo "Unknown argument. Try --help for information";;
             (*)             echo "No arguments defined";;
         esac
@@ -164,7 +164,7 @@ main()
         if [[ $SYNARGS = *"-syn="* ]]
         then
             PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${SYNARGS/-syn=/}/processor_synth.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf"
+            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${SYNARGS/-syn=/}/design.sdf +define+scan=1"
             proc "## SYNTHESIS ##"
             NCARGS=$NCDEFAULT
         else
@@ -177,7 +177,7 @@ main()
         if [[ $PNRARGS = *"-pnr="* ]]
         then
             PROCLOC="test/enums.sv test/processor_tb.sv syn/work_${PNRARGS/-pnr=/}/processor_net.v syn/0.35um_Technologu_HDL_Files/*.v"
-            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf"
+            NCARGS=$"$NCDEFAULT +define+SDF_FILE=syn/work_${PNRARGS/-pnr=/}/processor.sdf +define+scan=1"
             proc "## PLACE & ROUTE ##"
             NCARGS=$NCDEFAULT
         else
@@ -270,7 +270,7 @@ proc()
             echo "$(cat temp.log)" >> run.log
         done
     else
-        for test in {1..8}
+        for test in {1..4}
         do
             #PUT EACH CLOCK CASE HERE
             for i in "${CLOCK[@]}"

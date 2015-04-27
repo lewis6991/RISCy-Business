@@ -38,28 +38,20 @@ elaborate PROCESSOR -architecture verilog -library DEFAULT
 
 check_design > ../logs_${CLK_PERIOD}${TYPE}/synth_check_design_${CLK_PERIOD}${TYPE}.rpt
 
-if ("$SCAN"=="1") {set_scan_configuration -style multiplexed_flip_flop}
+if ($SCAN==1) {set_scan_configuration -style multiplexed_flip_flop}
 
 check_timing
 create_clock Clock -name Clock -period $CLK_PERIOD
 set_fix_hold Clock
 uniquify
 
-if ("$SCAN"=="1") {
-set_dft_signal -type ScanClock -port Clock -view exist -timing {45 55}
-set_dft_signal -view existing_dft -port nReset -type Reset -active 0
-set_dft_configuration -fix_set enable -fix_reset enable
-set_dft_signal  -view spec -port nReset -type TestData
-set_autofix_configuration -type reset -test_data nReset
-create_test_protocol
-dft_drc
-insert_dft }
-
 set_dont_touch_network [all_clocks]
 
 set_dont_touch_network nReset
 
-set_output_delay -clock Clock [expr $CLK_PERIOD/8] [all_outputs]
+set_dont_use c35_CORELIB/ADD*
+
+#set_output_delay -clock Clock [expr $CLK_PERIOD/8] [all_outputs]
 
 if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
@@ -71,6 +63,21 @@ if {($TYPE=="opt")   && ($SCAN==1)} {
     compile -map_effort high
 }
 
+#start_gui
+
+if ($SCAN==1) {
+  set_dft_signal -type ScanClock -port Clock -view exist -timing {45 55}
+  set_dft_signal -view existing_dft -port nReset -type Reset -active 0
+  set_dft_configuration -fix_set enable -fix_reset enable
+  set_dft_signal  -view spec -port nReset -type TestData
+  set_autofix_configuration -type reset -test_data nReset
+  create_test_protocol
+  dft_drc
+  insert_dft  
+  compile_ultra -scan -incremental }
+
+#optimize_registers
+
 report_design > ../logs_${CLK_PERIOD}${TYPE}/synth_design_${CLK_PERIOD}${TYPE}.rpt
 report_area > ../logs_${CLK_PERIOD}${TYPE}/synth_area_${CLK_PERIOD}${TYPE}.rpt
 report_power > ../logs_${CLK_PERIOD}${TYPE}/synth_power_${CLK_PERIOD}${TYPE}.rpt
@@ -81,7 +88,7 @@ report_clock -skew -attributes > ../logs_${CLK_PERIOD}${TYPE}/synth_clock_${CLK_
 report_qor > ../logs_${CLK_PERIOD}${TYPE}/synth_summary_${CLK_PERIOD}${TYPE}.rpt
 change_names -rules verilog -hierarchy -verbose
 
-if ("$SCAN"=="1") {write_test_protocol -out top.spf}
+if ($SCAN==1) {write_test_protocol -out processor_synth.spf}
 write -f verilog -hierarchy -output processor_synth.v
 
 write_sdc design.sdc

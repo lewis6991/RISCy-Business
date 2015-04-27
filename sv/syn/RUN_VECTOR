@@ -1,0 +1,60 @@
+#!/bin/tcsh
+
+#------------------------------------------------------------------------------
+# File              : RUN_VECTOR
+# Description       : Tcsh script to create test vectors for the design
+# Primary Author    : Ethan Bishop
+# Other Contributors:
+#------------------------------------------------------------------------------
+
+set host=`hostname`
+set hind="hind.ecs.soton.ac.uk"
+set hart="hart.ecs.soton.ac.uk"
+
+if ($host != $hind && $host != $hart) then
+    echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
+    exit
+endif
+
+if (${3} == "pnr") then
+    echo "Using PNR";
+    set pnr=1;
+else
+    echo "Using SYN";
+    set pnr=0;
+endif
+
+cd work_${2}${1} >&/dev/null
+
+
+echo "Generating scan path vectors..." | tee ../logs_${2}${1}/vector.log
+source /home/esdcad/scripts/TetraMAX_H_2013_03_SP4
+
+if ($pnr == 1) then
+    tmax -shell -tcl "../vector_script_pnr.tcl" | tee -a ../logs_${2}${1}/vector.log
+else
+    tmax -shell -tcl "../vector_script.tcl" | tee -a ../logs_${2}${1}/vector.log
+endif
+
+if ($? != 0) then
+    echo "Error: Test vector generation failed. See log file for details."
+    exit
+endif
+
+
+echo "Running scan path simulation..." | tee -a ../logs_${2}${1}/vector.log
+
+setenv ESDCAD /home/esdcad
+source /home/esdcad/scripts/synopsys_linux_vcs_D-2009.12
+chmod +x patterns_vcs.sh
+setenv STILDPV_HOME '/home/esdcad/software/synopsys/linux/TetraMAX_H_2013_03_SP4/linux/stildpv/'
+
+./patterns_vcs.sh | tee -a ../logs_${2}${1}/vector.log
+
+if ($? != 0) then
+    echo "Error: Scan path simulation failed. See log file for details."
+    exit
+endif
+
+echo "Scan path test complete. Results written to logs_${2}${1}/vector.log"
+exit
