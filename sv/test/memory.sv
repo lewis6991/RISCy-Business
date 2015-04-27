@@ -27,7 +27,8 @@ module memory #(
     //else
     //    $fatal("FATAL: Address size has to be less than 32.");
 
-    logic [7:0] memory[0:1 << AddressSize - 1];
+
+    logic [7:0] memory[0:4*(1 << AddressSize - 1)];
 
     // Write block
     always @ (posedge Clock, negedge nReset)

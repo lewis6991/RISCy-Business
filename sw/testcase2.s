@@ -27,8 +27,10 @@ nor   $10,  $1, $2
 xori  $11,  $1, 0x5555
 andi  $12,  $1, 0xFFFF
 clz   $13, $12
+nop
 sub   $14,  $0, $12
 clo   $15, $14
+nop
 addu  $16,  $1, $2
 subu  $17,  $1, $2
 addiu $18,  $2, 0x5500

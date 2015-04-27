@@ -31,19 +31,22 @@ module IF(
 );
 
     logic [31:0] progAddrOut ;
+    logic [31:0] progAddrNext;
     wire  [31:0] progAddrMOut;
 
     always_ff @ (posedge Clock, negedge nReset)
         if (~nReset)
-            progAddrOut <= #1 32'd0;
+            progAddrOut  <= #1 32'd0;
         else
-            progAddrOut <= #1 RevBranch   ? RevBranchAddr :
-                              BranchTaken ? BranchAddr    :
-                              Jump        ? JumpAddr      : progAddrMOut;
+            progAddrOut  <= #1 progAddrNext;
+
+    assign progAddrNext = RevBranch   ? RevBranchAddr :
+                          BranchTaken ? BranchAddr    :
+                          Jump        ? JumpAddr      : progAddrMOut;
 
     assign progAddrMOut = nStall ? progAddrOut + 32'd4 : progAddrOut;
 
-    assign InstrAddr = progAddrOut            ;
-    assign InstrOut  = InstrMem & {32{nStall}};
+    assign InstrAddr = progAddrOut;
+    assign InstrOut  = InstrMem;
 
 endmodule

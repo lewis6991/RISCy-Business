@@ -26,6 +26,7 @@ module PROCESSOR(
                         MemRead  ,
                         WriteL   ,
                         WriteR   ,
+                        JBFlush  ,
                         nStall
 );
 
@@ -34,7 +35,6 @@ logic Stall1      ;
 logic Flush       ;
 logic Flush1      ;
 logic Flush2      ;
-logic Flush3      ;
 
 logic JumpD        ;
 logic JumpE1       ;
@@ -43,6 +43,7 @@ logic BranchD      ;
 logic BranchE1     ;
 logic BranchE2     ;
 
+logic MemReadIF    ;
 logic MemReadD     ;
 logic MemReadE1    ;
 logic MemReadE2    ;
@@ -211,13 +212,31 @@ logic [31:0] SubOut2_E2  ;
 logic [31:0] SubOut3_E2  ;
 
 wire brTakenE2;
+logic JBFlush1;
+logic JBFlush2;
 
-assign nStall = (~Stall1 & ~Stall2);
+logic MRStall;
+logic MRStall1;
+logic MRStall2;
+logic MRStall3;
+logic MRStall4;
 
-assign Flush = (~Flush1 & ~Flush2 & ~Flush3);
+assign MRStall1 = MemReadD & ~JBFlush;
+
+`PIPE(MRStall2, MRStall1)
+`PIPE(MRStall3, MRStall2)
+`PIPE(MRStall4, MRStall3)
+
+assign MRStall = MRStall1 || MRStall2 || MRStall3 || MRStall4;
+
+assign nStall = (~Stall1 & ~Stall2 & ~MRStall);
+
+assign JBFlush = JBFlush1 | JBFlush2;
+
+assign Flush = (~Flush1 & ~Flush2);
 
 `PIPE(Flush2, Flush1)
-`PIPE(Flush3, Flush2)
+`PIPE(JBFlush2, JBFlush1)
 
 IF if0(
     .Clock        (Clock          ),
@@ -243,7 +262,12 @@ addrcalc addrcalc0(
 
 `PIPE(Stall2, Stall1)
 
-`PIPE(InstructionD, InstructionF)
+logic nStall2;
+
+`PIPE(nStall2, nStall)
+
+`PIPE(InstructionD, InstructionF & {32{Flush}} & ~{32{JBFlush}} & {32{nStall2}})
+
 `PIPE(InstrAddrD  , InstrAddr   )
 
 DEC dec0(
@@ -299,11 +323,11 @@ logic [5:0] MULFuncE1;
 `PIPE(MemReadE1   , MemReadD           )
 `PIPE(MemtoRegE1  , MemtoRegD          )
 `PIPE(MULOpE1     , MULOpD             )
-`PIPE(MemWriteE1  , MemWriteD & Flush  )
+`PIPE(MemWriteE1  , MemWriteD          )
 `PIPE(ALUSrcE1    , ALUSrcD            )
 `PIPE(RegJumpE1   , RegJumpD           )
-`PIPE(RegWriteE1  , RegWriteD & Flush  )
-`PIPE(ACCEnE1     , ACCEnD    & Flush  )
+`PIPE(RegWriteE1  , RegWriteD          )
+`PIPE(ACCEnE1     , ACCEnD             )
 `PIPE(ALUEnE1     , ALUEnD             )
 `PIPE(MULSelBE1   , MULSelBD           )
 `PIPE(OutSelE1    , OutSelD            )
@@ -355,16 +379,16 @@ assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 `PIPE(CLDataE2    , CLDataE1             )
 `PIPE(MULOpE2     , MULOpE1              )
 `PIPE(MULOpM      , MULOpE2              )
-`PIPE(RegWriteE2  , RegWriteE1Out & Flush)
+`PIPE(RegWriteE2  , RegWriteE1Out )
 `PIPE(MemReadE2   , MemReadE1            )
 `PIPE(MemtoRegE2  , MemtoRegE1           )
-`PIPE(MemWriteE2  , MemWriteE1    & Flush)
+`PIPE(MemWriteE2  , MemWriteE1    )
 `PIPE(MemfuncE2   , MemfuncE1            )
 `PIPE(ALUCE2      , ALUCE1               )
 `PIPE(ALUZE2      , ALUZE1               )
 `PIPE(ALUOE2      , ALUOE1               )
 `PIPE(ALUNE2      , ALUNE1               )
-`PIPE(ACCEnE2     , ACCEnE1       & Flush)
+`PIPE(ACCEnE2     , ACCEnE1       )
 `PIPE(RsDataE2    , RsDataE1             )
 `PIPE(RtDataE2    , RtDataE1             )
 `PIPE(ALUDataE2   , ALUDataE1Out         )
@@ -415,21 +439,23 @@ assign ALUDataE2Out = OutSelE2[1] ? RsDataE2 : ALUDataE2;
 assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 // ------------------------------------------------
 
+logic [31:0] RtDataE2out;
+
 `PIPE(ALUDataM , ALUDataE2Out         )
 `PIPE(MULDataM , MULDataE2            )
-`PIPE(RtDataM  , RtDataE2             )
+`PIPE(RtDataM  , RtDataE2out          )
 `PIPE(RAddrM   , RAddrE2              )
 `PIPE(MemFuncM , MemfuncE2            )
-`PIPE(RegWriteM, RegWriteE2Out & Flush)
+`PIPE(RegWriteM, RegWriteE2Out )
 `PIPE(MemReadM , MemReadE2            )
 `PIPE(MemtoRegM, MemtoRegE2           )
-`PIPE(MemWriteM, MemWriteE2    & Flush)
+`PIPE(MemWriteM, MemWriteE2    )
 `PIPE(RtAddrM  , RtAddrE2             )
 `PIPE(ALUCM    , ALUCE2               )
 `PIPE(ALUZM    , ALUZE2               )
 `PIPE(ALUOM    , ALUOE2               )
 `PIPE(ALUNM    , ALUNE2               )
-`PIPE(ACCEnM   , ACCEnE2       & Flush)
+`PIPE(ACCEnM   , ACCEnE2       )
 `PIPE(FuncM    , FuncE2               )
 
 EX2 ex2(
@@ -475,11 +501,14 @@ WB wb0(
     .WBData  (RDataW   )
 );
 
+logic ForwardMem2;
+
 FU fu0(
     .RegWriteE2 (RegWriteE2   ),
     .RegWriteE1 (RegWriteE1Out),
     .RegWriteM  (RegWriteM    ),
     .RegWriteW  (RegWriteW    ),
+    .MemWriteE2 (MemWriteE2   ),
     .Memfunc    (MemFuncM     ),
     .RAddrE2    (RAddrE2      ),
     .RAddrE1    (RAddrE1      ),
@@ -488,11 +517,13 @@ FU fu0(
     .RtAddrM    (RtAddrM      ),
     .RsAddrE1   (RsAddrE1     ),
     .RtAddrE1   (RtAddrE1     ),
+    .RtAddrE2   (RtAddrE2     ),
     .RsAddrD    (RsAddrD      ),
     .RtAddrD    (RtAddrD      ),
     .ForwardSrcA(ForwardSrcA  ),
     .ForwardSrcB(ForwardSrcB  ),
-    .ForwardMem (ForwardMem   ),
+    .ForwardMem1(ForwardMem1  ),
+    .ForwardMem2(ForwardMem2  ),
     .ForwardA   (ForwardA     ),
     .ForwardB   (ForwardB     )
 );
@@ -513,22 +544,20 @@ case (ForwardB)
     3: RtDataIn = ALUDataMOut ;
 endcase
 
-assign RsDataD    = ForwardSrcA ? RDataW : RsData ;
-assign RtDataD    = ForwardSrcB ? RDataW : RtData ;
-assign RtDataMout = ForwardMem  ? RDataW : RtDataM;
+assign RsDataD    = ForwardSrcA ? RDataW  : RsData  ;
+assign RtDataD    = ForwardSrcB ? RDataW  : RtData  ;
+assign RtDataMout = ForwardMem1 ? RDataW  : RtDataM ;
+assign RtDataE2out= ForwardMem2 ? ALUDataM: RtDataE2;
 
 HDU hdu0(
-    .MemReadE(MemReadE1        ),
     .MULOp   (MULOpD           ),
+    .ALUOp   (ALUEnD           ),
     .Func    (InstructionD[5:0]),
-    .RtAddrE (RtAddrE1         ),
-    .RsAddrD (RsAddrD          ),
-    .RtAddrD (RtAddrD          ),
-    .Branch  (BranchD          ),
     .Stall   (Stall1           )
 );
 
-assign Flush1 = ~brTakenE2 & BranchE2;
+assign Flush1   = ~brTakenE2 & BranchE2;
+assign JBFlush1 = BranchD || JumpD     ;
 
 assign MemWrite = MemWriteM  ;
 assign MemRead  = MemReadM   ;

@@ -26,8 +26,8 @@ module MEM(
         WriteL = MemfuncIn == `WL;
         WriteR = MemfuncIn == `WR;
         case(MemfuncIn)
-            `BS          : MemWriteData = {{24{RtDataIn[ 7]}}, RtDataIn[ 7:0]};
-            `HS          : MemWriteData = {{16{RtDataIn[15]}}, RtDataIn[15:0]};
+            `BS          : MemWriteData = $signed(RtDataIn[ 7:0]);
+            `HS          : MemWriteData = $signed(RtDataIn[15:0]);
             `WD, `WL, `WR: MemWriteData = RtDataIn;
             default      : MemWriteData = RtDataIn;
         endcase

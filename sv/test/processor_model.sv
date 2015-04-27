@@ -14,6 +14,7 @@ program processor_model(
     input                   Clock      ,
                             nReset     ,
                             Stall      ,
+                            JBFlush    ,
     input            [31:0] Instruction,
     output           [15:0] InstAddr   ,
     output bit       [ 4:0] cAddr      ,
@@ -32,7 +33,7 @@ parameter reg_d   = 5; // Delay for reg writes to occur.
 parameter mem_d   = 3; // Delay for memory operations to occur.
 parameter block_d = 4; // Cycles for instructions to be blocked.
 
-parameter mem_size = 4096;
+parameter mem_size = 409600;
 
 logic        [63:0] acc        ;
 e_op_code           opcode     ;
@@ -59,6 +60,8 @@ bit [0:31][31:0] register_packed;
 bit [4:0] caddr;
 
 int memory[0:mem_size-1];
+
+bit Stall2;
 
 default clocking delay @ (posedge Clock);
     output pc      ;
@@ -89,6 +92,8 @@ assign InstAddr = pc;
 `define ra register[31]
 `define r0 register[0]
 
+`define mem_data memory[mem_addr]
+
 initial while(1)
 begin
     @ (posedge Clock, negedge nReset)
@@ -102,19 +107,26 @@ begin
     end
     else
     begin
-        if (block_counter > 0)
+        if (JBFlush || block_counter > 0)
         begin
-            --block_counter;
+            if (block_counter > 0)
+                --block_counter;
             if (~Stall)
                 pc <= pc + 4;
         end
-        else if (~Stall)
+        else
         begin
-            update_caddr();
-            update_acc();
-            update_pc();
-            update_registers();
-            update_memory();
+            if (~Stall && ~JBFlush)
+            begin
+                update_caddr();
+                update_pc();
+                update_acc();
+            end
+            if (~Stall2 && ~JBFlush)
+            begin
+                update_memory();
+                update_registers();
+            end
 
             // Move registers to packed array.
             foreach(register[i])
@@ -122,6 +134,7 @@ begin
 
             delay.Register <= ##(reg_d) register_packed;
         end
+        Stall2 = Stall;
     end
 end
 
@@ -205,7 +218,6 @@ task automatic update_memory();
 
     int mem_addr = (`rs + offset) >> 2;
 
-    `define mem_data memory[mem_addr]
 
     // Memory write block
     case (opcode)

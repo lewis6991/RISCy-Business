@@ -45,6 +45,7 @@ wire         memReadEn  ,
              memWriteEnM,
              memWriteL  ,
              memWriteR  ,
+             JBFLush    ,
              nStall     ;
 
 
@@ -66,12 +67,13 @@ processor_model pmodel0(
     .MemAddr    (memAddrM   ),
     .MemWrite   (memWriteEnM),
     .MemRead    (memReadEnM ),
+    .JBFlush    (JBFlush    ),
     .Stall      (~nStall    )
 );
 
-`ifdef no_check
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
+    .JBFlush  (JBFlush   ),
     .nReset   (nReset    ),
     .InstrMem (instrData ),
     .InstrAddr(rtlPC     ),
@@ -82,26 +84,12 @@ PROCESSOR prcsr0 (
     .MemRead  (memReadEn ),
     .WriteL   (memWriteL ),
     .WriteR   (memWriteR ),
-    .nStall   (nStall    )
-);
-`else
-PROCESSOR prcsr0 (
-    .Clock    (Clock     ),
-    .nReset   (nReset    ),
-    .InstrMem (instrData ),
-    .InstrAddr(rtlPC     ),
-    .MemData  (memRData  ),
-    .WriteData(memWData  ),
-    .MemAddr  (memAddr   ),
-    .MemWrite (memWriteEn),
-    .MemRead  (memReadEn ),
-    .WriteL   (memWriteL ),
-    .WriteR   (memWriteR ),
+`ifndef no_check
     .RegAddr  (regAddr   ),
     .RegData  (regData   ),
+`endif
     .nStall   (nStall    )
 );
-`endif
 
 memory memory0 (
     .Clock    (Clock     ),
@@ -211,7 +199,7 @@ end
 task run_random();
     Instruction new_inst;
 
-    repeat(10000000)
+    repeat(100000000)
     begin
         @ (rtlPC)
         #20
@@ -228,7 +216,7 @@ always begin
 
     // Timeout mechanism.
     ++cycles;
-    TIMEOUT_CTRL: assert (cycles < 100000)
+    TIMEOUT_CTRL: assert (cycles < 10000)
     else
         $fatal(1, "FATAL: Timeout");
 end
