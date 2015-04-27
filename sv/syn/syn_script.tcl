@@ -73,8 +73,8 @@ if ($SCAN==1) {
   set_autofix_configuration -type reset -test_data nReset
   create_test_protocol
   dft_drc
-  insert_dft
-  compile_ultra ‐scan ­‐incremental }
+  insert_dft  
+  compile_ultra -scan -inremental }
 
 #optimize_registers
 
