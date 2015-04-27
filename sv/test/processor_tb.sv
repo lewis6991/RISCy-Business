@@ -12,9 +12,6 @@
 
 module processor_tb;
 
-//`define no_check=0;
-//`define scan=0;
-
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
 import "DPI-C" function void compile_test(string arg);
@@ -111,7 +108,7 @@ PROCESSOR prcsr0 (
     .WriteR   (memWriteR ),
     .RegAddr  (regAddr   ),
     .RegData  (regData   ),
-    .nStall   (nStall    )
+    .nStall   (nStall    ),
     .test_si  (scanIn    ),
     .test_se  (scanEnable)
 );
