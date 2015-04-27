@@ -201,14 +201,48 @@ wire  [15:0] OffsetD         ;
 logic [15:0] OffsetE1        ;
 logic [15:0] OffsetE2        ;
 
-wire  [31:0] SubOut0_E1      ;
-wire  [31:0] SubOut1_E1      ;
-wire  [31:0] SubOut2_E1      ;
-wire  [31:0] SubOut3_E1      ;
-logic [31:0] SubOut0_E2      ;
-logic [31:0] SubOut1_E2      ;
-logic [31:0] SubOut2_E2      ;
-logic [31:0] SubOut3_E2      ;
+//wire  [31:0] SubOut0_E1      ;
+//wire  [31:0] SubOut1_E1      ;
+//wire  [31:0] SubOut2_E1      ;
+//wire  [31:0] SubOut3_E1      ;
+//logic [31:0] SubOut0_E2      ;
+//logic [31:0] SubOut1_E2      ;
+//logic [31:0] SubOut2_E2      ;
+//logic [31:0] SubOut3_E2      ;
+
+wire  [15:0] SubOut0_E1      ;
+wire  [15:0] SubOut1_E1      ;
+wire  [15:0] SubOut2_E1      ;
+wire  [15:0] SubOut3_E1      ;
+wire  [15:0] SubOut4_E1      ;
+wire  [15:0] SubOut5_E1      ;
+wire  [15:0] SubOut6_E1      ;
+wire  [15:0] SubOut7_E1      ;
+wire  [15:0] SubOut8_E1      ;
+wire  [15:0] SubOut9_E1      ;
+wire  [15:0] SubOut10_E1     ;
+wire  [15:0] SubOut11_E1     ;
+wire  [15:0] SubOut12_E1     ;
+wire  [15:0] SubOut13_E1     ;
+wire  [15:0] SubOut14_E1     ;
+wire  [15:0] SubOut15_E1     ;
+
+logic [15:0] SubOut0_E2      ;
+logic [15:0] SubOut1_E2      ;
+logic [15:0] SubOut2_E2      ;
+logic [15:0] SubOut3_E2      ;
+logic [15:0] SubOut4_E2      ;
+logic [15:0] SubOut5_E2      ;
+logic [15:0] SubOut6_E2      ;
+logic [15:0] SubOut7_E2      ;
+logic [15:0] SubOut8_E2      ;
+logic [15:0] SubOut9_E2      ;
+logic [15:0] SubOut10_E2     ;
+logic [15:0] SubOut11_E2     ;
+logic [15:0] SubOut12_E2     ;
+logic [15:0] SubOut13_E2     ;
+logic [15:0] SubOut14_E2     ;
+logic [15:0] SubOut15_E2     ;
 
 wire brTakenE2;
 
@@ -235,10 +269,10 @@ IF if0(
 );
 
 addrcalc addrcalc0(
-    .PCIn   ({16'b0, InstrAddrD}),
-    .BrCode (BrCodeD            ),
-    .Address($signed(OffsetD)   ),
-    .PCout  (BranchAddrD        )
+    .PCIn   ({16'b0, InstrAddrD}         ),
+    .BrCode (BrCodeD                     ),
+    .Address({{16{OffsetD[15]}}, OffsetD}),
+    .PCout  (BranchAddrD                 )
 );
 
 `PIPE(Stall2, Stall1)
@@ -333,12 +367,24 @@ EX1 ex1(
 assign BranchAddrE1Out = RegJumpE1 ? RsDataE1 : BranchAddrE1;
 
 mult1 mult0(
-    .A      (RsDataE1  ),
-    .B      (RtDataE1  ),
-    .SubOut0(SubOut0_E1),
-    .SubOut1(SubOut1_E1),
-    .SubOut2(SubOut2_E1),
-    .SubOut3(SubOut3_E1)
+    .A       (RsDataE1   ),
+    .B       (RtDataE1   ),
+    .SubOut0 (SubOut0_E1 ),
+    .SubOut1 (SubOut1_E1 ),
+    .SubOut2 (SubOut2_E1 ),
+    .SubOut3 (SubOut3_E1 ),
+    .SubOut4 (SubOut4_E1 ),
+    .SubOut5 (SubOut5_E1 ),
+    .SubOut6 (SubOut6_E1 ),
+    .SubOut7 (SubOut7_E1 ),
+    .SubOut8 (SubOut8_E1 ),
+    .SubOut9 (SubOut9_E1 ),
+    .SubOut10(SubOut10_E1),
+    .SubOut11(SubOut11_E1),
+    .SubOut12(SubOut12_E1),
+    .SubOut13(SubOut13_E1),
+    .SubOut14(SubOut14_E1),
+    .SubOut15(SubOut15_E1)
 );
 
 always_comb
@@ -381,6 +427,18 @@ assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 `PIPE(SubOut1_E2  , SubOut1_E1            )
 `PIPE(SubOut2_E2  , SubOut2_E1            )
 `PIPE(SubOut3_E2  , SubOut3_E1            )
+`PIPE(SubOut4_E2  , SubOut4_E1            )
+`PIPE(SubOut5_E2  , SubOut5_E1            )
+`PIPE(SubOut6_E2  , SubOut6_E1            )
+`PIPE(SubOut7_E2  , SubOut7_E1            )
+`PIPE(SubOut8_E2  , SubOut8_E1            )
+`PIPE(SubOut9_E2  , SubOut9_E1            )
+`PIPE(SubOut10_E2 , SubOut10_E1           )
+`PIPE(SubOut11_E2 , SubOut11_E1           )
+`PIPE(SubOut12_E2 , SubOut12_E1           )
+`PIPE(SubOut13_E2 , SubOut13_E1           )
+`PIPE(SubOut14_E2 , SubOut14_E1           )
+`PIPE(SubOut15_E2 , SubOut15_E1           )
 `PIPE(BranchAddrE2, BranchAddrE1Out       )
 
 always_comb
@@ -389,9 +447,16 @@ case (FuncE2)
     default   :
         if (MULSelBE2)
             // Shift and Add sub results from the multipliers.
-            MULDataE2 = (SubOut0_E2 << 32)
-                      + ((SubOut1_E2 + SubOut2_E2) << 16)
-                      +  SubOut3_E2;
+//            MULDataE2 = (SubOut0_E2 << 32)
+//                      + ((SubOut1_E2 + SubOut2_E2) << 16)
+//                      +  SubOut3_E2;
+            MULDataE2 = (SubOut0_E2                                    << 48)
+             + ((SubOut1_E2  + SubOut4_E2                            ) << 40)
+             + ((SubOut2_E2  + SubOut5_E2  + SubOut8_E2              ) << 32)
+             + ((SubOut3_E2  + SubOut6_E2  + SubOut9_E2 + SubOut12_E2) << 24)
+             + ((SubOut7_E2  + SubOut10_E2 + SubOut13_E2             ) << 16)
+             + ((SubOut11_E2 + SubOut14_E2                           ) << 8 )
+             +   SubOut15_E2;
         else
             MULDataE2 = RsDataE2;
 endcase
