@@ -16,13 +16,25 @@ if ($host != $hind && $host != $hart) then
     exit
 endif
 
+if (${3} == "pnr") then
+    echo "Using PNR";
+    set pnr=1;
+else
+    echo "Using SYN";
+    set pnr=0;
+endif
+
 cd work_${2}${1} >&/dev/null
 
 
 echo "Generating scan path vectors..." | tee ../logs_${2}${1}/vector.log
 source /home/esdcad/scripts/TetraMAX_H_2013_03_SP4
 
-tmax -shell -tcl "../vector_script.tcl" | tee -a ../logs_${2}${1}/vector.log
+if ($pnr == 1) then
+    tmax -shell -tcl "../vector_script_pnr.tcl" | tee -a ../logs_${2}${1}/vector.log
+else
+    tmax -shell -tcl "../vector_script.tcl" | tee -a ../logs_${2}${1}/vector.log
+endif
 
 if ($? != 0) then
     echo "Error: Test vector generation failed. See log file for details."
