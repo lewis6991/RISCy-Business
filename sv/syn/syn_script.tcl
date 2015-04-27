@@ -88,7 +88,7 @@ report_clock -skew -attributes > ../logs_${CLK_PERIOD}${TYPE}/synth_clock_${CLK_
 report_qor > ../logs_${CLK_PERIOD}${TYPE}/synth_summary_${CLK_PERIOD}${TYPE}.rpt
 change_names -rules verilog -hierarchy -verbose
 
-if ($SCAN==1) {write_test_protocol -out top.spf}
+if ($SCAN==1) {write_test_protocol -out processor_synth.spf}
 write -f verilog -hierarchy -output processor_synth.v
 
 write_sdc design.sdc
