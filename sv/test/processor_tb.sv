@@ -12,7 +12,8 @@
 
 module processor_tb;
 
-//`define no_check;
+//`define no_check=0;
+//`define scan=0;
 
 // These functions are provided by complib.so
 import "DPI-C" function void set_compile_script(string arg);
@@ -47,8 +48,10 @@ wire         memReadEn  ,
              memWriteR  ,
              nStall     ;
 
+`ifdef scan
 logic scanIn     = 1'b0;
 logic scanEnable = 1'b0;
+`endif
 
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
@@ -72,6 +75,7 @@ processor_model pmodel0(
 );
 
 `ifdef no_check
+`ifdef scan
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
@@ -84,9 +88,15 @@ PROCESSOR prcsr0 (
     .MemRead  (memReadEn ),
     .WriteL   (memWriteL ),
     .WriteR   (memWriteR ),
-    .nStall   (nStall    )
+    .nStall   (nStall    ),
+    .test_si  (scanIn    ),
+    .test_se  (scanEnable)
 );
-`else
+`endif
+`endif
+
+`ifndef no_check
+`ifdef scan
 PROCESSOR prcsr0 (
     .Clock    (Clock     ),
     .nReset   (nReset    ),
@@ -101,10 +111,51 @@ PROCESSOR prcsr0 (
     .WriteR   (memWriteR ),
     .RegAddr  (regAddr   ),
     .RegData  (regData   ),
-    .nStall   (nStall    ),
+    .nStall   (nStall    )
     .test_si  (scanIn    ),
     .test_se  (scanEnable)
 );
+`endif
+`endif
+
+`ifdef no_check
+`ifndef scan
+PROCESSOR prcsr0 (
+    .Clock    (Clock     ),
+    .nReset   (nReset    ),
+    .InstrMem (instrData ),
+    .InstrAddr(rtlPC     ),
+    .MemData  (memRData  ),
+    .WriteData(memWData  ),
+    .MemAddr  (memAddr   ),
+    .MemWrite (memWriteEn),
+    .MemRead  (memReadEn ),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
+    .nStall   (nStall    )
+);
+`endif
+`endif
+
+`ifndef no_check
+`ifndef scan
+PROCESSOR prcsr0 (
+    .Clock    (Clock     ),
+    .nReset   (nReset    ),
+    .InstrMem (instrData ),
+    .InstrAddr(rtlPC     ),
+    .MemData  (memRData  ),
+    .WriteData(memWData  ),
+    .MemAddr  (memAddr   ),
+    .MemWrite (memWriteEn),
+    .MemRead  (memReadEn ),
+    .WriteL   (memWriteL ),
+    .WriteR   (memWriteR ),
+    .RegAddr  (regAddr   ),
+    .RegData  (regData   ),
+    .nStall   (nStall    )
+);
+`endif
 `endif
 
 memory memory0 (

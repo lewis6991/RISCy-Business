@@ -13,6 +13,10 @@
 module PROCESSOR(
     input               Clock    ,
                         nReset   ,
+`ifdef scan
+                        test_si  ,
+                        test_se  ,
+`endif
     input        [31:0] InstrMem ,
                         MemData  ,
     output logic [31:0] WriteData,
