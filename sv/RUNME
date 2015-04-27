@@ -270,7 +270,7 @@ proc()
             echo "$(cat temp.log)" >> run.log
         done
     else
-        for test in {1..8}
+        for test in {1..4}
         do
             #PUT EACH CLOCK CASE HERE
             for i in "${CLOCK[@]}"
