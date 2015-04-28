@@ -51,7 +51,9 @@ set_dont_touch_network nReset
 
 set_dont_use c35_CORELIB/ADD*
 
-#set_output_delay -clock Clock [expr $CLK_PERIOD/8] [all_outputs]
+set_output_delay -clock Clock [expr $CLK_PERIOD/8] [all_outputs]
+
+set_critical_range 2 PROCESSOR
 
 if {($TYPE=="opt")   && ($SCAN==1)} {
 	compile_ultra -scan -timing_high_effort_script
@@ -75,8 +77,6 @@ if ($SCAN==1) {
   dft_drc
   insert_dft  
   compile_ultra -scan -incremental }
-
-#optimize_registers
 
 report_design > ../logs_${CLK_PERIOD}${TYPE}/synth_design_${CLK_PERIOD}${TYPE}.rpt
 report_area > ../logs_${CLK_PERIOD}${TYPE}/synth_area_${CLK_PERIOD}${TYPE}.rpt
