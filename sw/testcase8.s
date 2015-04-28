@@ -9,7 +9,7 @@
 #                     - Instructions that lead to a fail state are spammed to
 #                       avoid a false pass. For example if the pipeline is not
 #                       stalled properly a fail branch may be overridden and
-#                       test may pass when it should of failed.
+#                       test may pass when it should have failed.
 #------------------------------------------------------------------------------
     .set    noreorder
     .set    noat

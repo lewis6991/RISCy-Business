@@ -2,7 +2,7 @@
 	.set	nomacro
 	j	main
 	
-factorial:
+check:
 	addiu	$sp,$sp,-16
 	sw	$fp,8($sp)
 	nop
@@ -104,7 +104,7 @@ main:
 	nop
 	nop
 	li	$4,3			# 0x3
-	jal	factorial
+	jal	check
 	nop
 
 	move	$3,$2
