@@ -1,0 +1,91 @@
+//------------------------------------------------------------------------------
+// File              : index.txt
+// Description       : Explanation of the working directory
+// Primary Author    :
+// Other Contributors:
+// Notes             :
+//------------------------------------------------------------------------------
+
+The project is self contained within the RISCy-Business directory.
+At the top level there are two directories, 'sv' and 'sw'.
+
+__________________________ ______________________
+ Directory tree           | Information
+--------------------------|---------------------
+ RISCy-Business/          | Top level
+  -> sw/                  | Contains all the model testcases
+    -> testcase1.s        | Test minimum operation and NOP
+    -> testcase2.s        | Test all ALU functions
+    -> testcase3.s        | Test multiply instructions
+    -> testcase4.s        | Test shift instructions
+    -> testcase5.s        | Test branch instructions
+    -> testcase6.s        | Test jump instructions
+    -> testcase7.s        | Test memory instructions
+    -> testcase8.s        | Test branch prediction without NOPs
+    -> testcase9.s        | Sudoku solver [REPLACE]
+    -> testcase10.s       | Sums all elements in a 9x9 grid
+    -> testcase11.s       | Sudoku solver with NOPs [REPLACE]
+
+  -> sv/                  | Contains all the verilog, synthesis, and place&route
+                          | simulation data
+    -> RUNME              | RUNME script for testing. Use ./RUNME --help for info
+    -> processor.tcl      | Defines the signals to display in ncverilog
+    -> test/              | Contains all testbenches, and the test model
+    -> src/               | Contains all behavioural verilog
+    -> syn/               |
+      -> DC_Setup.sh      | Settings for design compiler (synthesis)
+      -> library_Setup    | Defines the libraries for design compiler
+      -> SOC_Setup.sh     | Settings for cadence encounter (place&route)
+      -> design.conf      | Design configuration for cadence encounter
+
+      -> RUN_SYN          | RUN script for synthesis,
+      -> syn_script.tcl   | Called by RUN_SYN, defines all commands for dc
+
+      -> RUN_PNR          | RUN script for place&route
+      -> pnr_script.tcl   | Called by RUN_PNR, defines all commands for encounter
+
+      -> RUN_VECTOR       | RUN script to generate scan path test vectors
+      -> vector_script.tc | Generated test vector script for synthesis
+           l              |
+      -> vector_script_pn | Generated test vector script for place&route
+           r.tcl          |
+      -> 0.35um_Technolog | Technology files for simulation
+           u_HDL_Files/   |
+
+
+Design flow from behavioural to pre-fabrication with a target clock period of 5ns
+
+  ./RUNME -proc -clk="50"
+      "Run all the testcases on the behavioural model
+       clk units in 100ps e.g 50 = 5ns"
+
+  cd syn
+  ./RUN_SYN opt 5 [noscan]
+      "Perform synthesis of behavioural RTL with full optimisation at 5ns
+       By default, a scan path is inserted. Specify noscan to exclude
+       Generates two directories: work_5opt - Workspace with all generated files
+                                  logs_5opt - Contains all the logs and reports"
+
+  ./RUN_VECTOR opt 5
+      "Generates and runs scan path test vectors for the synthesised verilog"
+
+  cd ../
+  ./RUNME -syn=5opt -clk="50-60,1"
+      "Run all the testcases on the synthesised netlist
+       clk can also have a range defined, e.g 50-60,1 -> test all periods
+           from 50 to 60 incrementing by 1, until each testcase passes"
+
+  cd syn
+  ./RUN_PNR opt 5
+      "Performs place&route of synthesised netlist
+       Generated files contained within work_5opt, and reports within logs_5opt"
+
+  ./RUN_VECTOR opt 5 pnr
+      "Generates and runs scan path test vectors for the placed&routed verilog"
+
+  cd ../
+  ./RUNME -pnr=5opt -clk="50-60,1"
+      "Run all the testcases on the place&route netlist"
+
+
+
