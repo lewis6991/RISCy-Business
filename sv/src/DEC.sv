@@ -1,11 +1,11 @@
-//----------------------------------------
-// File: DEC.sv
-// Description: Decode pipeline stage
-// Primary Author: Dominic Murphy
-// Other Contributors: Dhanushan Raveendran
-// Notes:
-//----------------------------------------
-`ifdef no_check
+//------------------------------------------------------------------------------
+// File              : DEC.sv
+// Description       : Decode pipeline stage
+// Primary Author    : Dominic Murphy
+// Other Contributors: Dhanushan Raveendran, Lewis Russell
+// Notes             :
+//------------------------------------------------------------------------------
+
 module DEC(
     input                Clock       ,
                          nReset      ,
@@ -16,64 +16,32 @@ module DEC(
     output logic [31:0]  ImmData     ,
                          RsData      ,
                          RtData      ,
-    output logic [15:0]  Offset      ,
-    output logic [ 4:0]  RAddrOut    ,
-                         RsAddr      ,
-                         RtAddr      ,
-                         Shamt       ,
-    output logic         Branch      ,
-                         Jump        ,
-                         MemRead     ,
-                         MemtoReg    ,
-                         MULOp       ,
-                         MemWrite    ,
-                         ALUSrc      ,
-                         RegJump     ,
-                         RegWriteOut ,
-                         ACCEn       ,
-                         ALUEn       ,
-                         MULSelB     ,
-    output logic [ 5:0]  ALUfunc     ,
-    output logic [ 2:0]  Memfunc     ,
-                         BrCode      ,
-    output logic [ 1:0]  OutSel
-);
-`else
-module DEC(
-    input                Clock       ,
-                         nReset      ,
-                         RegWriteIn  ,
-    input        [31:0]  Instruction ,
-                         RData       ,
-    input        [ 4:0]  RAddrIn     ,
-                         RegAddr     ,
-    output logic [31:0]  ImmData     ,
-                         RsData      ,
-                         RtData      ,
-                         RegData     ,
-    output logic [15:0]  Offset      ,
-    output logic [ 4:0]  RAddrOut    ,
-                         RsAddr      ,
-                         RtAddr      ,
-                         Shamt       ,
-    output logic         Branch      ,
-                         Jump        ,
-                         MemRead     ,
-                         MemtoReg    ,
-                         MULOp       ,
-                         MemWrite    ,
-                         ALUSrc      ,
-                         RegJump     ,
-                         RegWriteOut ,
-                         ACCEn       ,
-                         ALUEn       ,
-                         MULSelB     ,
-    output logic [ 5:0]  ALUfunc     ,
-    output logic [ 2:0]  Memfunc     ,
-                         BrCode      ,
-    output logic [ 1:0]  OutSel
-);
+`ifndef no_check
+    input        [ 4:0]  RegAddr     ,
+    output logic [31:0]  RegData     ,
 `endif
+    output logic [15:0]  Offset      ,
+    output logic [ 4:0]  RAddrOut    ,
+                         RsAddr      ,
+                         RtAddr      ,
+                         Shamt       ,
+    output logic         Branch      ,
+                         Jump        ,
+                         MemRead     ,
+                         MemtoReg    ,
+                         MULOp       ,
+                         MemWrite    ,
+                         ALUSrc      ,
+                         RegJump     ,
+                         RegWriteOut ,
+                         ACCEn       ,
+                         ALUEn       ,
+                         MULSelB     ,
+    output logic [ 5:0]  ALUfunc     ,
+    output logic [ 2:0]  Memfunc     ,
+                         BrCode      ,
+    output logic [ 1:0]  OutSel
+);
 
 wire        shiftsel  ,
             unsgnsel  ,
