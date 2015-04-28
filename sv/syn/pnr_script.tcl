@@ -22,7 +22,9 @@ fit
 addRing -spacing_bottom 2 -width_left 2 -width_bottom 2 -width_top 2 -spacing_top 2 -layer_bottom MET1 -stacked_via_top_layer MET4 -width_right 2 -around core -jog_distance 0.7 -offset_bottom 0.7 -layer_top MET1 -threshold 0.7 -offset_left 0.7 -spacing_right 2 -spacing_left 2 -offset_right 0.7 -offset_top 0.7 -layer_right MET2 -nets {gnd! vdd! } -stacked_via_bottom_layer MET1 -layer_left MET2
 sroute -connect { blockPin padPin padRing corePin floatingStripe } -layerChangeRange { 1 4 } -blockPinTarget { nearestRingStripe nearestTarget } -padPinPortConnect { allPort oneGeom } -checkAlignedSecondaryPin 1 -blockPin useLef -allowJogging 1 -crossoverViaBottomLayer 1 -allowLayerChange 1 -targetViaTopLayer 4 -crossoverViaTopLayer 4 -targetViaBottomLayer 1 -nets { gnd! vdd! }
 setOptMode -effort high
-placeDesign -prePlaceOpt
+setOptMode -congOpt true
+setPlaceMode -congEffort high
+placeDesign -inPlaceOpt
 checkPlace processor.checkPlace
 setDrawView place
 optDesign -preCTS

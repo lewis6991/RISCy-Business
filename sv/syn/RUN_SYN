@@ -34,7 +34,7 @@ if($1 == check) then
     exit
 endif
 
-if($3 == noscan)then
+if($3 == noscan) then
     set SCAN = 0
 else
     set SCAN = 1

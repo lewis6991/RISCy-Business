@@ -12,7 +12,7 @@ set hind="hind.ecs.soton.ac.uk"
 set hart="hart.ecs.soton.ac.uk"
 
 if ($host != $hind && $host != $hart) then
-    echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
+    echo "Error: Vector Testing requires hind or hart CAD server for tools. Exiting..."
     exit
 endif
 
@@ -31,9 +31,9 @@ echo "Generating scan path vectors..." | tee ../logs_${2}${1}/vector.log
 source /home/esdcad/scripts/TetraMAX_H_2013_03_SP4
 
 if ($pnr == 1) then
-    tmax -shell -tcl "../vector_script_pnr.tcl" | tee -a ../logs_${2}${1}/vector.log
+    tmax -shell -tcl "../vector_script_pnr.tcl" | tee -a ../logs_${2}${1}/vector_pnr.log
 else
-    tmax -shell -tcl "../vector_script.tcl" | tee -a ../logs_${2}${1}/vector.log
+    tmax -shell -tcl "../vector_script.tcl" | tee -a ../logs_${2}${1}/vector_syn.log
 endif
 
 if ($? != 0) then
