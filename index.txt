@@ -75,6 +75,7 @@ Design flow from behavioural to pre-fabrication with a target clock period of 5n
       "Perform synthesis of behavioural RTL with full optimisation at 5ns
        By default, a scan path is inserted. Specify noscan to exclude
        Generates two directories: work_5opt - Workspace with all generated files
+                                            - Included design.sdf timing file
                                   logs_5opt - Contains all the logs and reports"
 
   ./RUN_VECTOR opt 5
@@ -89,7 +90,8 @@ Design flow from behavioural to pre-fabrication with a target clock period of 5n
   cd syn
   ./RUN_PNR opt 5
       "Performs place&route of synthesised netlist
-       Generated files contained within work_5opt, and reports within logs_5opt"
+       Generated files contained within work_5opt, and reports within logs_5opt
+       Generates processor.sdf timing file, in work_5opt"
 
   ./RUN_VECTOR opt 5 pnr
       "Generates and runs scan path test vectors for the placed&routed verilog"
