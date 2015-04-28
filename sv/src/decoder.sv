@@ -167,7 +167,6 @@ assign ALUEn = (OpCode == 0);
                 FuncOut  = `ADDU;
                 ALUSrc   = 1'b1 ;
                 RegWrite = 1'b1 ;
-                Unsgnsel = 1'b1 ;
             end
 
             `LUI:
