@@ -138,7 +138,6 @@ begin
 
     fork
         `ifndef no_check
-        `else
              check_register(regAddr, register[regAddr]);
         `endif
     join_none
