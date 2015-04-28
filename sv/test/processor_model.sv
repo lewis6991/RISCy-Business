@@ -166,7 +166,7 @@ endtask
 task update_registers();
     case (opcode)
         ADDI : `rt = `rs + signed'(imm);
-        ADDIU: `rt = `rs + imm;
+        ADDIU: `rt = `rs + signed'(imm);
         LUI  : `rt = imm << 16;
         ANDI : `rt = `rs & imm;
         ORI  : `rt = `rs | imm;
