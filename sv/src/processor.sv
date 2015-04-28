@@ -21,7 +21,7 @@ module PROCESSOR(
                         MemData  ,
     output logic [31:0] WriteData,
     output logic [15:0] InstrAddr,
-    output logic [31:0] MemAddr  ,
+    output logic [15:0] MemAddr  ,
 `ifndef no_check
     input        [ 4:0] RegAddr  ,
     output logic [31:0] RegData  ,
