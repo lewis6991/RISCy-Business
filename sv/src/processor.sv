@@ -455,6 +455,18 @@ assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 `PIPE(SubOut1_E2  , SubOut1_E1           )
 `PIPE(SubOut2_E2  , SubOut2_E1           )
 `PIPE(SubOut3_E2  , SubOut3_E1           )
+`PIPE(SubOut4_E2  , SubOut4_E1           )
+`PIPE(SubOut5_E2  , SubOut5_E1           )
+`PIPE(SubOut6_E2  , SubOut6_E1           )
+`PIPE(SubOut7_E2  , SubOut7_E1           )
+`PIPE(SubOut8_E2  , SubOut8_E1           )
+`PIPE(SubOut9_E2  , SubOut9_E1           )
+`PIPE(SubOut10_E2 , SubOut10_E1          )
+`PIPE(SubOut11_E2 , SubOut11_E1          )
+`PIPE(SubOut12_E2 , SubOut12_E1          )
+`PIPE(SubOut13_E2 , SubOut13_E1          )
+`PIPE(SubOut14_E2 , SubOut14_E1          )
+`PIPE(SubOut15_E2 , SubOut15_E1          )
 `PIPE(BranchAddrE2, BranchAddrE1Out      )
 
 always_comb
