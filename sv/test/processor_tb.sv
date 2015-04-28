@@ -46,11 +46,6 @@ wire         memReadEn  ,
              JBFLush    ,
              nStall     ;
 
-`ifdef scan
-logic scanIn     = 1'b0;
-logic scanEnable = 1'b0;
-`endif
-
 bit signed [0:31][31:0] register;
 wire [4:0] cAddr;
 
@@ -81,6 +76,10 @@ PROCESSOR prcsr0 (
     .InstrAddr(rtlPC     ),
     .MemData  (memRData  ),
     .WriteData(memWData  ),
+`ifdef scan
+    .test_si  (1'b0      ),
+    .test_se  (1'b0      ),
+`endif
     .MemAddr  (memAddr   ),
     .MemWrite (memWriteEn),
     .MemRead  (memReadEn ),
