@@ -11,13 +11,13 @@
 `include "branch_definition.sv"
 
 module branch(
-    input               C      ,
-                        O      ,
-                        N      ,
-                        Z      ,
-    input        [ 2:0] BrCode ,
-    input               BrRt   ,
-    output logic        Taken    // Branch taken
+    input               C     ,
+                        O     ,
+                        N     ,
+                        Z     ,
+    input        [ 2:0] BrCode,
+    input               BrRt  ,
+    output logic        Taken
 );
 
     always_comb

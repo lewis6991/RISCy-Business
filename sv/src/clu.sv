@@ -6,9 +6,9 @@
 // Notes             :
 //------------------------------------------------------------------------------
 module clu(
-    input        [31:0] A     ,
-                        B     ,
-    input        [ 5:0] Func  ,
+    input        [31:0] A   ,
+                        B   ,
+    input        [ 5:0] Func,
     output logic [31:0] Out
 );
 
