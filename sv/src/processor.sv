@@ -252,6 +252,7 @@ logic [15:0] SubOut15_E2     ;
 wire brTakenE2;
 logic JBFlush1;
 logic JBFlush2;
+logic JBFlush_Temp;
 
 logic MRStall;
 logic MRStall1;
@@ -259,7 +260,7 @@ logic MRStall2;
 logic MRStall3;
 logic MRStall4;
 
-assign MRStall1 = MemReadD & ~JBFlush;
+assign MRStall1 = MemReadD & ~JBFlush_Temp;
 
 `PIPE(MRStall2, MRStall1)
 `PIPE(MRStall3, MRStall2)
@@ -270,6 +271,7 @@ assign MRStall = MRStall1 || MRStall2 || MRStall3 || MRStall4;
 assign nStall = (~Stall1 & ~Stall2 & ~MRStall);
 
 assign JBFlush = JBFlush1 | JBFlush2;
+assign JBFlush_Temp = JBFlush1 | JBFlush2;
 
 assign Flush = (~Flush1 & ~Flush2);
 
