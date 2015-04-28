@@ -30,9 +30,9 @@ logic [31:0] instrData = 0;
 logic [ 4:0] regAddr = 0;
 wire  [15:0] rtlPC      ,
              modelPC    ,
-             memAddr    ;
-wire  [31:0] memAddrM   ,
-             memRData   ,
+             memAddr    ,
+             memAddrM   ;
+wire  [31:0] memRData   ,
              memWData   ,
              memRDataM  ,
              memWDataM  ,

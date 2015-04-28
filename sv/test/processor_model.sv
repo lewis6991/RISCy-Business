@@ -21,7 +21,7 @@ program processor_model(
     output bit [0:31][31:0] Register   ,
     output bit       [31:0] MemRData   ,
                             MemWData   ,
-                            MemAddr    ,
+    output bit       [15:0] MemAddr    ,
     output bit              MemWrite   ,
                             MemRead
 );
@@ -33,7 +33,7 @@ parameter reg_d   = 5; // Delay for reg writes to occur.
 parameter mem_d   = 3; // Delay for memory operations to occur.
 parameter block_d = 4; // Cycles for instructions to be blocked.
 
-parameter mem_size = 409600;
+parameter mem_size = 65536;
 
 logic        [63:0] acc        ;
 e_op_code           opcode     ;
@@ -61,6 +61,8 @@ bit [4:0] caddr;
 
 int memory[0:mem_size-1];
 
+int topmem[0:255];
+
 bit Stall2;
 
 default clocking delay @ (posedge Clock);
@@ -85,6 +87,8 @@ assign offset  = Instruction[15: 0];
 assign address = Instruction[25: 0];
 
 assign InstAddr = pc;
+
+assign topmem  = memory[16128:16383];
 
 `define rs register[rs_addr]
 `define rt register[rt_addr]
@@ -216,7 +220,7 @@ task automatic update_memory();
     bit read  = 1;
     bit write = 1;
 
-    int mem_addr = (`rs + offset) >> 2;
+    bit[13:0] mem_addr = (`rs + offset) >> 2;
 
 
     // Memory write block
