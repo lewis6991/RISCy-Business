@@ -66,6 +66,7 @@ _____________________________________________________________________
 
 Design flow from behavioural to pre-fabrication with a target clock period of 5ns
 
+  cd sv
   ./RUNME -proc -clk="50"
       "Run all the testcases on the behavioural model
        clk units in 100ps e.g 50 = 5ns"
