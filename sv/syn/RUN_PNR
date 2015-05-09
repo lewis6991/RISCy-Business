@@ -18,14 +18,14 @@ if ("$1" == "--help" || "$1" == "-h") then
           \
           opt          - This specifies performing place and route on a synthesis that had opt set.\
           basic        - This specifies performing place and route on a synthesis that had basic set.\
-          clock period - Specify here The integer value used as the clock period for synthesis.\
+          clock period - Specify here the integer value used as the clock period for synthesis.\
           "
     exit
 endif
 
 if ($host != $hind && $host != $hart) then
     echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
-    exit
+    exit 1
 endif
 
 if ("$1" != "opt" && "$1" != "basic") then

@@ -31,7 +31,7 @@ endif
 
 if ($host != $hind && $host != $hart) then
     echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
-    exit
+    exit 1
 endif
 
 if ("$1" != "opt" && "$1" != "basic") then
