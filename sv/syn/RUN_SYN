@@ -11,28 +11,44 @@ set host=`hostname`
 set hind="hind.ecs.soton.ac.uk"
 set hart="hart.ecs.soton.ac.uk"
 
+if ("$1" == "--help" || "$1" == "-h") then
+    echo "This script is used to run a synthesis. It must be called in the following format:\
+          ./RUN_SYN {"opt" | "basic"} {clock period} ["noscan"]\
+          where {} signify compulsary arguments, [] optional arguments and | is either argument.\
+          \
+          opt          - This specifies an optimised synthesis, where maximum effort is placed in meeting\
+                         timing constraints.\
+          basic        - This specifies a basic synthesis, which uses minimal optimisations. Useful for\
+                         quick synthesis to ensure synthesisable SystemVerilog has been written.\
+          clock period - Specify here an integer value as the clock period. This is the target\
+                         clock period for the synthesis tool to try and meet.\
+          noscan       - Specify this optional flag to perform synthesis without a scan path. By default,\
+                         a scan path will be inserted.\
+          "
+    exit
+endif
+
+
 if ($host != $hind && $host != $hart) then
     echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
     exit
 endif
 
-if ($1 == clean) then
-    rm -rf ./work >&/dev/null
-    rm ./*.log >&/dev/null
-    echo "Cleaned!"
-    exit
+if ("$1" != "opt" && "$1" != "basic") then
+    echo "Error: Incorrect arguments given. See --help information."
+    exit 1
 endif
+
+if ("$2" != "[0-9]+") then
+    echo "Error: Incorrect arguments given. See --help information."
+    exit 1
+endif
+exit
+source ../DC_Setup.sh
 
 mkdir -p logs_${2}${1}
 mkdir -p work_${2}${1}
 cd work_${2}${1} >&/dev/null
-source ../DC_Setup.sh
-
-if($1 == check) then
-    dc_shell -f "../syn_check.tcl" > ../logs_${2}${1}/check_syn.log
-    echo "Complete. Results written to logs_${2}${1}/check_syn.log"
-    exit
-endif
 
 if($3 == noscan) then
     set SCAN = 0

@@ -11,17 +11,31 @@ set host=`hostname`
 set hind="hind.ecs.soton.ac.uk"
 set hart="hart.ecs.soton.ac.uk"
 
+if ("$1" == "--help" || "$1" == "-h") then
+    echo "This script is used to run place and route. It must be called in the following format:\
+          ./RUN_PNR {"opt" | "basic"} {clock period}\
+          where {} signify compulsary arguments.\
+          \
+          opt          - This specifies performing place and route on a synthesis that had opt set.\
+          basic        - This specifies performing place and route on a synthesis that had basic set.\
+          clock period - Specify here The integer value used as the clock period for synthesis.\
+          "
+    exit
+endif
+
 if ($host != $hind && $host != $hart) then
     echo "Error: Synthesis requires hind or hart CAD server for tools. Exiting..."
     exit
 endif
 
-if ($1 == clean) then
-    rm -rf ./work >&/dev/null
-    rm ./*.log >&/dev/null
-    rm ./encounter* >&/dev/null
-    echo "Cleaned!"
-    exit
+if ("$1" != "opt" && "$1" != "basic") then
+    echo "Error: Incorrect arguments given. See --help information."
+    exit 1
+endif
+
+if ("$2" != "[0-9]+") then
+    echo "Error: Incorrect arguments given. See --help information."
+    exit 1
 endif
 
 source SOC_Setup.sh
