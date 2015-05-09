@@ -58,19 +58,6 @@ main()
         shift
     done
 
-    #if [ -n "$PLUSARGS" ]
-    #then
-    #    myarray=($PLUSARGS)
-    #    for element in "${myarray[@]}"
-    #    do
-    #        if [[ $element = *"clk_p"* ]]
-    #        then
-    #            echo "Outdated use of clk_p. Please see 'RUNME --help'"
-    #            exit 1
-    #        fi
-    #    done
-#
-    #fi
     if [ -n "$CLOCK" ]
     then
         if [[ $CLOCK = *"="[0-9]* ]]
