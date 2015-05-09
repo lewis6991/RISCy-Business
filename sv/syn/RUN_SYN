@@ -43,7 +43,7 @@ if ("$2" != "[0-9]+") then
     echo "Error: Incorrect arguments given. See --help information."
     exit 1
 endif
-exit
+
 source ../DC_Setup.sh
 
 mkdir -p logs_${2}${1}
