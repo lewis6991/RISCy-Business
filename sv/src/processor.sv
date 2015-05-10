@@ -180,7 +180,7 @@ logic [ 1:0] ForwardB    ;
 
 logic        ForwardSrcA ;
 logic        ForwardSrcB ;
-wire         ForwardMem  ;
+wire         ForwardMem1 ;
 logic        ForwardMem2 ;
 
 logic [31:0] A           ;
@@ -276,7 +276,6 @@ assign JBFlush1 = BranchD || JumpD                         ;
 
 HDU hdu0(
     .MULOp   (MULOpD           ),
-    .ALUOp   (ALUEnD           ),
     .Func    (InstructionD[5:0]),
     .Stall   (Stall1           )
 );
@@ -380,7 +379,6 @@ addrcalc addrcalc0(
 // EX1 Stage ----------------------------------------------
 
 EX1 ex1(
-    .MULSelB(MULSelBE1                      ),
     .A      (RsDataE1                       ),
     .B      (ALUSrcE1 ? ImmDataE1 : RtDataE1),
     .Shamt  (ShamtE1                        ),

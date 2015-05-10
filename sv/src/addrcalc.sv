@@ -7,9 +7,9 @@
 
 module addrcalc(
 
-    input        [31:0] PCIn   , // Program counter input.
-    input        [ 2:0] BrCode ,
-    input        [31:0] Address, // Address input
+    input               [31:0] PCIn   , // Program counter input.
+    input               [ 2:0] BrCode ,
+    input               [31:0] Address, // Address input
     output logic signed [31:0] PCout
 );
 

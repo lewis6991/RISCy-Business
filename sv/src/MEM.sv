@@ -27,14 +27,14 @@ module MEM(
     input        [ 5:0] Func        ,
     input        [ 2:0] MemfuncIn   ,
     input        [31:0] RtDataIn    ,
-                        Out         ,
     output logic        WriteL      ,
                         WriteR      ,
                         C           , // Carry out flag.
                         Z           , // Output zero flag.
                         O           , // Overflow flag.
                         N           ,  // Output negative flag.
-    output logic [31:0] MemWriteData
+    output logic [31:0] MemWriteData,
+                        Out         
 );
 
     wire [31:0] ACCout;

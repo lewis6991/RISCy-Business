@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------------
 
 module EX1(
-    input               MULSelB    ,
     input        [31:0] A          , // ALU Input A.
                         B          , // ALU Input B.
     input        [ 4:0] Shamt      , // Shift amount.

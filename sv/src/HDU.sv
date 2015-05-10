@@ -9,7 +9,6 @@
 
 module HDU(
     input        MULOp   ,
-    input        ALUOp   ,
     input [5:0]  Func    ,
     output logic Stall
 );
