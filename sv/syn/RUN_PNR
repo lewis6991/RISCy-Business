@@ -28,15 +28,15 @@ if ($host != $hind && $host != $hart) then
     exit 1
 endif
 
-#if ("$1" != "opt" && "$1" != "basic") then
-#    echo "Error: Incorrect arguments given. See --help information."
-#    exit 1
-#endif
-
-if ("$2" != "[0-9]+") then
+if ("$1" != "opt" && "$1" != "basic") then
     echo "Error: Incorrect arguments given. See --help information."
     exit 1
 endif
+
+#if ("$2" != "[0-9]+") then
+#    echo "Error: Incorrect arguments given. See --help information."
+#    exit 1
+#endif
 
 source SOC_Setup.sh
 
