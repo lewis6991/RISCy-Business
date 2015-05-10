@@ -2,7 +2,7 @@
 // File              : branch.sv
 // Description       : Branch logic for execute stage
 // Primary Author    : Ethan Bishop
-// Other Contributors: Lewis Russell
+// Other Contributors: Lewis Russell, Dhanushan Raveendran
 // Notes             : Controls the PC for JUMP and BRANCH instructions
 //------------------------------------------------------------------------------
 

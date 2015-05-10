@@ -28,16 +28,6 @@ module mult1(
 
 wire [7:0] a_hihi, b_hihi, a_hilo, b_hilo, a_lohi, b_lohi, a_lolo, b_lolo;
 
-//assign a_hi = A[31:16];
-//assign a_lo = A[15: 0];
-//assign b_hi = B[31:16];
-//assign b_lo = B[15: 0];
-
-//assign SubOut0 = a_hi * b_hi;
-//assign SubOut1 = a_hi * b_lo;
-//assign SubOut2 = a_lo * b_hi;
-//assign SubOut3 = a_lo * b_lo;
-
 assign a_hihi = A[31:24];
 assign a_hilo = A[23:16];
 assign a_lohi = A[15: 8];

@@ -2,7 +2,7 @@
 // File              : addrcalc.sv
 // Description       : Calculates the new address for branch and jumps.
 // Primary Author    : Lewis Russell
-// Other Contributors:
+// Other Contributors: Dhanushan Raveendran
 //------------------------------------------------------------------------------
 
 module addrcalc(

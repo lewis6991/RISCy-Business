@@ -41,44 +41,30 @@ always_comb
        ForwardMem2 = 0    ;
 
        if(RegWriteE1 && (RAddrE1 != 0) && (RAddrE1 == RsAddrD))
-            ForwardA = 2'b01;
+           ForwardA = 2'b01;
        else if(RegWriteE2 && (RAddrE2 != 0) && (RAddrE2 == RsAddrD))
-            ForwardA = 2'b10;
+           ForwardA = 2'b10;
        else if(RegWriteM && (RAddrM != 0) && (RAddrM == RsAddrD))
-            ForwardA = 2'b11;
+           ForwardA = 2'b11;
 
        if(RegWriteE1 && (RAddrE1 != 0) && (RAddrE1 == RtAddrD))
-            ForwardB = 2'b01;
+           ForwardB = 2'b01;
        else if(RegWriteE2 && (RAddrE2 != 0) && (RAddrE2 == RtAddrD))
-            ForwardB = 2'b10;
+           ForwardB = 2'b10;
        else if(RegWriteM && (RAddrM != 0) && (RAddrM == RtAddrD))
-            ForwardB = 2'b11;
+           ForwardB = 2'b11;
 
-        if(MemWriteE2 && (RAddrM != 0) && (RAddrM == RtAddrE2))
-            ForwardMem2 = 1'b1;
+       if (Memfunc == `WC && RAddrW == RtAddrM)
+           ForwardMem1 = 1'b1;
 
-       /*if(RegWriteE2 && (RAddrE2 != 0) && (RAddrE2 == RsAddrE1))
-            ForwardA = 2'b01;
-       else if(RegWriteM && (RAddrM != 0) && (RAddrM == RsAddrE1))
-            ForwardA = 2'b10;
-       else if(RegWriteW && (RAddrW != 0) && (RAddrW == RsAddrE1))
-            ForwardA = 2'b11;
-
-       if(RegWriteE2 && (RAddrE2 != 0) && (RAddrE2 == RtAddrE1))
-            ForwardB = 2'b01;
-       else if(RegWriteM && (RAddrM != 0) && (RAddrM == RtAddrE1))
-            ForwardB = 2'b10;
-       else if(RegWriteW && (RAddrW != 0) && (RAddrW == RtAddrE1))
-            ForwardB = 2'b11;*/
+       if(MemWriteE2 && (RAddrM != 0) && (RAddrM == RtAddrE2))
+           ForwardMem2 = 1'b1;
 
        if(RegWriteW && RAddrW != 0)
        begin
            ForwardSrcA = (RAddrW == RsAddrD);
            ForwardSrcB = (RAddrW == RtAddrD);
        end
-
-       if (Memfunc == `WC && RAddrW == RtAddrM)
-           ForwardMem1 = 1'b1;
     end
 
 endmodule

@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 // File              : PROCESSOR.sv
 // Description       : Top-Level Processor
-// Primary Author    : Dominic Murphy
-// Other Contributors: Dhanushan Raveendran, Lewis Russell
+// Primary Author    : Dhanushan Raveendran
+// Other Contributors: Dominic Murphy, Lewis Russell
 // Notes             :
 //------------------------------------------------------------------------------
 
@@ -41,15 +41,29 @@ logic Flush  ;
 logic Flush1 ;
 logic Flush2 ;
 
-logic JumpD, JumpE1;
+logic JumpD        ;
+logic JumpE1       ;
 
-logic BranchD, BranchE1, BranchE2;
+logic BranchD      ;
+logic BranchE1     ;
+logic BranchE2     ;
 
-logic MemReadIF, MemReadD, MemReadE1, MemReadE2, MemReadM;
+logic MemReadIF    ;
+logic MemReadD     ;
+logic MemReadE1    ;
+logic MemReadE2    ;
+logic MemReadM     ;
 
-logic MemtoRegD, MemtoRegE1, MemtoRegE2, MemtoRegM, MemtoRegW;
+logic MemtoRegD    ;
+logic MemtoRegE1   ;
+logic MemtoRegE2   ;
+logic MemtoRegM    ;
+logic MemtoRegW    ;
 
-logic MemWriteD, MemWriteE1, MemWriteE2, MemWriteM;
+logic MemWriteD    ;
+logic MemWriteE1   ;
+logic MemWriteE2   ;
+logic MemWriteM    ;
 
 logic ALUSrcD      ;
 logic ALUSrcE1     ;
@@ -80,21 +94,33 @@ wire  ALUNE1       ;
 logic ALUNE2       ;
 logic ALUNM        ;
 
-logic ACCEnD, ACCEnE1, ACCEnE2, ACCEnM;
+logic ACCEnD       ;
+logic ACCEnE1      ;
+logic ACCEnE2      ;
+logic ACCEnM       ;
 
-logic ALUEnD, ALUEnE1, ALUEnE2;
+logic ALUEnD       ;
+logic ALUEnE1      ;
+logic ALUEnE2      ;
 
 wire  [31:0] InstructionF;
 logic [31:0] InstructionD;
 
 logic [31:0] RDataW      ;
 
-logic [4:0]  RAddrD, RAddrE1, RAddrE2, RAddrM, RAddrW;
+logic [4:0]  RAddrD      ;
+logic [4:0]  RAddrE1     ;
+logic [4:0]  RAddrE2     ;
+logic [4:0]  RAddrM      ;
+logic [4:0]  RAddrW      ;
 
 logic [4:0]  RsAddrD     ;
 logic [4:0]  RsAddrE1    ;
 
-logic [4:0]  RtAddrD, RtAddrE1, RtAddrE2, RtAddrM;
+logic [4:0]  RtAddrD     ;
+logic [4:0]  RtAddrE1    ;
+logic [4:0]  RtAddrE2    ;
+logic [4:0]  RtAddrM     ;
 
 logic [31:0] ImmDataD    ;
 logic [31:0] ImmDataE1   ;
@@ -124,7 +150,11 @@ wire  [2:0]  BrCodeD     ;
 logic [2:0]  BrCodeE1    ;
 logic [2:0]  BrCodeE2    ;
 
-logic [2:0]  MemfuncD, MemfuncE1, MemfuncE2, MemFuncM, MemfuncW;
+logic [2:0]  MemfuncD    ;
+logic [2:0]  MemfuncE1   ;
+logic [2:0]  MemfuncE2   ;
+logic [2:0]  MemFuncM    ;
+logic [2:0]  MemfuncW    ;
 
 logic [4:0]  ShamtD      ;
 logic [4:0]  ShamtE1     ;
@@ -171,20 +201,13 @@ logic        MULSelBD        ;
 logic        MULSelBE1       ;
 logic        MULSelBE2       ;
 
-logic [ 1:0] OutSelD, OutSelE1, OutSelE2;
+logic [ 1:0] OutSelD         ;
+logic [ 1:0] OutSelE1        ;
+logic [ 1:0] OutSelE2        ;
 
 wire  [15:0] OffsetD         ;
 logic [15:0] OffsetE1        ;
 logic [15:0] OffsetE2        ;
-
-//wire  [31:0] SubOut0_E1      ;
-//wire  [31:0] SubOut1_E1      ;
-//wire  [31:0] SubOut2_E1      ;
-//wire  [31:0] SubOut3_E1      ;
-//logic [31:0] SubOut0_E2      ;
-//logic [31:0] SubOut1_E2      ;
-//logic [31:0] SubOut2_E2      ;
-//logic [31:0] SubOut3_E2      ;
 
 wire  [15:0] SubOut0_E1      ;
 wire  [15:0] SubOut1_E1      ;
@@ -224,11 +247,16 @@ logic [5:0]  MULFuncE1;
 logic [63:0] MULDataE2;
 wire  [31:0] MULOutE1 ;
 
-wire brTakenE2;
+wire brTakenE2;  
 logic JBFlush1;
 logic JBFlush2;
+logic MRStall ;
+logic MRStall1;
+logic MRStall2;
+logic MRStall3;
+logic MRStall4;
 
-logic MRStall, MRStall1, MRStall2, MRStall3, MRStall4;
+// HDU ----------------------------------------------
 
 assign MRStall1 = MemReadD & ~JBFlush;
 
@@ -236,16 +264,24 @@ assign MRStall1 = MemReadD & ~JBFlush;
 `PIPE(MRStall3, MRStall2)
 `PIPE(MRStall4, MRStall3)
 
-assign MRStall = MRStall1 | MRStall2 | MRStall3 | MRStall4;
-
-assign nStall = ~Stall1 & ~Stall2 & ~MRStall;
-
-assign JBFlush = JBFlush1 | JBFlush2;
-
-assign Flush = ~Flush1 & ~Flush2;
+assign MRStall  = MRStall1 | MRStall2 | MRStall3 | MRStall4;
+assign nStall   = ~Stall1 & ~Stall2 & ~MRStall             ;
+assign JBFlush  = JBFlush1 | JBFlush2                      ;
+assign Flush    = ~Flush1 & ~Flush2                        ;    
+assign Flush1   = ~brTakenE2 & BranchE2                    ;
+assign JBFlush1 = BranchD || JumpD                         ;
 
 `PIPE(Flush2  , Flush1  )
 `PIPE(JBFlush2, JBFlush1)
+
+HDU hdu0(
+    .MULOp   (MULOpD           ),
+    .ALUOp   (ALUEnD           ),
+    .Func    (InstructionD[5:0]),
+    .Stall   (Stall1           )
+);
+
+// IF Stage ----------------------------------------------
 
 IF if0(
     .Clock        (Clock          ),
@@ -262,20 +298,12 @@ IF if0(
     .InstrOut     (InstructionF   )
 );
 
-addrcalc addrcalc0(
-    .PCIn   ({16'b0, InstrAddrD}         ),
-    .BrCode (BrCodeD                     ),
-    .Address({{16{OffsetD[15]}}, OffsetD}),
-    .PCout  (BranchAddrD                 )
-);
-
-`PIPE(Stall2, Stall1)
-
-`PIPE(nStall2, nStall)
-
+`PIPE(Stall2      , Stall1                                                     )
+`PIPE(nStall2     , nStall                                                     )
 `PIPE(InstructionD, InstructionF & {32{Flush}} & ~{32{JBFlush}} & {32{nStall2}})
+`PIPE(InstrAddrD  , InstrAddr                                                  )
 
-`PIPE(InstrAddrD  , InstrAddr   )
+// DEC Stage ----------------------------------------------
 
 DEC dec0(
     .Clock      (Clock              ),
@@ -314,6 +342,13 @@ DEC dec0(
     .Shamt      (ShamtD             )
 );
 
+addrcalc addrcalc0(
+    .PCIn   ({16'b0, InstrAddrD}         ),
+    .BrCode (BrCodeD                     ),
+    .Address({{16{OffsetD[15]}}, OffsetD}),
+    .PCout  (BranchAddrD                 )
+);
+
 `PIPE(ImmDataE1   , ImmDataD           )
 `PIPE(MULFuncE1   , InstructionD[5:0]  )
 `PIPE(OffsetE1    , OffsetD            )
@@ -341,6 +376,8 @@ DEC dec0(
 `PIPE(MemfuncE1   , MemfuncD           )
 `PIPE(ShamtE1     , ShamtD             )
 `PIPE(BranchAddrE1, BranchAddrD        )
+
+// EX1 Stage ----------------------------------------------
 
 EX1 ex1(
     .MULSelB(MULSelBE1                      ),
@@ -433,15 +470,13 @@ assign ALUDataE1Out = OutSelE1[0] ? InstrAddrE1 + 8 : ALUDataE1;
 `PIPE(SubOut15_E2 , SubOut15_E1    )
 `PIPE(BranchAddrE2, BranchAddrE1Out)
 
+// EX2 Stage ----------------------------------------------
+
 always_comb
 case (FuncE2)
     `CLO, `CLZ: MULDataE2 = CLDataE2;
     default   :
         if (MULSelBE2)
-            // Shift and Add sub results from the multipliers.
-            //MULDataE2 = (SubOut0_E2 << 32)
-            //          + ((SubOut1_E2 + SubOut2_E2) << 16)
-            //          +  SubOut3_E2;
             MULDataE2 = (SubOut0_E2                                    << 48)
              + ((SubOut1_E2  + SubOut4_E2                            ) << 40)
              + ((SubOut2_E2  + SubOut5_E2  + SubOut8_E2              ) << 32)
@@ -453,9 +488,7 @@ case (FuncE2)
             MULDataE2 = RsDataE2;
 endcase
 
-// Branch stuff ----------------------------------
-
-branch branch0(
+EX2 ex2(
     .C     (ALUCE2     ),
     .Z     (ALUZE2     ),
     .O     (ALUOE2     ),
@@ -465,12 +498,9 @@ branch branch0(
     .Taken (brTakenE2  )
 );
 
-assign BranchTakenE2 = BranchE2 & brTakenE2;
-
-assign ALUDataE2Out = OutSelE2[1] ? RsDataE2 : ALUDataE2;
-
-assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
-// ------------------------------------------------
+assign BranchTakenE2 = BranchE2 & brTakenE2                             ;
+assign ALUDataE2Out  = OutSelE2[1] ? RsDataE2               : ALUDataE2 ;
+assign RegWriteE2Out = BranchE2    ? RegWriteE2 & brTakenE2 : RegWriteE2;
 
 `PIPE(ALUDataM , ALUDataE2Out )
 `PIPE(MULDataM , MULDataE2    )
@@ -489,32 +519,31 @@ assign RegWriteE2Out = BranchE2 ? RegWriteE2 & brTakenE2 : RegWriteE2;
 `PIPE(ACCEnM   , ACCEnE2      )
 `PIPE(FuncM    , FuncE2       )
 
-EX2 ex2(
-    .Clock (Clock      ),
-    .nReset(nReset     ),
-    .ALUC  (ALUCM      ),
-    .ALUZ  (ALUZM      ),
-    .ALUO  (ALUOM      ),
-    .ALUN  (ALUNM      ),
-    .ACCEn (ACCEnM     ),
-    .MULOp (MULOpM     ),
-    .ALUIn (ALUDataM   ),
-    .MULIn (MULDataM   ),
-    .Func  (FuncM      ),
-    .Out   (ALUDataMOut),
-    .C     (           ),
-    .Z     (           ),
-    .O     (           ),
-    .N     (           )
-);
+// MEM Stage ----------------------------------------------
 
 MEM mem0(
-    .MemfuncIn   (MemFuncM ),
-    .RtDataIn    (RtDataM  ),
-    .WriteL      (WriteL   ),
-    .WriteR      (WriteR   ),
-    .MemWriteData(WriteData)
+    .Clock       (Clock      ),
+    .nReset      (nReset     ),
+    .ALUC        (ALUCM      ),
+    .ALUZ        (ALUZM      ),
+    .ALUO        (ALUOM      ),
+    .ALUN        (ALUNM      ),
+    .ACCEn       (ACCEnM     ),
+    .MULOp       (MULOpM     ),
+    .ALUIn       (ALUDataM   ),
+    .MULIn       (MULDataM   ),
+    .Func        (FuncM      ),
+    .Out         (ALUDataMOut),
+    .MemfuncIn   (MemFuncM   ),
+    .RtDataIn    (RtDataM    ),
+    .WriteL      (WriteL     ),
+    .WriteR      (WriteR     ),
+    .MemWriteData(WriteData  )
 );
+
+assign MemWrite = MemWriteM  ;
+assign MemRead  = MemReadM   ;
+assign MemAddr  = ALUDataMOut;
 
 `PIPE(RegWriteW, RegWriteM  )
 `PIPE(MemtoRegW, MemtoRegM  )
@@ -522,6 +551,8 @@ MEM mem0(
 `PIPE(RAddrW   , RAddrM     )
 `PIPE(ALUDataW , ALUDataMOut)
 `PIPE(RtDataW  , RtDataMout )
+
+// WB Stage ----------------------------------------------
 
 WB wb0(
     .MemtoReg(MemtoRegW),
@@ -531,6 +562,8 @@ WB wb0(
     .Memfunc (MemfuncW ),
     .WBData  (RDataW   )
 );
+
+// DFU ----------------------------------------------
 
 FU fu0(
     .RegWriteE2 (RegWriteE2   ),
@@ -577,19 +610,5 @@ assign RsDataD     = ForwardSrcA ? RDataW  : RsData  ;
 assign RtDataD     = ForwardSrcB ? RDataW  : RtData  ;
 assign RtDataMout  = ForwardMem1 ? RDataW  : RtDataM ;
 assign RtDataE2out = ForwardMem2 ? ALUDataM: RtDataE2;
-
-HDU hdu0(
-    .MULOp   (MULOpD           ),
-    .ALUOp   (ALUEnD           ),
-    .Func    (InstructionD[5:0]),
-    .Stall   (Stall1           )
-);
-
-assign Flush1   = ~brTakenE2 & BranchE2;
-assign JBFlush1 = BranchD || JumpD     ;
-
-assign MemWrite = MemWriteM  ;
-assign MemRead  = MemReadM   ;
-assign MemAddr  = ALUDataMOut;
 
 endmodule

@@ -116,12 +116,8 @@ assign ImmData = zeroImm  ? 32'd0             :
                  unsgnsel ? offset            :
                             signed_offset     ;
 
-// regdst = 00, RAddrOut = rt
-// regdst = 01, RAddrOut = rd
 assign raddrinstr = regdst[0] ? Instruction[15:11] : RtAddr;
 
-// regdst = 1x, RAddrOut = 31
-// ra = Reg 31 (return register)
 assign RAddrOut = regdst[1] ? 5'd31 : raddrinstr;
 
 endmodule
