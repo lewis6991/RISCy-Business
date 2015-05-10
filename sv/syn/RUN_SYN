@@ -39,16 +39,16 @@ if ("$1" != "opt" && "$1" != "basic") then
     exit 1
 endif
 
-if ("$2" != "[0-9]+") then
-    echo "Error: Incorrect arguments given. See --help information."
-    exit 1
-endif
-
-source ../DC_Setup.sh
+#if ("$2" != "[0-9]+"]) then
+#    echo "Error: Incorrect arguments given. See --help information."
+#    exit 1
+#endif
 
 mkdir -p logs_${2}${1}
 mkdir -p work_${2}${1}
 cd work_${2}${1} >&/dev/null
+
+source ../DC_Setup.sh
 
 if($3 == noscan) then
     set SCAN = 0
