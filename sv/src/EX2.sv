@@ -11,8 +11,8 @@ module EX2(
                 Z     ,
                 O     ,
                 N     ,
-    input [2:0] BrCode,
                 BrRt  ,
+    input [2:0] BrCode,
     output      Taken 
 );
 
